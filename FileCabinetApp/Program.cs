@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 
 namespace FileCabinetApp
 {
@@ -18,6 +19,7 @@ namespace FileCabinetApp
             new Tuple<string, Action<string>>("exit", Exit),
             new Tuple<string, Action<string>>("stat", Stat),
             new Tuple<string, Action<string>>("create", Create),
+            new Tuple<string, Action<string>>("list", List),
         };
 
         private static string[][] helpMessages = new string[][]
@@ -26,6 +28,7 @@ namespace FileCabinetApp
             new string[] { "exit", "exits the application", "The 'exit' command exits the application." },
             new string[] { "stat", "prints the statistics", "The 'stat' command prints the statistics." },
             new string[] { "create", "creates a new record", "The 'stat' command creates a new record." },
+            new string[] { "list", "returns a list of records", "The 'stat' command returns a list of recordscre." },
         };
 
         private static FileCabinetService fileCabinetService = new FileCabinetService();
@@ -126,6 +129,20 @@ namespace FileCabinetApp
 
             Program.fileCabinetService.CreateRecord(firstname, lastname, dateTime);
             Console.WriteLine($"\nRecord #{1} created ", Program.fileCabinetService.GetStat());
+        }
+
+        private static void List(string parameters)
+        {
+            FileCabinetRecord[] tmpArray = Program.fileCabinetService.GetRecords();
+            foreach (FileCabinetRecord tmp in tmpArray)
+            {
+                Console.Write($"#{1}, ", tmp.Id);
+                Console.Write(tmp.FirstName);
+                Console.Write(", ");
+                Console.Write(tmp.LastName);
+                Console.Write(", ");
+                Console.WriteLine(tmp.DateOfBirth.ToString("yyyy-MMM-dd",  CultureInfo.InvariantCulture));
+            }
         }
     }
 }
