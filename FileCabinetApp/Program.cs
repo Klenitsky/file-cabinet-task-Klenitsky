@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 
 namespace FileCabinetApp
 {
@@ -16,13 +17,21 @@ namespace FileCabinetApp
         {
             new Tuple<string, Action<string>>("help", PrintHelp),
             new Tuple<string, Action<string>>("exit", Exit),
+            new Tuple<string, Action<string>>("stat", Stat),
+            new Tuple<string, Action<string>>("create", Create),
+            new Tuple<string, Action<string>>("list", List),
         };
 
         private static string[][] helpMessages = new string[][]
         {
             new string[] { "help", "prints the help screen", "The 'help' command prints the help screen." },
             new string[] { "exit", "exits the application", "The 'exit' command exits the application." },
+            new string[] { "stat", "prints the statistics", "The 'stat' command prints the statistics." },
+            new string[] { "create", "creates a new record", "The 'stat' command creates a new record." },
+            new string[] { "list", "returns a list of records", "The 'stat' command returns a list of recordscre." },
         };
+
+        private static FileCabinetService fileCabinetService = new FileCabinetService();
 
         public static void Main(string[] args)
         {
@@ -95,6 +104,78 @@ namespace FileCabinetApp
         {
             Console.WriteLine("Exiting an application...");
             isRunning = false;
+        }
+
+        private static void Stat(string parameters)
+        {
+            var recordsCount = Program.fileCabinetService.GetStat();
+            Console.WriteLine($"{recordsCount} record(s).");
+        }
+
+        private static void Create(string parameters)
+        {
+            Console.Write("First Name: ");
+            string firstname = Console.ReadLine();
+            Console.Write("Last Name: ");
+            string lastname = Console.ReadLine();
+            Console.Write("Date of birth: ");
+            string date = Console.ReadLine();
+            DateTime dateTime;
+            bool success = DateTime.TryParse(date, out dateTime);
+            if (!success)
+            {
+                return;
+            }
+
+            Console.Write("Height: ");
+            string tmp = Console.ReadLine();
+            short height;
+            success = short.TryParse(tmp, out height);
+            if (!success)
+            {
+                return;
+            }
+
+            Console.Write("Weight: ");
+            tmp = Console.ReadLine();
+            decimal weight;
+            success = decimal.TryParse(tmp, out weight);
+            if (!success)
+            {
+                return;
+            }
+
+            Console.Write("Driving license category: ");
+            tmp = Console.ReadLine();
+            char category;
+            success = char.TryParse(tmp, out category);
+            if (!success)
+            {
+                return;
+            }
+
+            Program.fileCabinetService.CreateRecord(firstname, lastname, dateTime, height, weight, category);
+            Console.WriteLine($"\nRecord #{1} created ", Program.fileCabinetService.GetStat());
+        }
+
+        private static void List(string parameters)
+        {
+            FileCabinetRecord[] tmpArray = Program.fileCabinetService.GetRecords();
+            foreach (FileCabinetRecord tmp in tmpArray)
+            {
+                Console.Write($"#{1}, ", tmp.Id);
+                Console.Write(tmp.FirstName);
+                Console.Write(", ");
+                Console.Write(tmp.LastName);
+                Console.Write(", ");
+                Console.Write(tmp.DateOfBirth.ToString("yyyy-MMM-dd",  CultureInfo.InvariantCulture));
+                Console.Write(", height: ");
+                Console.Write(tmp.Height);
+                Console.Write(", weight ");
+                Console.Write(tmp.Weight);
+                Console.Write(", driving license category: ");
+                Console.WriteLine(tmp.DrivingLicenseCategory);
+            }
         }
     }
 }
