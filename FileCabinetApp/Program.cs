@@ -127,7 +127,34 @@ namespace FileCabinetApp
                 return;
             }
 
-            Program.fileCabinetService.CreateRecord(firstname, lastname, dateTime);
+            Console.Write("Height: ");
+            string tmp = Console.ReadLine();
+            short height;
+            success = short.TryParse(tmp, out height);
+            if (!success)
+            {
+                return;
+            }
+
+            Console.Write("Weight: ");
+            tmp = Console.ReadLine();
+            decimal weight;
+            success = decimal.TryParse(tmp, out weight);
+            if (!success)
+            {
+                return;
+            }
+
+            Console.Write("Driving license category: ");
+            tmp = Console.ReadLine();
+            char category;
+            success = char.TryParse(tmp, out category);
+            if (!success)
+            {
+                return;
+            }
+
+            Program.fileCabinetService.CreateRecord(firstname, lastname, dateTime, height, weight, category);
             Console.WriteLine($"\nRecord #{1} created ", Program.fileCabinetService.GetStat());
         }
 
@@ -141,7 +168,13 @@ namespace FileCabinetApp
                 Console.Write(", ");
                 Console.Write(tmp.LastName);
                 Console.Write(", ");
-                Console.WriteLine(tmp.DateOfBirth.ToString("yyyy-MMM-dd",  CultureInfo.InvariantCulture));
+                Console.Write(tmp.DateOfBirth.ToString("yyyy-MMM-dd",  CultureInfo.InvariantCulture));
+                Console.Write(", height: ");
+                Console.Write(tmp.Height);
+                Console.Write(", weight ");
+                Console.Write(tmp.Weight);
+                Console.Write(", driving license category: ");
+                Console.WriteLine(tmp.DrivingLicenseCategory);
             }
         }
     }

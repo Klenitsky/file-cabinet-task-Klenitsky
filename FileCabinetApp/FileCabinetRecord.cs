@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -13,5 +13,11 @@ namespace FileCabinetApp
         public string LastName { get; set; }
 
         public DateTime DateOfBirth { get; set; }
+
+        public short Height { get; set; }
+
+        public decimal Weight { get; set; }
+
+        public char DrivingLicenseCategory { get; set; }
     }
 }
