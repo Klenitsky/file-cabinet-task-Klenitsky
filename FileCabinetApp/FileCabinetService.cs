@@ -25,9 +25,9 @@ namespace FileCabinetApp
                 throw new ArgumentNullException(nameof(lastName));
             }
 
-            if ((firstName.Length < 2) || (firstName.Length > 60) || string.IsNullOrWhiteSpace(lastName))
+            if ((lastName.Length < 2) || (lastName.Length > 60) || string.IsNullOrWhiteSpace(lastName))
             {
-                throw new ArgumentException("Invalid Last Name", nameof(firstName));
+                throw new ArgumentException("Invalid Last Name", nameof(lastName));
             }
 
             if (DateTime.Compare(dateOfBirth, DateTime.Today) > 0 || (DateTime.Compare(dateOfBirth, new DateTime(1950, 1, 1)) < 0))
