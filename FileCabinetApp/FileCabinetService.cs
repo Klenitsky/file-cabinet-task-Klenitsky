@@ -8,6 +8,7 @@ namespace FileCabinetApp
     public class FileCabinetService
     {
         private readonly List<FileCabinetRecord> list = new List<FileCabinetRecord>();
+        private readonly Dictionary<string, List<FileCabinetRecord>> firstNameDictionary = new Dictionary<string, List<FileCabinetRecord>>();
 
         public int CreateRecord(string firstName, string lastName, DateTime dateOfBirth, short height, decimal weight, char drivingLicenseCategory)
         {
@@ -61,6 +62,12 @@ namespace FileCabinetApp
                 Weight = weight,
                 DrivingLicenseCategory = drivingLicenseCategory,
             };
+            if (!this.firstNameDictionary.ContainsKey(firstName))
+            {
+                this.firstNameDictionary.Add(firstName, new List<FileCabinetRecord>());
+            }
+
+            this.firstNameDictionary[firstName].Add(record);
 
             this.list.Add(record);
 
@@ -127,12 +134,20 @@ namespace FileCabinetApp
                         throw new ArgumentException("Invalid license", nameof(drivingLicenseCategory));
                     }
 
+                    this.firstNameDictionary[tmp.FirstName].Remove(tmp);
                     tmp.FirstName = firstName;
                     tmp.LastName = lastName;
                     tmp.DateOfBirth = dateOfBirth;
                     tmp.Height = height;
                     tmp.Weight = weight;
                     tmp.DrivingLicenseCategory = drivingLicenseCategory;
+
+                    if (!this.firstNameDictionary.ContainsKey(firstName))
+                    {
+                        this.firstNameDictionary.Add(firstName, new List<FileCabinetRecord>());
+                    }
+
+                    this.firstNameDictionary[firstName].Add(tmp);
                 }
             }
 
@@ -149,16 +164,7 @@ namespace FileCabinetApp
                 throw new ArgumentNullException(nameof(firstName));
             }
 
-            List<FileCabinetRecord> result = new List<FileCabinetRecord>();
-            foreach (FileCabinetRecord tmp in this.list)
-            {
-                if (tmp.FirstName.ToUpperInvariant() == firstName.ToUpperInvariant())
-                {
-                    result.Add(tmp);
-                }
-            }
-
-            return result.ToArray();
+            return this.firstNameDictionary[firstName].ToArray();
         }
 
         public FileCabinetRecord[] FindByLastName(string lastname)
