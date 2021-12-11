@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text;
 
 namespace FileCabinetApp
@@ -7,6 +8,9 @@ namespace FileCabinetApp
     public class FileCabinetService
     {
         private readonly List<FileCabinetRecord> list = new List<FileCabinetRecord>();
+        private readonly Dictionary<string, List<FileCabinetRecord>> firstNameDictionary = new Dictionary<string, List<FileCabinetRecord>>();
+        private readonly Dictionary<string, List<FileCabinetRecord>> lastNameDictionary = new Dictionary<string, List<FileCabinetRecord>>();
+        private readonly Dictionary<string, List<FileCabinetRecord>> dateOfBirthDictionary = new Dictionary<string, List<FileCabinetRecord>>();
 
         public int CreateRecord(string firstName, string lastName, DateTime dateOfBirth, short height, decimal weight, char drivingLicenseCategory)
         {
@@ -60,6 +64,26 @@ namespace FileCabinetApp
                 Weight = weight,
                 DrivingLicenseCategory = drivingLicenseCategory,
             };
+            if (!this.firstNameDictionary.ContainsKey(firstName))
+            {
+                this.firstNameDictionary.Add(firstName, new List<FileCabinetRecord>());
+            }
+
+            this.firstNameDictionary[firstName].Add(record);
+
+            if (!this.lastNameDictionary.ContainsKey(lastName))
+            {
+                this.lastNameDictionary.Add(lastName, new List<FileCabinetRecord>());
+            }
+
+            this.lastNameDictionary[lastName].Add(record);
+
+            if (!this.dateOfBirthDictionary.ContainsKey(dateOfBirth.ToString(CultureInfo.CurrentCulture)))
+            {
+                this.dateOfBirthDictionary.Add(dateOfBirth.ToString(CultureInfo.CurrentCulture), new List<FileCabinetRecord>());
+            }
+
+            this.dateOfBirthDictionary[dateOfBirth.ToString(CultureInfo.CurrentCulture)].Add(record);
 
             this.list.Add(record);
 
@@ -126,12 +150,36 @@ namespace FileCabinetApp
                         throw new ArgumentException("Invalid license", nameof(drivingLicenseCategory));
                     }
 
+                    this.firstNameDictionary[tmp.FirstName].Remove(tmp);
+                    this.lastNameDictionary[tmp.LastName].Remove(tmp);
+                    this.dateOfBirthDictionary[tmp.DateOfBirth.ToString(CultureInfo.CurrentCulture)].Remove(tmp);
                     tmp.FirstName = firstName;
                     tmp.LastName = lastName;
                     tmp.DateOfBirth = dateOfBirth;
                     tmp.Height = height;
                     tmp.Weight = weight;
                     tmp.DrivingLicenseCategory = drivingLicenseCategory;
+
+                    if (!this.firstNameDictionary.ContainsKey(firstName))
+                    {
+                        this.firstNameDictionary.Add(firstName, new List<FileCabinetRecord>());
+                    }
+
+                    this.firstNameDictionary[firstName].Add(tmp);
+
+                    if (!this.lastNameDictionary.ContainsKey(lastName))
+                    {
+                        this.lastNameDictionary.Add(lastName, new List<FileCabinetRecord>());
+                    }
+
+                    this.lastNameDictionary[lastName].Add(tmp);
+
+                    if (!this.dateOfBirthDictionary.ContainsKey(dateOfBirth.ToString(CultureInfo.CurrentCulture)))
+                    {
+                        this.dateOfBirthDictionary.Add(dateOfBirth.ToString(CultureInfo.CurrentCulture), new List<FileCabinetRecord>());
+                    }
+
+                    this.dateOfBirthDictionary[dateOfBirth.ToString(CultureInfo.CurrentCulture)].Add(tmp);
                 }
             }
 
@@ -139,6 +187,31 @@ namespace FileCabinetApp
             {
                 throw new ArgumentException("There is no such Id.", nameof(id));
             }
+        }
+
+        public FileCabinetRecord[] FindByFirstName(string firstName)
+        {
+            if (string.IsNullOrEmpty(firstName))
+            {
+                throw new ArgumentNullException(nameof(firstName));
+            }
+
+            return this.firstNameDictionary[firstName].ToArray();
+        }
+
+        public FileCabinetRecord[] FindByLastName(string lastname)
+        {
+            if (string.IsNullOrEmpty(lastname))
+            {
+                throw new ArgumentNullException(nameof(lastname));
+            }
+
+            return this.lastNameDictionary[lastname].ToArray();
+        }
+
+        public FileCabinetRecord[] FindByDateOfBirth(DateTime date)
+        {
+            return this.dateOfBirthDictionary[date.ToString(CultureInfo.CurrentCulture)].ToArray();
         }
     }
 }
