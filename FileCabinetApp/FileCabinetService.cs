@@ -160,5 +160,24 @@ namespace FileCabinetApp
 
             return result.ToArray();
         }
+
+        public FileCabinetRecord[] FindByLastName(string lastname)
+        {
+            if (string.IsNullOrEmpty(lastname))
+            {
+                throw new ArgumentNullException(nameof(lastname));
+            }
+
+            List<FileCabinetRecord> result = new List<FileCabinetRecord>();
+            foreach (FileCabinetRecord tmp in this.list)
+            {
+                if (tmp.LastName.ToUpperInvariant() == lastname.ToUpperInvariant())
+                {
+                    result.Add(tmp);
+                }
+            }
+
+            return result.ToArray();
+        }
     }
 }

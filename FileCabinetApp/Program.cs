@@ -320,30 +320,38 @@ namespace FileCabinetApp
         {
             int index = parameters.IndexOf(' ', StringComparison.InvariantCulture);
             StringBuilder property = new StringBuilder(parameters, 0, index, 255);
+            FileCabinetRecord[] result = Array.Empty<FileCabinetRecord>();
             if (property.ToString().ToLower(CultureInfo.CurrentCulture) == "firstname".ToLower(CultureInfo.CurrentCulture))
             {
                 StringBuilder name = new StringBuilder(parameters, index + 2, parameters.Length - index - 3, 255);
-                FileCabinetRecord[] result = Program.fileCabinetService.FindByFirstName(name.ToString());
-                if (result.Length == 0)
-                {
-                    Console.WriteLine("No elements with such property");
-                }
+                result = Program.fileCabinetService.FindByFirstName(name.ToString());
+            }
 
-                foreach (FileCabinetRecord tmp in result)
-                {
-                    Console.Write($"#" + tmp.Id + ", ");
-                    Console.Write(tmp.FirstName);
-                    Console.Write(", ");
-                    Console.Write(tmp.LastName);
-                    Console.Write(", ");
-                    Console.Write(tmp.DateOfBirth.ToString("yyyy-MMM-dd", CultureInfo.InvariantCulture));
-                    Console.Write(", height: ");
-                    Console.Write(tmp.Height);
-                    Console.Write(", weight ");
-                    Console.Write(tmp.Weight);
-                    Console.Write(", driving license category: ");
-                    Console.WriteLine(tmp.DrivingLicenseCategory);
-                }
+            if (property.ToString().ToLower(CultureInfo.CurrentCulture) == "lastname".ToLower(CultureInfo.CurrentCulture))
+            {
+                StringBuilder name = new StringBuilder(parameters, index + 2, parameters.Length - index - 3, 255);
+                result = Program.fileCabinetService.FindByLastName(name.ToString());
+            }
+
+            if (result.Length == 0)
+            {
+                Console.WriteLine("No elements with such property");
+            }
+
+            foreach (FileCabinetRecord tmp in result)
+            {
+                Console.Write($"#" + tmp.Id + ", ");
+                Console.Write(tmp.FirstName);
+                Console.Write(", ");
+                Console.Write(tmp.LastName);
+                Console.Write(", ");
+                Console.Write(tmp.DateOfBirth.ToString("yyyy-MMM-dd", CultureInfo.InvariantCulture));
+                Console.Write(", height: ");
+                Console.Write(tmp.Height);
+                Console.Write(", weight ");
+                Console.Write(tmp.Weight);
+                Console.Write(", driving license category: ");
+                Console.WriteLine(tmp.DrivingLicenseCategory);
             }
         }
     }
