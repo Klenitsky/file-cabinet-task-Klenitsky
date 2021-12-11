@@ -333,6 +333,22 @@ namespace FileCabinetApp
                 result = Program.fileCabinetService.FindByLastName(name.ToString());
             }
 
+            if (property.ToString().ToLower(CultureInfo.CurrentCulture) == "dateofbirth".ToLower(CultureInfo.CurrentCulture))
+            {
+                StringBuilder date = new StringBuilder(parameters, index + 2, parameters.Length - index - 3, 255);
+                DateTime dateTime;
+                bool success = DateTime.TryParse(date.ToString(), out dateTime);
+                while (!success)
+                {
+                    Console.WriteLine("Date  is invalid, try again: ");
+                    Console.Write("Date: ");
+                    date = new StringBuilder(Console.ReadLine());
+                    success = DateTime.TryParse(date.ToString(), out dateTime);
+                }
+
+                result = Program.fileCabinetService.FindByDateOfBirth(dateTime);
+            }
+
             if (result.Length == 0)
             {
                 Console.WriteLine("No elements with such property");
