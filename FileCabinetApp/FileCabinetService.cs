@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text;
 
 namespace FileCabinetApp
@@ -139,6 +140,25 @@ namespace FileCabinetApp
             {
                 throw new ArgumentException("There is no such Id.", nameof(id));
             }
+        }
+
+        public FileCabinetRecord[] FindByFirstName(string firstName)
+        {
+            if (string.IsNullOrEmpty(firstName))
+            {
+                throw new ArgumentNullException(nameof(firstName));
+            }
+
+            List<FileCabinetRecord> result = new List<FileCabinetRecord>();
+            foreach (FileCabinetRecord tmp in this.list)
+            {
+                if (tmp.FirstName.ToUpperInvariant() == firstName.ToUpperInvariant())
+                {
+                    result.Add(tmp);
+                }
+            }
+
+            return result.ToArray();
         }
     }
 }

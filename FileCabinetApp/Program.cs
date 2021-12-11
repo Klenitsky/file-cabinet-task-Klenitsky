@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Globalization;
+using System.Text;
 
 namespace FileCabinetApp
 {
@@ -21,6 +22,7 @@ namespace FileCabinetApp
             new Tuple<string, Action<string>>("create", Create),
             new Tuple<string, Action<string>>("list", List),
             new Tuple<string, Action<string>>("edit", Edit),
+            new Tuple<string, Action<string>>("find", Find),
         };
 
         private static string[][] helpMessages = new string[][]
@@ -31,6 +33,7 @@ namespace FileCabinetApp
             new string[] { "create", "creates a new record", "The 'create' command creates a new record." },
             new string[] { "list", "returns a list of records", "The 'list' command returns a list of recordscre." },
             new string[] { "edit", "edits the record with entered id.", "The 'edit' command edits the record with entered id" },
+            new string[] { "find", "finds the record according to the parameters.", "The 'edit' command finds the record according to the parameters." },
         };
 
         private static FileCabinetService fileCabinetService = new FileCabinetService();
@@ -192,7 +195,7 @@ namespace FileCabinetApp
                     return;
                 }
 
-                Console.WriteLine($"\nRecord #{1} created ", Program.fileCabinetService.GetStat());
+                Console.WriteLine($"\nRecord #" + Program.fileCabinetService.GetStat().ToString(CultureInfo.CurrentCulture) + " created ");
         }
 
         private static void List(string parameters)
@@ -200,7 +203,7 @@ namespace FileCabinetApp
             FileCabinetRecord[] tmpArray = Program.fileCabinetService.GetRecords();
             foreach (FileCabinetRecord tmp in tmpArray)
             {
-                Console.Write($"#{1}, ", tmp.Id);
+                Console.Write($"#" + tmp.Id + ", ");
                 Console.Write(tmp.FirstName);
                 Console.Write(", ");
                 Console.Write(tmp.LastName);
@@ -311,6 +314,37 @@ namespace FileCabinetApp
             }
 
             Console.WriteLine($"Record #{1} is updated", id);
+        }
+
+        private static void Find(string parameters)
+        {
+            int index = parameters.IndexOf(' ', StringComparison.InvariantCulture);
+            StringBuilder property = new StringBuilder(parameters, 0, index, 255);
+            if (property.ToString().ToLower(CultureInfo.CurrentCulture) == "firstname".ToLower(CultureInfo.CurrentCulture))
+            {
+                StringBuilder name = new StringBuilder(parameters, index + 2, parameters.Length - index - 3, 255);
+                FileCabinetRecord[] result = Program.fileCabinetService.FindByFirstName(name.ToString());
+                if (result.Length == 0)
+                {
+                    Console.WriteLine("No elements with such property");
+                }
+
+                foreach (FileCabinetRecord tmp in result)
+                {
+                    Console.Write($"#" + tmp.Id + ", ");
+                    Console.Write(tmp.FirstName);
+                    Console.Write(", ");
+                    Console.Write(tmp.LastName);
+                    Console.Write(", ");
+                    Console.Write(tmp.DateOfBirth.ToString("yyyy-MMM-dd", CultureInfo.InvariantCulture));
+                    Console.Write(", height: ");
+                    Console.Write(tmp.Height);
+                    Console.Write(", weight ");
+                    Console.Write(tmp.Weight);
+                    Console.Write(", driving license category: ");
+                    Console.WriteLine(tmp.DrivingLicenseCategory);
+                }
+            }
         }
     }
 }
