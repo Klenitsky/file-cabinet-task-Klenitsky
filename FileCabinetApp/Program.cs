@@ -57,7 +57,7 @@ namespace FileCabinetApp
                     continue;
                 }
 
-                var index = Array.FindIndex(commands, 0, commands.Length, i => i.Item1.Equals(command, StringComparison.InvariantCultureIgnoreCase));
+                var index = Array.FindIndex(commands, 0, commands.Length, i => i.Item1.Equals(command, StringComparison.OrdinalIgnoreCase));
                 if (index >= 0)
                 {
                     const int parametersIndex = 1;
@@ -119,102 +119,33 @@ namespace FileCabinetApp
 
         private static void Create(string parameters)
         {
-                Console.Write("First Name: ");
-                string firstname = Console.ReadLine();
-                while ((firstname.Length < 2) || (firstname.Length > 60) || string.IsNullOrWhiteSpace(firstname))
-                {
-                    Console.Write("First name is invalid, try again: ");
-                    Console.Write("First Name: ");
-                    firstname = Console.ReadLine();
-                }
+            string firstName = string.Empty, lastName = string.Empty;
+            DateTime dateTime = default(DateTime);
+            short height = 0;
+            decimal weight = 0;
+            char drivingLicenseCategory = ' ';
 
-                Console.Write("Last Name: ");
-                string lastname = Console.ReadLine();
-                while ((lastname.Length < 2) || (lastname.Length > 60) || string.IsNullOrWhiteSpace(lastname))
-                {
-                     Console.WriteLine("Last name is invalid, try again: ");
-                     Console.Write("Last Name: ");
-                     lastname = Console.ReadLine();
-                }
+            EnterParameters(out firstName, out lastName, out dateTime, out height, out weight, out drivingLicenseCategory);
 
-                Console.Write("Date of birth: ");
-                string date = Console.ReadLine();
-                DateTime dateTime;
-                bool success = DateTime.TryParse(date, out dateTime);
-                while (!success || (DateTime.Compare(dateTime, DateTime.Today) > 0) || DateTime.Compare(dateTime, new DateTime(1950, 1, 1)) < 0)
-                {
-                    Console.WriteLine("Date  is invalid, try again: ");
-                    Console.Write("Date: ");
-                    date = Console.ReadLine();
-                    success = DateTime.TryParse(date, out dateTime);
-                }
-
-                Console.Write("Height: ");
-                string tmp = Console.ReadLine();
-                short height;
-                success = short.TryParse(tmp, out height);
-                while (!success || height < 0 || height > 250)
-                {
-                     Console.WriteLine("Height is invalid, try again: ");
-                     Console.Write("Height: ");
-                     tmp = Console.ReadLine();
-                     success = short.TryParse(tmp, out height);
-                }
-
-                Console.Write("Weight: ");
-                tmp = Console.ReadLine();
-                decimal weight;
-                success = decimal.TryParse(tmp, out weight);
-                while (!success || weight < 0 || weight > 180)
-                {
-                    Console.WriteLine("Weight is invalid, try again: ");
-                    Console.Write("Weight: ");
-                    tmp = Console.ReadLine();
-                    success = decimal.TryParse(tmp, out weight);
-                }
-
-                Console.Write("Driving license category: ");
-                tmp = Console.ReadLine();
-                char category;
-                success = char.TryParse(tmp, out category);
-                while (!success || ((category != 'A') && (category != 'B') && (category != 'C') && (category != 'D')))
-                {
-                Console.WriteLine("License category is invalid, try again: ");
-                Console.Write("Driving license category: ");
-                tmp = Console.ReadLine();
-                success = char.TryParse(tmp, out category);
-                }
-
-                try
-                {
-                    Program.fileCabinetService.CreateRecord(firstname, lastname, dateTime, height, weight, category);
-                }
-                catch (ArgumentException)
-                {
+            try
+            {
+                    Program.fileCabinetService.CreateRecord(firstName, lastName, dateTime, height, weight, drivingLicenseCategory);
+            }
+            catch (ArgumentException)
+            {
                     Console.WriteLine("Data is invalid");
                     return;
-                }
+            }
 
-                Console.WriteLine($"\nRecord #" + Program.fileCabinetService.GetStat().ToString(CultureInfo.CurrentCulture) + " created ");
+            Console.WriteLine($"\nRecord #" + Program.fileCabinetService.GetStat().ToString(CultureInfo.CurrentCulture) + " created ");
         }
 
         private static void List(string parameters)
         {
-            FileCabinetRecord[] tmpArray = Program.fileCabinetService.GetRecords();
-            foreach (FileCabinetRecord tmp in tmpArray)
+            FileCabinetRecord[] arrayOfRecords = Program.fileCabinetService.GetRecords();
+            foreach (FileCabinetRecord record in arrayOfRecords)
             {
-                Console.Write($"#" + tmp.Id + ", ");
-                Console.Write(tmp.FirstName);
-                Console.Write(", ");
-                Console.Write(tmp.LastName);
-                Console.Write(", ");
-                Console.Write(tmp.DateOfBirth.ToString("yyyy-MMM-dd",  CultureInfo.InvariantCulture));
-                Console.Write(", height: ");
-                Console.Write(tmp.Height);
-                Console.Write(", weight ");
-                Console.Write(tmp.Weight);
-                Console.Write(", driving license category: ");
-                Console.WriteLine(tmp.DrivingLicenseCategory);
+                Console.WriteLine(record.ToString());
             }
         }
 
@@ -224,88 +155,30 @@ namespace FileCabinetApp
             bool success = int.TryParse(parameters, out id);
             if (!success)
             {
-                Console.WriteLine("Not a number");
+                Console.WriteLine("Invalid Id");
                 return;
             }
 
             try
             {
-                Program.fileCabinetService.EditRecord(id, "tmp", "tmp", DateTime.Today, 0, 0, 'A');
+                Program.fileCabinetService.EditRecord(id, "ex", "ex", DateTime.Today, 0, 0, 'A');
             }
             catch (ArgumentException)
             {
-                Console.WriteLine($"#{1} record is not found", id);
+                Console.WriteLine($"#" + id + " record is not found");
             }
 
-            Console.Write("First Name: ");
-            string firstname = Console.ReadLine();
-            while ((firstname.Length < 2) || (firstname.Length > 60) || string.IsNullOrWhiteSpace(firstname))
-            {
-                Console.Write("First name is invalid, try again: ");
-                Console.Write("First Name: ");
-                firstname = Console.ReadLine();
-            }
+            string firstName = string.Empty, lastName = string.Empty;
+            DateTime dateTime = default(DateTime);
+            short height = 0;
+            decimal weight = 0;
+            char drivingLicenseCategory = ' ';
 
-            Console.Write("Last Name: ");
-            string lastname = Console.ReadLine();
-            while ((lastname.Length < 2) || (lastname.Length > 60) || string.IsNullOrWhiteSpace(lastname))
-            {
-                Console.WriteLine("Last name is invalid, try again: ");
-                Console.Write("Last Name: ");
-                lastname = Console.ReadLine();
-            }
-
-            Console.Write("Date of birth: ");
-            string date = Console.ReadLine();
-            DateTime dateTime;
-            success = DateTime.TryParse(date, out dateTime);
-            while (!success || (DateTime.Compare(dateTime, DateTime.Today) > 0) || DateTime.Compare(dateTime, new DateTime(1950, 1, 1)) < 0)
-            {
-                Console.WriteLine("Date  is invalid, try again: ");
-                Console.Write("Date: ");
-                date = Console.ReadLine();
-                success = DateTime.TryParse(date, out dateTime);
-            }
-
-            Console.Write("Height: ");
-            string tmp = Console.ReadLine();
-            short height;
-            success = short.TryParse(tmp, out height);
-            while (!success || height < 0 || height > 250)
-            {
-                Console.WriteLine("Height is invalid, try again: ");
-                Console.Write("Height: ");
-                tmp = Console.ReadLine();
-                success = short.TryParse(tmp, out height);
-            }
-
-            Console.Write("Weight: ");
-            tmp = Console.ReadLine();
-            decimal weight;
-            success = decimal.TryParse(tmp, out weight);
-            while (!success || weight < 0 || weight > 180)
-            {
-                Console.WriteLine("Weight is invalid, try again: ");
-                Console.Write("Weight: ");
-                tmp = Console.ReadLine();
-                success = decimal.TryParse(tmp, out weight);
-            }
-
-            Console.Write("Driving license category: ");
-            tmp = Console.ReadLine();
-            char category;
-            success = char.TryParse(tmp, out category);
-            while (!success || ((category != 'A') && (category != 'B') && (category != 'C') && (category != 'D')))
-            {
-                Console.WriteLine("License category is invalid, try again: ");
-                Console.Write("Driving license category: ");
-                tmp = Console.ReadLine();
-                success = char.TryParse(tmp, out category);
-            }
+            EnterParameters(out firstName, out lastName, out dateTime, out height, out weight, out drivingLicenseCategory);
 
             try
             {
-                Program.fileCabinetService.EditRecord(id, firstname, lastname, dateTime, height, weight, category);
+                Program.fileCabinetService.EditRecord(id, firstName, lastName, dateTime, height, weight, drivingLicenseCategory);
             }
             catch (ArgumentException)
             {
@@ -313,23 +186,38 @@ namespace FileCabinetApp
                 return;
             }
 
-            Console.WriteLine($"Record #{1} is updated", id);
+            Console.WriteLine($"Record #" + id + "is updated");
         }
 
         private static void Find(string parameters)
         {
             int index = parameters.IndexOf(' ', StringComparison.InvariantCulture);
-            StringBuilder property = new StringBuilder(parameters, 0, index, 255);
+            StringBuilder property = new StringBuilder(parameters, 0, index, char.MaxValue);
             FileCabinetRecord[] result = Array.Empty<FileCabinetRecord>();
+
             if (property.ToString().ToLower(CultureInfo.CurrentCulture) == "firstname".ToLower(CultureInfo.CurrentCulture))
             {
-                StringBuilder name = new StringBuilder(parameters, index + 2, parameters.Length - index - 3, 255);
+                StringBuilder name = new StringBuilder(parameters, index + 2, parameters.Length - (index + 3), 255);
+                while ((name.Length < 2) || (name.Length > 60))
+                {
+                    Console.Write("First name is invalid, try again: ");
+                    Console.Write("First Name: ");
+                    name = new StringBuilder(Console.ReadLine());
+                }
+
                 result = Program.fileCabinetService.FindByFirstName(name.ToString());
             }
 
             if (property.ToString().ToLower(CultureInfo.CurrentCulture) == "lastname".ToLower(CultureInfo.CurrentCulture))
             {
                 StringBuilder name = new StringBuilder(parameters, index + 2, parameters.Length - index - 3, 255);
+                while ((name.Length < 2) || (name.Length > 60))
+                {
+                    Console.Write("First name is invalid, try again: ");
+                    Console.Write("Last Name: ");
+                    name = new StringBuilder(Console.ReadLine());
+                }
+
                 result = Program.fileCabinetService.FindByLastName(name.ToString());
             }
 
@@ -354,20 +242,74 @@ namespace FileCabinetApp
                 Console.WriteLine("No elements with such property");
             }
 
-            foreach (FileCabinetRecord tmp in result)
+            foreach (FileCabinetRecord record in result)
             {
-                Console.Write($"#" + tmp.Id + ", ");
-                Console.Write(tmp.FirstName);
-                Console.Write(", ");
-                Console.Write(tmp.LastName);
-                Console.Write(", ");
-                Console.Write(tmp.DateOfBirth.ToString("yyyy-MMM-dd", CultureInfo.InvariantCulture));
-                Console.Write(", height: ");
-                Console.Write(tmp.Height);
-                Console.Write(", weight ");
-                Console.Write(tmp.Weight);
-                Console.Write(", driving license category: ");
-                Console.WriteLine(tmp.DrivingLicenseCategory);
+                Console.WriteLine(record.ToString());
+            }
+        }
+
+        private static void EnterParameters(out string firstName, out string lastName, out DateTime dateOfBirth, out short height, out decimal weight, out char drivingLicenseCategory)
+        {
+            Console.Write("First Name: ");
+            firstName = Console.ReadLine();
+            while ((firstName.Length < 2) || (firstName.Length > 60) || string.IsNullOrWhiteSpace(firstName))
+            {
+                Console.Write("First name is invalid, try again: ");
+                Console.Write("First Name: ");
+                firstName = Console.ReadLine();
+            }
+
+            Console.Write("Last Name: ");
+            lastName = Console.ReadLine();
+            while ((lastName.Length < 2) || (lastName.Length > 60) || string.IsNullOrWhiteSpace(lastName))
+            {
+                Console.WriteLine("Last name is invalid, try again: ");
+                Console.Write("Last Name: ");
+                lastName = Console.ReadLine();
+            }
+
+            Console.Write("Date of birth: ");
+            string date = Console.ReadLine();
+            bool success = DateTime.TryParse(date, out dateOfBirth);
+            while (!success || (DateTime.Compare(dateOfBirth, DateTime.Today) > 0) || DateTime.Compare(dateOfBirth, new DateTime(1950, 1, 1)) < 0)
+            {
+                Console.WriteLine("Date  is invalid, try again: ");
+                Console.Write("Date: ");
+                date = Console.ReadLine();
+                success = DateTime.TryParse(date, out dateOfBirth);
+            }
+
+            Console.Write("Height: ");
+            string nextLine = Console.ReadLine();
+            success = short.TryParse(nextLine, out height);
+            while (!success || height < 0 || height > 250)
+            {
+                Console.WriteLine("Height is invalid, try again: ");
+                Console.Write("Height: ");
+                nextLine = Console.ReadLine();
+                success = short.TryParse(nextLine, out height);
+            }
+
+            Console.Write("Weight: ");
+            nextLine = Console.ReadLine();
+            success = decimal.TryParse(nextLine, out weight);
+            while (!success || weight < 0 || weight > 180)
+            {
+                Console.WriteLine("Weight is invalid, try again: ");
+                Console.Write("Weight: ");
+                nextLine = Console.ReadLine();
+                success = decimal.TryParse(nextLine, out weight);
+            }
+
+            Console.Write("Driving license category: ");
+            nextLine = Console.ReadLine();
+            success = char.TryParse(nextLine, out drivingLicenseCategory);
+            while (!success || ((drivingLicenseCategory != 'A') && (drivingLicenseCategory != 'B') && (drivingLicenseCategory != 'C') && (drivingLicenseCategory != 'D')))
+            {
+                Console.WriteLine("License category is invalid, try again: ");
+                Console.Write("Driving license category: ");
+                nextLine = Console.ReadLine();
+                success = char.TryParse(nextLine, out drivingLicenseCategory);
             }
         }
     }

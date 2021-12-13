@@ -64,6 +64,7 @@ namespace FileCabinetApp
                 Weight = weight,
                 DrivingLicenseCategory = drivingLicenseCategory,
             };
+
             if (!this.firstNameDictionary.ContainsKey(firstName))
             {
                 this.firstNameDictionary.Add(firstName, new List<FileCabinetRecord>());
@@ -105,9 +106,9 @@ namespace FileCabinetApp
         public void EditRecord(int id, string firstName, string lastName, DateTime dateOfBirth, short height, decimal weight, char drivingLicenseCategory)
         {
             bool isValid = false;
-            foreach (FileCabinetRecord tmp in this.list)
+            foreach (FileCabinetRecord record in this.list)
             {
-                if (tmp.Id == id)
+                if (record.Id == id)
                 {
                     isValid = true;
                     if (string.IsNullOrEmpty(firstName))
@@ -150,36 +151,36 @@ namespace FileCabinetApp
                         throw new ArgumentException("Invalid license", nameof(drivingLicenseCategory));
                     }
 
-                    this.firstNameDictionary[tmp.FirstName].Remove(tmp);
-                    this.lastNameDictionary[tmp.LastName].Remove(tmp);
-                    this.dateOfBirthDictionary[tmp.DateOfBirth.ToString(CultureInfo.CurrentCulture)].Remove(tmp);
-                    tmp.FirstName = firstName;
-                    tmp.LastName = lastName;
-                    tmp.DateOfBirth = dateOfBirth;
-                    tmp.Height = height;
-                    tmp.Weight = weight;
-                    tmp.DrivingLicenseCategory = drivingLicenseCategory;
+                    this.firstNameDictionary[record.FirstName].Remove(record);
+                    this.lastNameDictionary[record.LastName].Remove(record);
+                    this.dateOfBirthDictionary[record.DateOfBirth.ToString(CultureInfo.CurrentCulture)].Remove(record);
+                    record.FirstName = firstName;
+                    record.LastName = lastName;
+                    record.DateOfBirth = dateOfBirth;
+                    record.Height = height;
+                    record.Weight = weight;
+                    record.DrivingLicenseCategory = drivingLicenseCategory;
 
                     if (!this.firstNameDictionary.ContainsKey(firstName))
                     {
                         this.firstNameDictionary.Add(firstName, new List<FileCabinetRecord>());
                     }
 
-                    this.firstNameDictionary[firstName].Add(tmp);
+                    this.firstNameDictionary[firstName].Add(record);
 
                     if (!this.lastNameDictionary.ContainsKey(lastName))
                     {
                         this.lastNameDictionary.Add(lastName, new List<FileCabinetRecord>());
                     }
 
-                    this.lastNameDictionary[lastName].Add(tmp);
+                    this.lastNameDictionary[lastName].Add(record);
 
                     if (!this.dateOfBirthDictionary.ContainsKey(dateOfBirth.ToString(CultureInfo.CurrentCulture)))
                     {
                         this.dateOfBirthDictionary.Add(dateOfBirth.ToString(CultureInfo.CurrentCulture), new List<FileCabinetRecord>());
                     }
 
-                    this.dateOfBirthDictionary[dateOfBirth.ToString(CultureInfo.CurrentCulture)].Add(tmp);
+                    this.dateOfBirthDictionary[dateOfBirth.ToString(CultureInfo.CurrentCulture)].Add(record);
                 }
             }
 
