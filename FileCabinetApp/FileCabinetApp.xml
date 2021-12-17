@@ -4,6 +4,72 @@
         <name>FileCabinetApp</name>
     </assembly>
     <members>
+        <member name="T:FileCabinetApp.Arguments">
+            <summary>
+            Stores parameters for creating and editing records.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.Arguments.#ctor(System.String,System.String,System.DateTime,System.Int16,System.Decimal,System.Char)">
+            <summary>
+            Initializes a new instance of the <see cref="T:FileCabinetApp.Arguments"/> class.
+            </summary>
+            <param name="firstName">The first name of the person.</param>
+            <param name="lastName">The last name of the person.</param>
+            <param name="dateTime">The date of birth of the person.</param>
+            <param name="height">The height of the person.</param>
+            <param name="weight">The weight of the person.</param>
+            <param name="drivingLicenseCategory">The category of driving license of the person.</param>
+            <returns>A list of records found.</returns>
+            <exception cref="T:System.ArgumentNullException">String firstName is null.</exception>
+        </member>
+        <member name="P:FileCabinetApp.Arguments.FirstName">
+            <summary>
+            Gets or sets first name of a person.
+            </summary>
+            <value>
+            First name of the record.
+            </value>
+        </member>
+        <member name="P:FileCabinetApp.Arguments.LastName">
+            <summary>
+            Gets or sets first name of a person.
+            </summary>
+            <value>
+            First name of the person.
+            </value>
+        </member>
+        <member name="P:FileCabinetApp.Arguments.DateOfBirth">
+            <summary>
+            Gets or sets last name of a person.
+            </summary>
+            <value>
+            Lst name of the person.
+            </value>
+        </member>
+        <member name="P:FileCabinetApp.Arguments.Height">
+            <summary>
+            Gets or sets date of birth of a person.
+            </summary>
+            <value>
+            Date of birth of the record.
+            </value>
+        </member>
+        <member name="P:FileCabinetApp.Arguments.Weight">
+            <summary>
+            Gets or sets Height of a person.
+            </summary>
+            <value>
+            Weight of the person.
+            </value>
+        </member>
+        <member name="P:FileCabinetApp.Arguments.DrivingLicenseCategory">
+            <summary>
+            Gets or sets driving license Category of a person.
+            </summary>
+            <value>
+            Driving license category of the person.
+            </value>
+        </member>
         <member name="T:FileCabinetApp.FileCabinetRecord">
             <summary>
             Class of a record.
@@ -76,18 +142,13 @@
             Stores a list of records.
             </summary>
         </member>
-        <member name="M:FileCabinetApp.FileCabinetService.CreateRecord(System.String,System.String,System.DateTime,System.Int16,System.Decimal,System.Char)">
+        <member name="M:FileCabinetApp.FileCabinetService.CreateRecord(FileCabinetApp.Arguments)">
             <summary>
             Creates a new Record.
             </summary>
-            <param name="firstName">The first name of the person.</param>
-            <param name="lastName">The last name of the person.</param>
-            <param name="dateOfBirth">The date of birth of the person.</param>
-            <param name="height">The height of the person.</param>
-            <param name="weight">The weight of the person.</param>
-            <param name="drivingLicenseCategory">A name of category of the driving license.</param>
+            <param name="arguments">Properties of the record.</param>
             <returns>New record's Id.</returns>
-            <exception cref="T:System.ArgumentNullException">One of the parameters is null.</exception>
+            <exception cref="T:System.ArgumentNullException"> Parameters are null.</exception>
             <exception cref="T:System.ArgumentException">One of the parameters is not valid.</exception>
         </member>
         <member name="M:FileCabinetApp.FileCabinetService.GetRecords">
@@ -102,17 +163,12 @@
             </summary>
             <returns>Number of records.</returns>
         </member>
-        <member name="M:FileCabinetApp.FileCabinetService.EditRecord(System.Int32,System.String,System.String,System.DateTime,System.Int16,System.Decimal,System.Char)">
+        <member name="M:FileCabinetApp.FileCabinetService.EditRecord(System.Int32,FileCabinetApp.Arguments)">
             <summary>
             Edits an existing record.
             </summary>
             <param name="id">The ID of a record.</param>
-            <param name="firstName">The first name of the person.</param>
-            <param name="lastName">The last name of the person.</param>
-            <param name="dateOfBirth">The date of birth of the person.</param>
-            <param name="height">The height of the person.</param>
-            <param name="weight">The weight of the person.</param>
-            <param name="drivingLicenseCategory">A name of category of the driving license.</param>
+            <param name="arguments">Properties of the record.</param>
             <exception cref="T:System.ArgumentNullException">One of the parameters is null.</exception>
             <exception cref="T:System.ArgumentException">One of the parameters is not valid.</exception>
         </member>

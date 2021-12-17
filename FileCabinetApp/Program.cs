@@ -136,7 +136,7 @@ namespace FileCabinetApp
 
             try
             {
-                    Program.fileCabinetService.CreateRecord(firstName, lastName, dateTime, height, weight, drivingLicenseCategory);
+                    Program.fileCabinetService.CreateRecord(new Arguments(firstName, lastName, dateTime, height, weight, drivingLicenseCategory));
             }
             catch (ArgumentException)
             {
@@ -168,7 +168,7 @@ namespace FileCabinetApp
 
             try
             {
-                Program.fileCabinetService.EditRecord(id, "ex", "ex", DateTime.Today, 0, 0, 'A');
+                Program.fileCabinetService.EditRecord(id, new Arguments("ex", "ex", DateTime.Today, 0, 0, 'A'));
             }
             catch (ArgumentException)
             {
@@ -185,7 +185,7 @@ namespace FileCabinetApp
 
             try
             {
-                Program.fileCabinetService.EditRecord(id, firstName, lastName, dateTime, height, weight, drivingLicenseCategory);
+                Program.fileCabinetService.EditRecord(id, new Arguments(firstName, lastName, dateTime, height, weight, drivingLicenseCategory));
             }
             catch (ArgumentException)
             {
