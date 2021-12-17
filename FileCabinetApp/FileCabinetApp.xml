@@ -4,5 +4,151 @@
         <name>FileCabinetApp</name>
     </assembly>
     <members>
+        <member name="T:FileCabinetApp.FileCabinetRecord">
+            <summary>
+            Class of a record.
+            </summary>
+        </member>
+        <member name="P:FileCabinetApp.FileCabinetRecord.Id">
+            <summary>
+            Gets or sets id of a person.
+            </summary>
+            <value>
+            Id of the record.
+            </value>
+        </member>
+        <member name="P:FileCabinetApp.FileCabinetRecord.FirstName">
+            <summary>
+            Gets or sets first name of a person.
+            </summary>
+            <value>
+            First name of the record.
+            </value>
+        </member>
+        <member name="P:FileCabinetApp.FileCabinetRecord.LastName">
+            <summary>
+            Gets or sets first name of a person.
+            </summary>
+            <value>
+            First name of the person.
+            </value>
+        </member>
+        <member name="P:FileCabinetApp.FileCabinetRecord.DateOfBirth">
+            <summary>
+            Gets or sets last name of a person.
+            </summary>
+            <value>
+            Lst name of the person.
+            </value>
+        </member>
+        <member name="P:FileCabinetApp.FileCabinetRecord.Height">
+            <summary>
+            Gets or sets date of birth of a person.
+            </summary>
+            <value>
+            Date of birth of the record.
+            </value>
+        </member>
+        <member name="P:FileCabinetApp.FileCabinetRecord.Weight">
+            <summary>
+            Gets or sets Height of a person.
+            </summary>
+            <value>
+            Weight of the person.
+            </value>
+        </member>
+        <member name="P:FileCabinetApp.FileCabinetRecord.DrivingLicenseCategory">
+            <summary>
+            Gets or sets driving license Category of a person.
+            </summary>
+            <value>
+            Driving license category of the person.
+            </value>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetRecord.ToString">
+            <summary>
+            Gets a string representation of the record.
+            </summary>
+            <returns>String with information about record.</returns>
+        </member>
+        <member name="T:FileCabinetApp.FileCabinetService">
+            <summary>
+            Stores a list of records.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetService.CreateRecord(System.String,System.String,System.DateTime,System.Int16,System.Decimal,System.Char)">
+            <summary>
+            Creates a new Record.
+            </summary>
+            <param name="firstName">The first name of the person.</param>
+            <param name="lastName">The last name of the person.</param>
+            <param name="dateOfBirth">The date of birth of the person.</param>
+            <param name="height">The height of the person.</param>
+            <param name="weight">The weight of the person.</param>
+            <param name="drivingLicenseCategory">A name of category of the driving license.</param>
+            <returns>New record's Id.</returns>
+            <exception cref="T:System.ArgumentNullException">One of the parameters is null.</exception>
+            <exception cref="T:System.ArgumentException">One of the parameters is not valid.</exception>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetService.GetRecords">
+            <summary>
+            Gets a copy of the list.
+            </summary>
+            <returns>Array of records.</returns>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetService.GetStat">
+            <summary>
+            Gets a number of records.
+            </summary>
+            <returns>Number of records.</returns>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetService.EditRecord(System.Int32,System.String,System.String,System.DateTime,System.Int16,System.Decimal,System.Char)">
+            <summary>
+            Edits an existing record.
+            </summary>
+            <param name="id">The ID of a record.</param>
+            <param name="firstName">The first name of the person.</param>
+            <param name="lastName">The last name of the person.</param>
+            <param name="dateOfBirth">The date of birth of the person.</param>
+            <param name="height">The height of the person.</param>
+            <param name="weight">The weight of the person.</param>
+            <param name="drivingLicenseCategory">A name of category of the driving license.</param>
+            <exception cref="T:System.ArgumentNullException">One of the parameters is null.</exception>
+            <exception cref="T:System.ArgumentException">One of the parameters is not valid.</exception>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetService.FindByFirstName(System.String)">
+            <summary>
+            Finds all records with given firstname.
+            </summary>
+            <param name="firstName">The first name of the person.</param>
+            <returns>A list of records found.</returns>
+            <exception cref="T:System.ArgumentNullException">String firstName is null.</exception>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetService.FindByLastName(System.String)">
+            <summary>
+            Finds all records with given lastname.
+            </summary>
+            <param name="lastName">The last name of the person.</param>
+            <returns>A list of records found.</returns>
+            <exception cref="T:System.ArgumentNullException">String firstName is null.</exception>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetService.FindByDateOfBirth(System.DateTime)">
+            <summary>
+            Finds all records with given date of Birth.
+            </summary>
+            <param name="date">The date of birth of the person.</param>
+            <returns>A list of records found.</returns>
+        </member>
+        <member name="T:FileCabinetApp.Program">
+            <summary>
+            The class of the programm.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.Program.Main(System.String[])">
+            <summary>
+            The main function of the application.
+            </summary>
+            <param name="args">Array of arguments.</param>
+        </member>
     </members>
 </doc>

@@ -4,6 +4,9 @@ using System.Text;
 
 namespace FileCabinetApp
 {
+    /// <summary>
+    /// The class of the programm.
+    /// </summary>
     public static class Program
     {
         private const string DeveloperName = "Konstantin Klenitsky";
@@ -38,6 +41,10 @@ namespace FileCabinetApp
 
         private static FileCabinetService fileCabinetService = new FileCabinetService();
 
+        /// <summary>
+        /// The main function of the application.
+        /// </summary>
+        /// <param name="args">Array of arguments.</param>
         public static void Main(string[] args)
         {
             Console.WriteLine($"File Cabinet Application, developed by {Program.DeveloperName}");
@@ -200,7 +207,7 @@ namespace FileCabinetApp
                 StringBuilder name = new StringBuilder(parameters, index + 2, parameters.Length - (index + 3), 255);
                 while ((name.Length < 2) || (name.Length > 60))
                 {
-                    Console.Write("First name is invalid, try again: ");
+                    Console.WriteLine("First name is invalid, try again: ");
                     Console.Write("First Name: ");
                     name = new StringBuilder(Console.ReadLine());
                 }
@@ -213,7 +220,7 @@ namespace FileCabinetApp
                 StringBuilder name = new StringBuilder(parameters, index + 2, parameters.Length - index - 3, 255);
                 while ((name.Length < 2) || (name.Length > 60))
                 {
-                    Console.Write("First name is invalid, try again: ");
+                    Console.WriteLine("First name is invalid, try again: ");
                     Console.Write("Last Name: ");
                     name = new StringBuilder(Console.ReadLine());
                 }
@@ -254,7 +261,7 @@ namespace FileCabinetApp
             firstName = Console.ReadLine();
             while ((firstName.Length < 2) || (firstName.Length > 60) || string.IsNullOrWhiteSpace(firstName))
             {
-                Console.Write("First name is invalid, try again: ");
+                Console.WriteLine("First name is invalid, try again: ");
                 Console.Write("First Name: ");
                 firstName = Console.ReadLine();
             }
