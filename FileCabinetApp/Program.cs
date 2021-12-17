@@ -39,7 +39,7 @@ namespace FileCabinetApp
             new string[] { "find", "finds the record according to the parameters.", "The 'edit' command finds the record according to the parameters." },
         };
 
-        private static FileCabinetService fileCabinetService = new FileCabinetCustomService();
+        private static FileCabinetService fileCabinetService = new FileCabinetDefaultService();
 
         /// <summary>
         /// The main function of the application.
@@ -48,6 +48,31 @@ namespace FileCabinetApp
         public static void Main(string[] args)
         {
             Console.WriteLine($"File Cabinet Application, developed by {Program.DeveloperName}");
+            bool isCustom = false;
+            if (args != null && args.Length > 0)
+            {
+                if (args[0] == "-v" && args[1].ToLower(CultureInfo.CurrentCulture) == "custom")
+                {
+                    fileCabinetService = new FileCabinetCustomService();
+                    isCustom = true;
+                }
+
+                if (args[0].Contains("--validation-rules=", StringComparison.InvariantCulture) && args[0][19..].ToLower(CultureInfo.CurrentCulture) == "custom")
+                {
+                    fileCabinetService = new FileCabinetCustomService();
+                    isCustom = true;
+                }
+            }
+
+            if (isCustom)
+            {
+                Console.WriteLine($"Using custom validation rules.");
+            }
+            else
+            {
+                Console.WriteLine($"Using default validation rules.");
+            }
+
             Console.WriteLine(Program.HintMessage);
             Console.WriteLine();
 
