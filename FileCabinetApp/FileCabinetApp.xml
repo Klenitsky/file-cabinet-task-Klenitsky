@@ -70,6 +70,32 @@
             Driving license category of the person.
             </value>
         </member>
+        <member name="T:FileCabinetApp.FileCabinetCustomService">
+            <summary>
+            Custom Service.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetCustomService.ValidateParameters(FileCabinetApp.Arguments)">
+            <summary>
+            Validates the parameters.
+            </summary>
+            <param name="arguments">Properties of the record.</param>
+            <exception cref="T:System.ArgumentNullException"> Parameters are null.</exception>
+            <exception cref="T:System.ArgumentException">One of the parameters is not valid.</exception>
+        </member>
+        <member name="T:FileCabinetApp.FileCabinetDefaultService">
+            <summary>
+            Default Service.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetDefaultService.ValidateParameters(FileCabinetApp.Arguments)">
+            <summary>
+            Validates the parameters.
+            </summary>
+            <param name="arguments">Properties of the record.</param>
+            <exception cref="T:System.ArgumentNullException"> Parameters are null.</exception>
+            <exception cref="T:System.ArgumentException">One of the parameters is not valid.</exception>
+        </member>
         <member name="T:FileCabinetApp.FileCabinetRecord">
             <summary>
             Class of a record.
@@ -194,6 +220,14 @@
             </summary>
             <param name="date">The date of birth of the person.</param>
             <returns>A list of records found.</returns>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetService.ValidateParameters(FileCabinetApp.Arguments)">
+            <summary>
+            Validates the parameters.
+            </summary>
+            <param name="arguments">Properties of the record.</param>
+            <exception cref="T:System.ArgumentNullException"> Parameters are null.</exception>
+            <exception cref="T:System.ArgumentException">One of the parameters is not valid.</exception>
         </member>
         <member name="T:FileCabinetApp.Program">
             <summary>

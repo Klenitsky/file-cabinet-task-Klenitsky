@@ -39,7 +39,7 @@ namespace FileCabinetApp
             new string[] { "find", "finds the record according to the parameters.", "The 'edit' command finds the record according to the parameters." },
         };
 
-        private static FileCabinetService fileCabinetService = new FileCabinetService();
+        private static FileCabinetService fileCabinetService = new FileCabinetCustomService();
 
         /// <summary>
         /// The main function of the application.

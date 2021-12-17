@@ -8,7 +8,7 @@ namespace FileCabinetApp
     /// <summary>
     /// Stores a list of records.
     /// </summary>
-    public class FileCabinetService
+    public abstract class FileCabinetService
     {
         private readonly List<FileCabinetRecord> list = new List<FileCabinetRecord>();
         private readonly Dictionary<string, List<FileCabinetRecord>> firstNameDictionary = new Dictionary<string, List<FileCabinetRecord>>();
@@ -29,46 +29,7 @@ namespace FileCabinetApp
                 throw new ArgumentNullException(nameof(arguments));
             }
 
-            if (string.IsNullOrEmpty(arguments.FirstName))
-            {
-                throw new ArgumentNullException(nameof(arguments));
-            }
-
-            if ((arguments.FirstName.Length < 2) || (arguments.FirstName.Length > 60) || string.IsNullOrWhiteSpace(arguments.FirstName))
-            {
-                throw new ArgumentException("Invalid First Name", nameof(arguments));
-            }
-
-            if (string.IsNullOrEmpty(arguments.LastName))
-            {
-                throw new ArgumentNullException(nameof(arguments));
-            }
-
-            if ((arguments.LastName.Length < 2) || (arguments.LastName.Length > 60) || string.IsNullOrWhiteSpace(arguments.LastName))
-            {
-                throw new ArgumentException("Invalid Last Name", nameof(arguments));
-            }
-
-            if (DateTime.Compare(arguments.DateOfBirth, DateTime.Today) > 0 || (DateTime.Compare(arguments.DateOfBirth, new DateTime(1950, 1, 1)) < 0))
-            {
-                throw new ArgumentException("Invalid date", nameof(arguments));
-            }
-
-            if ((arguments.Height < 0) || (arguments.Height > 250))
-            {
-                throw new ArgumentException("Invalid height", nameof(arguments));
-            }
-
-            if ((arguments.Weight < 0) || (arguments.Weight > 180))
-            {
-                throw new ArgumentException("Invalid height", nameof(arguments));
-            }
-
-            if ((arguments.DrivingLicenseCategory != 'A') && (arguments.DrivingLicenseCategory != 'B') && (arguments.DrivingLicenseCategory != 'C') && (arguments.DrivingLicenseCategory != 'D'))
-            {
-                throw new ArgumentException("Invalid license", nameof(arguments));
-            }
-
+            this.ValidateParameters(arguments);
             var record = new FileCabinetRecord
             {
                 Id = this.list.Count + 1,
@@ -266,5 +227,13 @@ namespace FileCabinetApp
         {
             return this.dateOfBirthDictionary[date.ToString(CultureInfo.CurrentCulture)].ToArray();
         }
+
+        /// <summary>
+        /// Validates the parameters.
+        /// </summary>
+        /// <param name="arguments">Properties of the record.</param>
+        /// <exception cref="ArgumentNullException"> Parameters are null.</exception>
+        /// <exception cref="ArgumentException">One of the parameters is not valid.</exception>
+        protected abstract void ValidateParameters(Arguments arguments);
     }
 }
