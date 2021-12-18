@@ -5,7 +5,7 @@ using System.Text;
 namespace FileCabinetApp
 {
     /// <summary>
-    /// Validator with default settings
+    /// Validator with default settings.
     /// </summary>
     public class DefaultValidator : IRecordValidator
     {

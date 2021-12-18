@@ -10,12 +10,13 @@ namespace FileCabinetApp
     internal class FileCabinetCustomService : FileCabinetService
     {
         /// <summary>
+        /// Initializes a new instance of the <see cref="FileCabinetCustomService"/> class.
         /// Creates a validator with custom settings.
         /// </summary>
         /// <returns>A validator for the parameters.</returns>
-        protected override IRecordValidator CreateValidator()
+        public FileCabinetCustomService()
+            : base(new DefaultValidator())
         {
-            return new CustomValidator();
         }
     }
 }

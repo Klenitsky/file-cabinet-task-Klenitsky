@@ -14,6 +14,17 @@ namespace FileCabinetApp
         private readonly Dictionary<string, List<FileCabinetRecord>> firstNameDictionary = new Dictionary<string, List<FileCabinetRecord>>();
         private readonly Dictionary<string, List<FileCabinetRecord>> lastNameDictionary = new Dictionary<string, List<FileCabinetRecord>>();
         private readonly Dictionary<string, List<FileCabinetRecord>> dateOfBirthDictionary = new Dictionary<string, List<FileCabinetRecord>>();
+        private readonly IRecordValidator validator;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FileCabinetService"/> class.
+        /// Creates a new Record.
+        /// </summary>
+        /// <param name="validator">Validator probidet.</param>
+        protected FileCabinetService(IRecordValidator validator)
+        {
+            this.validator = validator;
+        }
 
         /// <summary>
         /// Creates a new Record.
@@ -29,7 +40,7 @@ namespace FileCabinetApp
                 throw new ArgumentNullException(nameof(arguments));
             }
 
-            this.CreateValidator().ValidateParameters(arguments);
+            this.validator.ValidateParameters(arguments);
             var record = new FileCabinetRecord
             {
                 Id = this.list.Count + 1,
@@ -107,7 +118,7 @@ namespace FileCabinetApp
                 if (record.Id == id)
                 {
                     isValid = true;
-                    this.CreateValidator().ValidateParameters(arguments);
+                    this.validator.ValidateParameters(arguments);
 
                     this.firstNameDictionary[record.FirstName].Remove(record);
                     this.lastNameDictionary[record.LastName].Remove(record);
@@ -190,10 +201,5 @@ namespace FileCabinetApp
             return this.dateOfBirthDictionary[date.ToString(CultureInfo.CurrentCulture)].ToArray();
         }
 
-        /// <summary>
-        /// Creates parameters validator.
-        /// </summary>
-        /// <returns>A validator for the parameters.</returns>
-        protected abstract IRecordValidator CreateValidator();
     }
 }
