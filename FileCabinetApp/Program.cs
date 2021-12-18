@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
 
@@ -174,7 +176,7 @@ namespace FileCabinetApp
 
         private static void List(string parameters)
         {
-            FileCabinetRecord[] arrayOfRecords = Program.fileCabinetService.GetRecords();
+            IReadOnlyCollection<FileCabinetRecord> arrayOfRecords = Program.fileCabinetService.GetRecords();
             foreach (FileCabinetRecord record in arrayOfRecords)
             {
                 Console.WriteLine(record.ToString());
@@ -225,7 +227,7 @@ namespace FileCabinetApp
         {
             int index = parameters.IndexOf(' ', StringComparison.InvariantCulture);
             StringBuilder property = new StringBuilder(parameters, 0, index, char.MaxValue);
-            FileCabinetRecord[] result = Array.Empty<FileCabinetRecord>();
+            IReadOnlyCollection<FileCabinetRecord> result = Array.Empty<FileCabinetRecord>();
 
             if (property.ToString().ToLower(CultureInfo.CurrentCulture) == "firstname".ToLower(CultureInfo.CurrentCulture))
             {
@@ -269,7 +271,7 @@ namespace FileCabinetApp
                 result = Program.fileCabinetService.FindByDateOfBirth(dateTime);
             }
 
-            if (result.Length == 0)
+            if (result.Count == 0)
             {
                 Console.WriteLine("No elements with such property");
             }

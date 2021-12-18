@@ -82,7 +82,7 @@ namespace FileCabinetApp
         /// Gets a copy of the list.
         /// </summary>
         /// <returns>Array of records.</returns>
-        public FileCabinetRecord[] GetRecords()
+        public IReadOnlyCollection<FileCabinetRecord> GetRecords()
         {
             FileCabinetRecord[] result = new FileCabinetRecord[this.list.Count];
             this.list.CopyTo(result);
@@ -165,7 +165,7 @@ namespace FileCabinetApp
         /// <param name="firstName">The first name of the person.</param>
         /// <returns>A list of records found.</returns>
         /// <exception cref="ArgumentNullException">String firstName is null.</exception>
-        public FileCabinetRecord[] FindByFirstName(string firstName)
+        public IReadOnlyCollection<FileCabinetRecord> FindByFirstName(string firstName)
         {
             if (string.IsNullOrEmpty(firstName))
             {
@@ -181,7 +181,7 @@ namespace FileCabinetApp
         /// <param name="lastName">The last name of the person.</param>
         /// <returns>A list of records found.</returns>
         /// <exception cref="ArgumentNullException">String firstName is null.</exception>
-        public FileCabinetRecord[] FindByLastName(string lastName)
+        public IReadOnlyCollection<FileCabinetRecord> FindByLastName(string lastName)
         {
             if (string.IsNullOrEmpty(lastName))
             {
@@ -196,7 +196,7 @@ namespace FileCabinetApp
         /// </summary>
         /// <param name="date">The date of birth of the person.</param>
         /// <returns>A list of records found.</returns>
-        public FileCabinetRecord[] FindByDateOfBirth(DateTime date)
+        public IReadOnlyCollection<FileCabinetRecord> FindByDateOfBirth(DateTime date)
         {
             return this.dateOfBirthDictionary[date.ToString(CultureInfo.CurrentCulture)].ToArray();
         }
