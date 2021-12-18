@@ -70,31 +70,49 @@
             Driving license category of the person.
             </value>
         </member>
+        <member name="T:FileCabinetApp.CustomValidator">
+            <summary>
+            Validator with custom settings
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.CustomValidator.ValidateParameters(FileCabinetApp.Arguments)">
+            <summary>
+            Checks the parameters.
+            </summary>
+            <param name="arguments">Properties of the record.</param>
+        </member>
+        <member name="T:FileCabinetApp.DefaultValidator">
+            <summary>
+            Validator with default settings
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.DefaultValidator.ValidateParameters(FileCabinetApp.Arguments)">
+            <summary>
+            Checks the parameters.
+            </summary>
+            <param name="arguments">Properties of the record.</param>
+        </member>
         <member name="T:FileCabinetApp.FileCabinetCustomService">
             <summary>
             Custom Service.
             </summary>
         </member>
-        <member name="M:FileCabinetApp.FileCabinetCustomService.ValidateParameters(FileCabinetApp.Arguments)">
+        <member name="M:FileCabinetApp.FileCabinetCustomService.CreateValidator">
             <summary>
-            Validates the parameters.
+            Creates a validator with custom settings.
             </summary>
-            <param name="arguments">Properties of the record.</param>
-            <exception cref="T:System.ArgumentNullException"> Parameters are null.</exception>
-            <exception cref="T:System.ArgumentException">One of the parameters is not valid.</exception>
+            <returns>A validator for the parameters.</returns>
         </member>
         <member name="T:FileCabinetApp.FileCabinetDefaultService">
             <summary>
             Default Service.
             </summary>
         </member>
-        <member name="M:FileCabinetApp.FileCabinetDefaultService.ValidateParameters(FileCabinetApp.Arguments)">
+        <member name="M:FileCabinetApp.FileCabinetDefaultService.CreateValidator">
             <summary>
-            Validates the parameters.
+            Creates a validator with default settings.
             </summary>
-            <param name="arguments">Properties of the record.</param>
-            <exception cref="T:System.ArgumentNullException"> Parameters are null.</exception>
-            <exception cref="T:System.ArgumentException">One of the parameters is not valid.</exception>
+            <returns>A validator for the parameters.</returns>
         </member>
         <member name="T:FileCabinetApp.FileCabinetRecord">
             <summary>
@@ -221,13 +239,22 @@
             <param name="date">The date of birth of the person.</param>
             <returns>A list of records found.</returns>
         </member>
-        <member name="M:FileCabinetApp.FileCabinetService.ValidateParameters(FileCabinetApp.Arguments)">
+        <member name="M:FileCabinetApp.FileCabinetService.CreateValidator">
             <summary>
-            Validates the parameters.
+            Creates parameters validator.
+            </summary>
+            <returns>A validator for the parameters.</returns>
+        </member>
+        <member name="T:FileCabinetApp.IRecordValidator">
+            <summary>
+            Interface for validators.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.IRecordValidator.ValidateParameters(FileCabinetApp.Arguments)">
+            <summary>
+            Checks the parameters.
             </summary>
             <param name="arguments">Properties of the record.</param>
-            <exception cref="T:System.ArgumentNullException"> Parameters are null.</exception>
-            <exception cref="T:System.ArgumentException">One of the parameters is not valid.</exception>
         </member>
         <member name="T:FileCabinetApp.Program">
             <summary>
