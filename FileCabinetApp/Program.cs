@@ -39,7 +39,7 @@ namespace FileCabinetApp
             new string[] { "find", "finds the record according to the parameters.", "The 'edit' command finds the record according to the parameters." },
         };
 
-        private static FileCabinetService fileCabinetService = new FileCabinetDefaultService();
+        private static FileCabinetService fileCabinetService = new FileCabinetService(new DefaultValidator());
 
         /// <summary>
         /// The main function of the application.
@@ -53,13 +53,13 @@ namespace FileCabinetApp
             {
                 if (args[0] == "-v" && args[1].ToLower(CultureInfo.CurrentCulture) == "custom")
                 {
-                    fileCabinetService = new FileCabinetCustomService();
+                    fileCabinetService = new FileCabinetService(new CustomValidator());
                     isCustom = true;
                 }
 
                 if (args[0].Contains("--validation-rules=", StringComparison.InvariantCulture) && args[0][19..].ToLower(CultureInfo.CurrentCulture) == "custom")
                 {
-                    fileCabinetService = new FileCabinetCustomService();
+                    fileCabinetService = new FileCabinetService(new CustomValidator());
                     isCustom = true;
                 }
             }

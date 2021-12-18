@@ -8,7 +8,7 @@ namespace FileCabinetApp
     /// <summary>
     /// Stores a list of records.
     /// </summary>
-    public abstract class FileCabinetService
+    public class FileCabinetService
     {
         private readonly List<FileCabinetRecord> list = new List<FileCabinetRecord>();
         private readonly Dictionary<string, List<FileCabinetRecord>> firstNameDictionary = new Dictionary<string, List<FileCabinetRecord>>();
@@ -21,7 +21,7 @@ namespace FileCabinetApp
         /// Creates a new Record.
         /// </summary>
         /// <param name="validator">Validator probidet.</param>
-        protected FileCabinetService(IRecordValidator validator)
+        public FileCabinetService(IRecordValidator validator)
         {
             this.validator = validator;
         }
@@ -200,6 +200,5 @@ namespace FileCabinetApp
         {
             return this.dateOfBirthDictionary[date.ToString(CultureInfo.CurrentCulture)].ToArray();
         }
-
     }
 }
