@@ -6,17 +6,30 @@ using System.Text;
 namespace FileCabinetApp
 {
     /// <summary>
-    /// Class of a record.
+    /// Stores parameters for creating and editing records.
     /// </summary>
-    public class FileCabinetRecord
+    public class Arguments
     {
         /// <summary>
-        /// Gets or sets id of a person.
+        /// Initializes a new instance of the <see cref="Arguments"/> class.
         /// </summary>
-        /// <value>
-        /// Id of the record.
-        /// </value>
-        public int Id { get; set; }
+        /// <param name="firstName">The first name of the person.</param>
+        /// <param name="lastName">The last name of the person.</param>
+        /// <param name="dateTime">The date of birth of the person.</param>
+        /// <param name="height">The height of the person.</param>
+        /// <param name="weight">The weight of the person.</param>
+        /// <param name="drivingLicenseCategory">The category of driving license of the person.</param>
+        /// <returns>A list of records found.</returns>
+        /// <exception cref="ArgumentNullException">String firstName is null.</exception>
+        public Arguments(string firstName, string lastName, DateTime dateTime, short height, decimal weight, char drivingLicenseCategory)
+        {
+            this.FirstName = firstName;
+            this.LastName = lastName;
+            this.DateOfBirth = dateTime;
+            this.Height = height;
+            this.Weight = weight;
+            this.DrivingLicenseCategory = drivingLicenseCategory;
+        }
 
         /// <summary>
         /// Gets or sets first name of a person.
@@ -65,22 +78,5 @@ namespace FileCabinetApp
         /// Driving license category of the person.
         /// </value>
         public char DrivingLicenseCategory { get; set; }
-
-        /// <summary>
-        /// Gets a string representation of the record.
-        /// </summary>
-        /// <returns>String with information about record.</returns>
-        public override string ToString()
-        {
-            StringBuilder result = new StringBuilder();
-            result.Append("#" + this.Id + ", ");
-            result.Append(this.FirstName + ", ");
-            result.Append(this.LastName + ", ");
-            result.Append(this.DateOfBirth.ToString("yyyy-MMM-dd", CultureInfo.InvariantCulture) + ", ");
-            result.Append("height: " + this.Height + ", ");
-            result.Append("weight: " + this.Weight + ", ");
-            result.Append("driving license category: " + this.DrivingLicenseCategory);
-            return result.ToString();
-        }
     }
 }

@@ -5,181 +5,151 @@ using System.Text;
 
 namespace FileCabinetApp
 {
-    public class FileCabinetService
+    /// <summary>
+    /// Stores a list of records.
+    /// </summary>
+    public class FileCabinetService : IFileCabinetService
     {
         private readonly List<FileCabinetRecord> list = new List<FileCabinetRecord>();
         private readonly Dictionary<string, List<FileCabinetRecord>> firstNameDictionary = new Dictionary<string, List<FileCabinetRecord>>();
         private readonly Dictionary<string, List<FileCabinetRecord>> lastNameDictionary = new Dictionary<string, List<FileCabinetRecord>>();
         private readonly Dictionary<string, List<FileCabinetRecord>> dateOfBirthDictionary = new Dictionary<string, List<FileCabinetRecord>>();
+        private readonly IRecordValidator validator;
 
-        public int CreateRecord(string firstName, string lastName, DateTime dateOfBirth, short height, decimal weight, char drivingLicenseCategory)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FileCabinetService"/> class.
+        /// Creates a new Record.
+        /// </summary>
+        /// <param name="validator">Validator probidet.</param>
+        public FileCabinetService(IRecordValidator validator)
         {
-            if (string.IsNullOrEmpty(firstName))
+            this.validator = validator;
+        }
+
+        /// <summary>
+        /// Creates a new Record.
+        /// </summary>
+        /// <param name="arguments">Properties of the record.</param>
+        /// <returns>New record's Id.</returns>
+        /// <exception cref="ArgumentNullException"> Parameters are null.</exception>
+        /// <exception cref="ArgumentException">One of the parameters is not valid.</exception>
+        public int CreateRecord(Arguments arguments)
+        {
+            if (arguments == null)
             {
-                throw new ArgumentNullException(nameof(firstName));
+                throw new ArgumentNullException(nameof(arguments));
             }
 
-            if ((firstName.Length < 2) || (firstName.Length > 60) || string.IsNullOrWhiteSpace(firstName))
-            {
-                throw new ArgumentException("Invalid First Name", nameof(firstName));
-            }
-
-            if (string.IsNullOrEmpty(lastName))
-            {
-                throw new ArgumentNullException(nameof(lastName));
-            }
-
-            if ((lastName.Length < 2) || (lastName.Length > 60) || string.IsNullOrWhiteSpace(lastName))
-            {
-                throw new ArgumentException("Invalid Last Name", nameof(lastName));
-            }
-
-            if (DateTime.Compare(dateOfBirth, DateTime.Today) > 0 || (DateTime.Compare(dateOfBirth, new DateTime(1950, 1, 1)) < 0))
-            {
-                throw new ArgumentException("Invalid date", nameof(dateOfBirth));
-            }
-
-            if ((height < 0) || (height > 250))
-            {
-                throw new ArgumentException("Invalid height", nameof(height));
-            }
-
-            if ((weight < 0) || (weight > 180))
-            {
-                throw new ArgumentException("Invalid height", nameof(height));
-            }
-
-            if ((drivingLicenseCategory != 'A') && (drivingLicenseCategory != 'B') && (drivingLicenseCategory != 'C') && (drivingLicenseCategory != 'D'))
-            {
-                throw new ArgumentException("Invalid license", nameof(drivingLicenseCategory));
-            }
-
+            this.validator.ValidateParameters(arguments);
             var record = new FileCabinetRecord
             {
                 Id = this.list.Count + 1,
-                FirstName = firstName,
-                LastName = lastName,
-                DateOfBirth = dateOfBirth,
-                Height = height,
-                Weight = weight,
-                DrivingLicenseCategory = drivingLicenseCategory,
+                FirstName = arguments.FirstName,
+                LastName = arguments.LastName,
+                DateOfBirth = arguments.DateOfBirth,
+                Height = arguments.Height,
+                Weight = arguments.Weight,
+                DrivingLicenseCategory = arguments.DrivingLicenseCategory,
             };
-            if (!this.firstNameDictionary.ContainsKey(firstName))
+
+            if (!this.firstNameDictionary.ContainsKey(record.FirstName))
             {
-                this.firstNameDictionary.Add(firstName, new List<FileCabinetRecord>());
+                this.firstNameDictionary.Add(record.FirstName, new List<FileCabinetRecord>());
             }
 
-            this.firstNameDictionary[firstName].Add(record);
+            this.firstNameDictionary[record.FirstName].Add(record);
 
-            if (!this.lastNameDictionary.ContainsKey(lastName))
+            if (!this.lastNameDictionary.ContainsKey(record.LastName))
             {
-                this.lastNameDictionary.Add(lastName, new List<FileCabinetRecord>());
+                this.lastNameDictionary.Add(record.LastName, new List<FileCabinetRecord>());
             }
 
-            this.lastNameDictionary[lastName].Add(record);
+            this.lastNameDictionary[record.LastName].Add(record);
 
-            if (!this.dateOfBirthDictionary.ContainsKey(dateOfBirth.ToString(CultureInfo.CurrentCulture)))
+            if (!this.dateOfBirthDictionary.ContainsKey(record.DateOfBirth.ToString(CultureInfo.CurrentCulture)))
             {
-                this.dateOfBirthDictionary.Add(dateOfBirth.ToString(CultureInfo.CurrentCulture), new List<FileCabinetRecord>());
+                this.dateOfBirthDictionary.Add(record.DateOfBirth.ToString(CultureInfo.CurrentCulture), new List<FileCabinetRecord>());
             }
 
-            this.dateOfBirthDictionary[dateOfBirth.ToString(CultureInfo.CurrentCulture)].Add(record);
+            this.dateOfBirthDictionary[record.DateOfBirth.ToString(CultureInfo.CurrentCulture)].Add(record);
 
             this.list.Add(record);
 
             return record.Id;
         }
 
-        public FileCabinetRecord[] GetRecords()
+        /// <summary>
+        /// Gets a copy of the list.
+        /// </summary>
+        /// <returns>Array of records.</returns>
+        public IReadOnlyCollection<FileCabinetRecord> GetRecords()
         {
             FileCabinetRecord[] result = new FileCabinetRecord[this.list.Count];
             this.list.CopyTo(result);
             return result;
         }
 
+        /// <summary>
+        /// Gets a number of records.
+        /// </summary>
+        /// <returns>Number of records.</returns>
         public int GetStat()
         {
-                return this.list.Count;
+            return this.list.Count;
         }
 
-        public void EditRecord(int id, string firstName, string lastName, DateTime dateOfBirth, short height, decimal weight, char drivingLicenseCategory)
+        /// <summary>
+        /// Edits an existing record.
+        /// </summary>
+        /// <param name="id">The ID of a record.</param>
+        /// <param name="arguments">Properties of the record.</param>
+        /// <exception cref="ArgumentNullException">One of the parameters is null.</exception>
+        /// <exception cref="ArgumentException">One of the parameters is not valid.</exception>
+        public void EditRecord(int id, Arguments arguments)
         {
-            bool isValid = false;
-            foreach (FileCabinetRecord tmp in this.list)
+            if (arguments == null)
             {
-                if (tmp.Id == id)
+                throw new ArgumentNullException(nameof(arguments));
+            }
+
+            bool isValid = false;
+            foreach (FileCabinetRecord record in this.list)
+            {
+                if (record.Id == id)
                 {
                     isValid = true;
-                    if (string.IsNullOrEmpty(firstName))
+                    this.validator.ValidateParameters(arguments);
+
+                    this.firstNameDictionary[record.FirstName].Remove(record);
+                    this.lastNameDictionary[record.LastName].Remove(record);
+                    this.dateOfBirthDictionary[record.DateOfBirth.ToString(CultureInfo.CurrentCulture)].Remove(record);
+                    record.FirstName = arguments.FirstName;
+                    record.LastName = arguments.LastName;
+                    record.DateOfBirth = arguments.DateOfBirth;
+                    record.Height = arguments.Height;
+                    record.Weight = arguments.Weight;
+                    record.DrivingLicenseCategory = arguments.DrivingLicenseCategory;
+
+                    if (!this.firstNameDictionary.ContainsKey(record.FirstName))
                     {
-                        throw new ArgumentNullException(nameof(firstName));
+                        this.firstNameDictionary.Add(record.FirstName, new List<FileCabinetRecord>());
                     }
 
-                    if ((firstName.Length < 2) || (firstName.Length > 60) || string.IsNullOrWhiteSpace(firstName))
+                    this.firstNameDictionary[record.FirstName].Add(record);
+
+                    if (!this.lastNameDictionary.ContainsKey(record.LastName))
                     {
-                        throw new ArgumentException("Invalid First Name", nameof(firstName));
+                        this.lastNameDictionary.Add(record.LastName, new List<FileCabinetRecord>());
                     }
 
-                    if (string.IsNullOrEmpty(lastName))
+                    this.lastNameDictionary[record.LastName].Add(record);
+
+                    if (!this.dateOfBirthDictionary.ContainsKey(record.DateOfBirth.ToString(CultureInfo.CurrentCulture)))
                     {
-                        throw new ArgumentNullException(nameof(lastName));
+                        this.dateOfBirthDictionary.Add(record.DateOfBirth.ToString(CultureInfo.CurrentCulture), new List<FileCabinetRecord>());
                     }
 
-                    if ((lastName.Length < 2) || (lastName.Length > 60) || string.IsNullOrWhiteSpace(lastName))
-                    {
-                        throw new ArgumentException("Invalid Last Name", nameof(lastName));
-                    }
-
-                    if (DateTime.Compare(dateOfBirth, DateTime.Today) > 0 || (DateTime.Compare(dateOfBirth, new DateTime(1950, 1, 1)) < 0))
-                    {
-                        throw new ArgumentException("Invalid date", nameof(dateOfBirth));
-                    }
-
-                    if ((height < 0) || (height > 250))
-                    {
-                        throw new ArgumentException("Invalid height", nameof(height));
-                    }
-
-                    if ((weight < 0) || (weight > 180))
-                    {
-                        throw new ArgumentException("Invalid height", nameof(height));
-                    }
-
-                    if ((drivingLicenseCategory != 'A') && (drivingLicenseCategory != 'B') && (drivingLicenseCategory != 'C') && (drivingLicenseCategory != 'D'))
-                    {
-                        throw new ArgumentException("Invalid license", nameof(drivingLicenseCategory));
-                    }
-
-                    this.firstNameDictionary[tmp.FirstName].Remove(tmp);
-                    this.lastNameDictionary[tmp.LastName].Remove(tmp);
-                    this.dateOfBirthDictionary[tmp.DateOfBirth.ToString(CultureInfo.CurrentCulture)].Remove(tmp);
-                    tmp.FirstName = firstName;
-                    tmp.LastName = lastName;
-                    tmp.DateOfBirth = dateOfBirth;
-                    tmp.Height = height;
-                    tmp.Weight = weight;
-                    tmp.DrivingLicenseCategory = drivingLicenseCategory;
-
-                    if (!this.firstNameDictionary.ContainsKey(firstName))
-                    {
-                        this.firstNameDictionary.Add(firstName, new List<FileCabinetRecord>());
-                    }
-
-                    this.firstNameDictionary[firstName].Add(tmp);
-
-                    if (!this.lastNameDictionary.ContainsKey(lastName))
-                    {
-                        this.lastNameDictionary.Add(lastName, new List<FileCabinetRecord>());
-                    }
-
-                    this.lastNameDictionary[lastName].Add(tmp);
-
-                    if (!this.dateOfBirthDictionary.ContainsKey(dateOfBirth.ToString(CultureInfo.CurrentCulture)))
-                    {
-                        this.dateOfBirthDictionary.Add(dateOfBirth.ToString(CultureInfo.CurrentCulture), new List<FileCabinetRecord>());
-                    }
-
-                    this.dateOfBirthDictionary[dateOfBirth.ToString(CultureInfo.CurrentCulture)].Add(tmp);
+                    this.dateOfBirthDictionary[record.DateOfBirth.ToString(CultureInfo.CurrentCulture)].Add(record);
                 }
             }
 
@@ -189,7 +159,13 @@ namespace FileCabinetApp
             }
         }
 
-        public FileCabinetRecord[] FindByFirstName(string firstName)
+        /// <summary>
+        /// Finds all records with given firstname.
+        /// </summary>
+        /// <param name="firstName">The first name of the person.</param>
+        /// <returns>A list of records found.</returns>
+        /// <exception cref="ArgumentNullException">String firstName is null.</exception>
+        public IReadOnlyCollection<FileCabinetRecord> FindByFirstName(string firstName)
         {
             if (string.IsNullOrEmpty(firstName))
             {
@@ -199,17 +175,28 @@ namespace FileCabinetApp
             return this.firstNameDictionary[firstName].ToArray();
         }
 
-        public FileCabinetRecord[] FindByLastName(string lastname)
+        /// <summary>
+        /// Finds all records with given lastname.
+        /// </summary>
+        /// <param name="lastName">The last name of the person.</param>
+        /// <returns>A list of records found.</returns>
+        /// <exception cref="ArgumentNullException">String firstName is null.</exception>
+        public IReadOnlyCollection<FileCabinetRecord> FindByLastName(string lastName)
         {
-            if (string.IsNullOrEmpty(lastname))
+            if (string.IsNullOrEmpty(lastName))
             {
-                throw new ArgumentNullException(nameof(lastname));
+                throw new ArgumentNullException(nameof(lastName));
             }
 
-            return this.lastNameDictionary[lastname].ToArray();
+            return this.lastNameDictionary[lastName].ToArray();
         }
 
-        public FileCabinetRecord[] FindByDateOfBirth(DateTime date)
+        /// <summary>
+        /// Finds all records with given date of Birth.
+        /// </summary>
+        /// <param name="date">The date of birth of the person.</param>
+        /// <returns>A list of records found.</returns>
+        public IReadOnlyCollection<FileCabinetRecord> FindByDateOfBirth(DateTime date)
         {
             return this.dateOfBirthDictionary[date.ToString(CultureInfo.CurrentCulture)].ToArray();
         }

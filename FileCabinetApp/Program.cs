@@ -1,9 +1,14 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
 
 namespace FileCabinetApp
 {
+    /// <summary>
+    /// The class of the programm.
+    /// </summary>
     public static class Program
     {
         private const string DeveloperName = "Konstantin Klenitsky";
@@ -11,6 +16,7 @@ namespace FileCabinetApp
         private const int CommandHelpIndex = 0;
         private const int DescriptionHelpIndex = 1;
         private const int ExplanationHelpIndex = 2;
+        private static bool isCustom;
 
         private static bool isRunning = true;
 
@@ -36,11 +42,39 @@ namespace FileCabinetApp
             new string[] { "find", "finds the record according to the parameters.", "The 'edit' command finds the record according to the parameters." },
         };
 
-        private static FileCabinetService fileCabinetService = new FileCabinetService();
+        private static IFileCabinetService fileCabinetService = new FileCabinetService(new DefaultValidator());
 
+        /// <summary>
+        /// The main function of the application.
+        /// </summary>
+        /// <param name="args">Array of arguments.</param>
         public static void Main(string[] args)
         {
             Console.WriteLine($"File Cabinet Application, developed by {Program.DeveloperName}");
+            if (args != null && args.Length > 0)
+            {
+                if (args[0] == "-v" && args[1].ToLower(CultureInfo.CurrentCulture) == "custom")
+                {
+                    fileCabinetService = new FileCabinetService(new CustomValidator());
+                    isCustom = true;
+                }
+
+                if (args[0].Contains("--validation-rules=", StringComparison.InvariantCulture) && args[0][19..].ToLower(CultureInfo.CurrentCulture) == "custom")
+                {
+                    fileCabinetService = new FileCabinetService(new CustomValidator());
+                    isCustom = true;
+                }
+            }
+
+            if (isCustom)
+            {
+                Console.WriteLine($"Using custom validation rules.");
+            }
+            else
+            {
+                Console.WriteLine($"Using default validation rules.");
+            }
+
             Console.WriteLine(Program.HintMessage);
             Console.WriteLine();
 
@@ -57,7 +91,7 @@ namespace FileCabinetApp
                     continue;
                 }
 
-                var index = Array.FindIndex(commands, 0, commands.Length, i => i.Item1.Equals(command, StringComparison.InvariantCultureIgnoreCase));
+                var index = Array.FindIndex(commands, 0, commands.Length, i => i.Item1.Equals(command, StringComparison.OrdinalIgnoreCase));
                 if (index >= 0)
                 {
                     const int parametersIndex = 1;
@@ -119,102 +153,33 @@ namespace FileCabinetApp
 
         private static void Create(string parameters)
         {
-                Console.Write("First Name: ");
-                string firstname = Console.ReadLine();
-                while ((firstname.Length < 2) || (firstname.Length > 60) || string.IsNullOrWhiteSpace(firstname))
-                {
-                    Console.Write("First name is invalid, try again: ");
-                    Console.Write("First Name: ");
-                    firstname = Console.ReadLine();
-                }
+            string firstName = string.Empty, lastName = string.Empty;
+            DateTime dateTime = default(DateTime);
+            short height = 0;
+            decimal weight = 0;
+            char drivingLicenseCategory = ' ';
 
-                Console.Write("Last Name: ");
-                string lastname = Console.ReadLine();
-                while ((lastname.Length < 2) || (lastname.Length > 60) || string.IsNullOrWhiteSpace(lastname))
-                {
-                     Console.WriteLine("Last name is invalid, try again: ");
-                     Console.Write("Last Name: ");
-                     lastname = Console.ReadLine();
-                }
+            EnterParameters(out firstName, out lastName, out dateTime, out height, out weight, out drivingLicenseCategory);
 
-                Console.Write("Date of birth: ");
-                string date = Console.ReadLine();
-                DateTime dateTime;
-                bool success = DateTime.TryParse(date, out dateTime);
-                while (!success || (DateTime.Compare(dateTime, DateTime.Today) > 0) || DateTime.Compare(dateTime, new DateTime(1950, 1, 1)) < 0)
-                {
-                    Console.WriteLine("Date  is invalid, try again: ");
-                    Console.Write("Date: ");
-                    date = Console.ReadLine();
-                    success = DateTime.TryParse(date, out dateTime);
-                }
-
-                Console.Write("Height: ");
-                string tmp = Console.ReadLine();
-                short height;
-                success = short.TryParse(tmp, out height);
-                while (!success || height < 0 || height > 250)
-                {
-                     Console.WriteLine("Height is invalid, try again: ");
-                     Console.Write("Height: ");
-                     tmp = Console.ReadLine();
-                     success = short.TryParse(tmp, out height);
-                }
-
-                Console.Write("Weight: ");
-                tmp = Console.ReadLine();
-                decimal weight;
-                success = decimal.TryParse(tmp, out weight);
-                while (!success || weight < 0 || weight > 180)
-                {
-                    Console.WriteLine("Weight is invalid, try again: ");
-                    Console.Write("Weight: ");
-                    tmp = Console.ReadLine();
-                    success = decimal.TryParse(tmp, out weight);
-                }
-
-                Console.Write("Driving license category: ");
-                tmp = Console.ReadLine();
-                char category;
-                success = char.TryParse(tmp, out category);
-                while (!success || ((category != 'A') && (category != 'B') && (category != 'C') && (category != 'D')))
-                {
-                Console.WriteLine("License category is invalid, try again: ");
-                Console.Write("Driving license category: ");
-                tmp = Console.ReadLine();
-                success = char.TryParse(tmp, out category);
-                }
-
-                try
-                {
-                    Program.fileCabinetService.CreateRecord(firstname, lastname, dateTime, height, weight, category);
-                }
-                catch (ArgumentException)
-                {
+            try
+            {
+                    Program.fileCabinetService.CreateRecord(new Arguments(firstName, lastName, dateTime, height, weight, drivingLicenseCategory));
+            }
+            catch (ArgumentException)
+            {
                     Console.WriteLine("Data is invalid");
                     return;
-                }
+            }
 
-                Console.WriteLine($"\nRecord #" + Program.fileCabinetService.GetStat().ToString(CultureInfo.CurrentCulture) + " created ");
+            Console.WriteLine($"\nRecord #" + Program.fileCabinetService.GetStat().ToString(CultureInfo.CurrentCulture) + " created ");
         }
 
         private static void List(string parameters)
         {
-            FileCabinetRecord[] tmpArray = Program.fileCabinetService.GetRecords();
-            foreach (FileCabinetRecord tmp in tmpArray)
+            IReadOnlyCollection<FileCabinetRecord> arrayOfRecords = Program.fileCabinetService.GetRecords();
+            foreach (FileCabinetRecord record in arrayOfRecords)
             {
-                Console.Write($"#" + tmp.Id + ", ");
-                Console.Write(tmp.FirstName);
-                Console.Write(", ");
-                Console.Write(tmp.LastName);
-                Console.Write(", ");
-                Console.Write(tmp.DateOfBirth.ToString("yyyy-MMM-dd",  CultureInfo.InvariantCulture));
-                Console.Write(", height: ");
-                Console.Write(tmp.Height);
-                Console.Write(", weight ");
-                Console.Write(tmp.Weight);
-                Console.Write(", driving license category: ");
-                Console.WriteLine(tmp.DrivingLicenseCategory);
+                Console.WriteLine(record.ToString());
             }
         }
 
@@ -224,88 +189,30 @@ namespace FileCabinetApp
             bool success = int.TryParse(parameters, out id);
             if (!success)
             {
-                Console.WriteLine("Not a number");
+                Console.WriteLine("Invalid Id");
                 return;
             }
 
             try
             {
-                Program.fileCabinetService.EditRecord(id, "tmp", "tmp", DateTime.Today, 0, 0, 'A');
+                Program.fileCabinetService.EditRecord(id, new Arguments("ex", "ex", DateTime.Today, 0, 0, 'A'));
             }
             catch (ArgumentException)
             {
-                Console.WriteLine($"#{1} record is not found", id);
+                Console.WriteLine($"#" + id + " record is not found");
             }
 
-            Console.Write("First Name: ");
-            string firstname = Console.ReadLine();
-            while ((firstname.Length < 2) || (firstname.Length > 60) || string.IsNullOrWhiteSpace(firstname))
-            {
-                Console.Write("First name is invalid, try again: ");
-                Console.Write("First Name: ");
-                firstname = Console.ReadLine();
-            }
+            string firstName = string.Empty, lastName = string.Empty;
+            DateTime dateTime = default(DateTime);
+            short height = 0;
+            decimal weight = 0;
+            char drivingLicenseCategory = ' ';
 
-            Console.Write("Last Name: ");
-            string lastname = Console.ReadLine();
-            while ((lastname.Length < 2) || (lastname.Length > 60) || string.IsNullOrWhiteSpace(lastname))
-            {
-                Console.WriteLine("Last name is invalid, try again: ");
-                Console.Write("Last Name: ");
-                lastname = Console.ReadLine();
-            }
-
-            Console.Write("Date of birth: ");
-            string date = Console.ReadLine();
-            DateTime dateTime;
-            success = DateTime.TryParse(date, out dateTime);
-            while (!success || (DateTime.Compare(dateTime, DateTime.Today) > 0) || DateTime.Compare(dateTime, new DateTime(1950, 1, 1)) < 0)
-            {
-                Console.WriteLine("Date  is invalid, try again: ");
-                Console.Write("Date: ");
-                date = Console.ReadLine();
-                success = DateTime.TryParse(date, out dateTime);
-            }
-
-            Console.Write("Height: ");
-            string tmp = Console.ReadLine();
-            short height;
-            success = short.TryParse(tmp, out height);
-            while (!success || height < 0 || height > 250)
-            {
-                Console.WriteLine("Height is invalid, try again: ");
-                Console.Write("Height: ");
-                tmp = Console.ReadLine();
-                success = short.TryParse(tmp, out height);
-            }
-
-            Console.Write("Weight: ");
-            tmp = Console.ReadLine();
-            decimal weight;
-            success = decimal.TryParse(tmp, out weight);
-            while (!success || weight < 0 || weight > 180)
-            {
-                Console.WriteLine("Weight is invalid, try again: ");
-                Console.Write("Weight: ");
-                tmp = Console.ReadLine();
-                success = decimal.TryParse(tmp, out weight);
-            }
-
-            Console.Write("Driving license category: ");
-            tmp = Console.ReadLine();
-            char category;
-            success = char.TryParse(tmp, out category);
-            while (!success || ((category != 'A') && (category != 'B') && (category != 'C') && (category != 'D')))
-            {
-                Console.WriteLine("License category is invalid, try again: ");
-                Console.Write("Driving license category: ");
-                tmp = Console.ReadLine();
-                success = char.TryParse(tmp, out category);
-            }
+            EnterParameters(out firstName, out lastName, out dateTime, out height, out weight, out drivingLicenseCategory);
 
             try
             {
-                Program.fileCabinetService.EditRecord(id, firstname, lastname, dateTime, height, weight, category);
+                Program.fileCabinetService.EditRecord(id, new Arguments(firstName, lastName, dateTime, height, weight, drivingLicenseCategory));
             }
             catch (ArgumentException)
             {
@@ -313,23 +220,38 @@ namespace FileCabinetApp
                 return;
             }
 
-            Console.WriteLine($"Record #{1} is updated", id);
+            Console.WriteLine($"Record #" + id + "is updated");
         }
 
         private static void Find(string parameters)
         {
             int index = parameters.IndexOf(' ', StringComparison.InvariantCulture);
-            StringBuilder property = new StringBuilder(parameters, 0, index, 255);
-            FileCabinetRecord[] result = Array.Empty<FileCabinetRecord>();
+            StringBuilder property = new StringBuilder(parameters, 0, index, char.MaxValue);
+            IReadOnlyCollection<FileCabinetRecord> result = Array.Empty<FileCabinetRecord>();
+
             if (property.ToString().ToLower(CultureInfo.CurrentCulture) == "firstname".ToLower(CultureInfo.CurrentCulture))
             {
-                StringBuilder name = new StringBuilder(parameters, index + 2, parameters.Length - index - 3, 255);
+                StringBuilder name = new StringBuilder(parameters, index + 2, parameters.Length - (index + 3), 255);
+                while ((name.Length < 2) || (name.Length > 60))
+                {
+                    Console.WriteLine("First name is invalid, try again: ");
+                    Console.Write("First Name: ");
+                    name = new StringBuilder(Console.ReadLine());
+                }
+
                 result = Program.fileCabinetService.FindByFirstName(name.ToString());
             }
 
             if (property.ToString().ToLower(CultureInfo.CurrentCulture) == "lastname".ToLower(CultureInfo.CurrentCulture))
             {
                 StringBuilder name = new StringBuilder(parameters, index + 2, parameters.Length - index - 3, 255);
+                while ((name.Length < 2) || (name.Length > 60))
+                {
+                    Console.WriteLine("First name is invalid, try again: ");
+                    Console.Write("Last Name: ");
+                    name = new StringBuilder(Console.ReadLine());
+                }
+
                 result = Program.fileCabinetService.FindByLastName(name.ToString());
             }
 
@@ -349,26 +271,224 @@ namespace FileCabinetApp
                 result = Program.fileCabinetService.FindByDateOfBirth(dateTime);
             }
 
-            if (result.Length == 0)
+            if (result.Count == 0)
             {
                 Console.WriteLine("No elements with such property");
             }
 
-            foreach (FileCabinetRecord tmp in result)
+            foreach (FileCabinetRecord record in result)
             {
-                Console.Write($"#" + tmp.Id + ", ");
-                Console.Write(tmp.FirstName);
-                Console.Write(", ");
-                Console.Write(tmp.LastName);
-                Console.Write(", ");
-                Console.Write(tmp.DateOfBirth.ToString("yyyy-MMM-dd", CultureInfo.InvariantCulture));
-                Console.Write(", height: ");
-                Console.Write(tmp.Height);
-                Console.Write(", weight ");
-                Console.Write(tmp.Weight);
-                Console.Write(", driving license category: ");
-                Console.WriteLine(tmp.DrivingLicenseCategory);
+                Console.WriteLine(record.ToString());
             }
+        }
+
+        private static void EnterParameters(out string firstName, out string lastName, out DateTime dateOfBirth, out short height, out decimal weight, out char drivingLicenseCategory)
+        {
+            Console.Write("First name: ");
+            firstName = ReadInput(StringConverter, FirstNameValidator);
+
+            Console.Write("Last Name: ");
+            lastName = ReadInput(StringConverter, LastNameValidator);
+
+            Console.Write("Date of birth: ");
+            dateOfBirth = ReadInput(DateTimeConverter, DateOfBirthValidator);
+
+            Console.Write("Height: ");
+            height = ReadInput(ShortConverter, HeightValidator);
+
+            Console.Write("Weight: ");
+            weight = ReadInput(DecimalConverter, WeightValidator);
+
+            Console.Write("Driving license category: ");
+            drivingLicenseCategory = ReadInput(CharConverter, LicenseCategoryValidator);
+        }
+
+        private static T ReadInput<T>(Func<string, Tuple<bool, string, T>> converter, Func<T, Tuple<bool, string>> validator)
+        {
+            do
+            {
+                T value;
+
+                var input = Console.ReadLine();
+                var conversionResult = converter(input);
+
+                if (!conversionResult.Item1)
+                {
+                    Console.WriteLine($"Conversion failed: {conversionResult.Item2}. Please, correct your input.");
+                    continue;
+                }
+
+                value = conversionResult.Item3;
+
+                var validationResult = validator(value);
+                if (!validationResult.Item1)
+                {
+                    Console.WriteLine($"Validation failed: {validationResult.Item2}. Please, correct your input.");
+                    continue;
+                }
+
+                return value;
+            }
+            while (true);
+        }
+
+        private static Tuple<bool, string, string> StringConverter(string input)
+        {
+            return new Tuple<bool, string, string>(true, string.Empty, input);
+        }
+
+        private static Tuple<bool, string, DateTime> DateTimeConverter(string input)
+        {
+            DateTime dateOfBirth;
+            bool success = DateTime.TryParse(input, out dateOfBirth);
+            return new Tuple<bool, string, DateTime>(success, string.Empty, dateOfBirth);
+        }
+
+        private static Tuple<bool, string, short> ShortConverter(string input)
+        {
+            short height;
+            bool success = short.TryParse(input, out height);
+            return new Tuple<bool, string, short>(success, string.Empty, height);
+        }
+
+        private static Tuple<bool, string, decimal> DecimalConverter(string input)
+        {
+            decimal weight;
+            bool success = decimal.TryParse(input, out weight);
+            return new Tuple<bool, string, decimal>(success, string.Empty, weight);
+        }
+
+        private static Tuple<bool, string, char> CharConverter(string input)
+        {
+            char symbol;
+            bool success = char.TryParse(input, out symbol);
+            return new Tuple<bool, string, char>(success, string.Empty, symbol);
+        }
+
+        private static Tuple<bool, string> FirstNameValidator(string firstName)
+        {
+            bool result = true;
+            if (isCustom)
+            {
+                if ((firstName.Length < 1) || (firstName.Length > 8) || string.IsNullOrWhiteSpace(firstName))
+                {
+                    result = false;
+                }
+            }
+            else
+            {
+                if ((firstName.Length < 2) || (firstName.Length > 60) || string.IsNullOrWhiteSpace(firstName))
+                {
+                    result = false;
+                }
+            }
+
+            return new Tuple<bool, string>(result, string.Empty);
+        }
+
+        private static Tuple<bool, string> LastNameValidator(string firstName)
+        {
+            bool result = true;
+            if (isCustom)
+            {
+                if ((firstName.Length < 1) || (firstName.Length > 7) || string.IsNullOrWhiteSpace(firstName))
+                {
+                    result = false;
+                }
+            }
+            else
+            {
+                if ((firstName.Length < 2) || (firstName.Length > 60) || string.IsNullOrWhiteSpace(firstName))
+                {
+                    result = false;
+                }
+            }
+
+            return new Tuple<bool, string>(result, string.Empty);
+        }
+
+        private static Tuple<bool, string> DateOfBirthValidator(DateTime dateOfBirth)
+        {
+            bool result = true;
+            if (isCustom)
+            {
+                if ((DateTime.Compare(dateOfBirth, DateTime.Today) > 0) || (DateTime.Compare(dateOfBirth, new DateTime(1800, 1, 1)) < 0))
+                {
+                    result = false;
+                }
+            }
+            else
+            {
+                if ((DateTime.Compare(dateOfBirth, DateTime.Today) > 0) || (DateTime.Compare(dateOfBirth, new DateTime(1950, 1, 1)) < 0))
+                {
+                    result = false;
+                }
+            }
+
+            return new Tuple<bool, string>(result, string.Empty);
+        }
+
+        private static Tuple<bool, string> HeightValidator(short height)
+        {
+            bool result = true;
+            if (isCustom)
+            {
+                if (height < 10 || height > 20)
+                {
+                    result = false;
+                }
+            }
+            else
+            {
+                if (height < 0 || height > 250)
+                {
+                    result = false;
+                }
+            }
+
+            return new Tuple<bool, string>(result, string.Empty);
+        }
+
+        private static Tuple<bool, string> WeightValidator(decimal weight)
+        {
+            bool result = true;
+            if (isCustom)
+            {
+                if (weight < 10 || weight > 20)
+                {
+                    result = false;
+                }
+            }
+            else
+            {
+                if (weight < 0 || weight > 180)
+                {
+                    result = false;
+                }
+            }
+
+            return new Tuple<bool, string>(result, string.Empty);
+        }
+
+        private static Tuple<bool, string> LicenseCategoryValidator(char drivingLicenseCategory)
+        {
+            bool result = true;
+            if (isCustom)
+            {
+                if ((drivingLicenseCategory != 'A') && (drivingLicenseCategory != 'B') && (drivingLicenseCategory != 'C') && (drivingLicenseCategory != 'Q'))
+                {
+                    result = false;
+                }
+            }
+            else
+            {
+                if ((drivingLicenseCategory != 'A') && (drivingLicenseCategory != 'B') && (drivingLicenseCategory != 'C') && (drivingLicenseCategory != 'D'))
+                {
+                    result = false;
+                }
+            }
+
+            return new Tuple<bool, string>(result, string.Empty);
         }
     }
 }
