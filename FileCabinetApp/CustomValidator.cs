@@ -35,7 +35,7 @@ namespace FileCabinetApp
                 throw new ArgumentNullException(nameof(arguments));
             }
 
-            if ((arguments.LastName.Length < 1) || (arguments.LastName.Length > 8) || string.IsNullOrWhiteSpace(arguments.LastName))
+            if ((arguments.LastName.Length < 1) || (arguments.LastName.Length > 7) || string.IsNullOrWhiteSpace(arguments.LastName))
             {
                 throw new ArgumentException("Invalid Last Name", nameof(arguments));
             }
@@ -55,7 +55,7 @@ namespace FileCabinetApp
                 throw new ArgumentException("Invalid height", nameof(arguments));
             }
 
-            if ((arguments.DrivingLicenseCategory != 'A') && (arguments.DrivingLicenseCategory != 'B') && (arguments.DrivingLicenseCategory != 'C') && (arguments.DrivingLicenseCategory != 'D'))
+            if ((arguments.DrivingLicenseCategory != 'A') && (arguments.DrivingLicenseCategory != 'B') && (arguments.DrivingLicenseCategory != 'C') && (arguments.DrivingLicenseCategory != 'Q'))
             {
                 throw new ArgumentException("Invalid license", nameof(arguments));
             }

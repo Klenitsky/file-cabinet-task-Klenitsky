@@ -16,6 +16,7 @@ namespace FileCabinetApp
         private const int CommandHelpIndex = 0;
         private const int DescriptionHelpIndex = 1;
         private const int ExplanationHelpIndex = 2;
+        private static bool isCustom;
 
         private static bool isRunning = true;
 
@@ -50,7 +51,6 @@ namespace FileCabinetApp
         public static void Main(string[] args)
         {
             Console.WriteLine($"File Cabinet Application, developed by {Program.DeveloperName}");
-            bool isCustom = false;
             if (args != null && args.Length > 0)
             {
                 if (args[0] == "-v" && args[1].ToLower(CultureInfo.CurrentCulture) == "custom")
@@ -284,67 +284,211 @@ namespace FileCabinetApp
 
         private static void EnterParameters(out string firstName, out string lastName, out DateTime dateOfBirth, out short height, out decimal weight, out char drivingLicenseCategory)
         {
-            Console.Write("First Name: ");
-            firstName = Console.ReadLine();
-            while ((firstName.Length < 2) || (firstName.Length > 60) || string.IsNullOrWhiteSpace(firstName))
-            {
-                Console.WriteLine("First name is invalid, try again: ");
-                Console.Write("First Name: ");
-                firstName = Console.ReadLine();
-            }
+            Console.Write("First name: ");
+            firstName = ReadInput(StringConverter, FirstNameValidator);
 
             Console.Write("Last Name: ");
-            lastName = Console.ReadLine();
-            while ((lastName.Length < 2) || (lastName.Length > 60) || string.IsNullOrWhiteSpace(lastName))
-            {
-                Console.WriteLine("Last name is invalid, try again: ");
-                Console.Write("Last Name: ");
-                lastName = Console.ReadLine();
-            }
+            lastName = ReadInput(StringConverter, LastNameValidator);
 
             Console.Write("Date of birth: ");
-            string date = Console.ReadLine();
-            bool success = DateTime.TryParse(date, out dateOfBirth);
-            while (!success || (DateTime.Compare(dateOfBirth, DateTime.Today) > 0) || DateTime.Compare(dateOfBirth, new DateTime(1950, 1, 1)) < 0)
-            {
-                Console.WriteLine("Date  is invalid, try again: ");
-                Console.Write("Date: ");
-                date = Console.ReadLine();
-                success = DateTime.TryParse(date, out dateOfBirth);
-            }
+            dateOfBirth = ReadInput(DateTimeConverter, DateOfBirthValidator);
 
             Console.Write("Height: ");
-            string nextLine = Console.ReadLine();
-            success = short.TryParse(nextLine, out height);
-            while (!success || height < 0 || height > 250)
-            {
-                Console.WriteLine("Height is invalid, try again: ");
-                Console.Write("Height: ");
-                nextLine = Console.ReadLine();
-                success = short.TryParse(nextLine, out height);
-            }
+            height = ReadInput(ShortConverter, HeightValidator);
 
             Console.Write("Weight: ");
-            nextLine = Console.ReadLine();
-            success = decimal.TryParse(nextLine, out weight);
-            while (!success || weight < 0 || weight > 180)
-            {
-                Console.WriteLine("Weight is invalid, try again: ");
-                Console.Write("Weight: ");
-                nextLine = Console.ReadLine();
-                success = decimal.TryParse(nextLine, out weight);
-            }
+            weight = ReadInput(DecimalConverter, WeightValidator);
 
             Console.Write("Driving license category: ");
-            nextLine = Console.ReadLine();
-            success = char.TryParse(nextLine, out drivingLicenseCategory);
-            while (!success || ((drivingLicenseCategory != 'A') && (drivingLicenseCategory != 'B') && (drivingLicenseCategory != 'C') && (drivingLicenseCategory != 'D')))
+            drivingLicenseCategory = ReadInput(CharConverter, LicenseCategoryValidator);
+        }
+
+        private static T ReadInput<T>(Func<string, Tuple<bool, string, T>> converter, Func<T, Tuple<bool, string>> validator)
+        {
+            do
             {
-                Console.WriteLine("License category is invalid, try again: ");
-                Console.Write("Driving license category: ");
-                nextLine = Console.ReadLine();
-                success = char.TryParse(nextLine, out drivingLicenseCategory);
+                T value;
+
+                var input = Console.ReadLine();
+                var conversionResult = converter(input);
+
+                if (!conversionResult.Item1)
+                {
+                    Console.WriteLine($"Conversion failed: {conversionResult.Item2}. Please, correct your input.");
+                    continue;
+                }
+
+                value = conversionResult.Item3;
+
+                var validationResult = validator(value);
+                if (!validationResult.Item1)
+                {
+                    Console.WriteLine($"Validation failed: {validationResult.Item2}. Please, correct your input.");
+                    continue;
+                }
+
+                return value;
             }
+            while (true);
+        }
+
+        private static Tuple<bool, string, string> StringConverter(string input)
+        {
+            return new Tuple<bool, string, string>(true, string.Empty, input);
+        }
+
+        private static Tuple<bool, string, DateTime> DateTimeConverter(string input)
+        {
+            DateTime dateOfBirth;
+            bool success = DateTime.TryParse(input, out dateOfBirth);
+            return new Tuple<bool, string, DateTime>(success, string.Empty, dateOfBirth);
+        }
+
+        private static Tuple<bool, string, short> ShortConverter(string input)
+        {
+            short height;
+            bool success = short.TryParse(input, out height);
+            return new Tuple<bool, string, short>(success, string.Empty, height);
+        }
+
+        private static Tuple<bool, string, decimal> DecimalConverter(string input)
+        {
+            decimal weight;
+            bool success = decimal.TryParse(input, out weight);
+            return new Tuple<bool, string, decimal>(success, string.Empty, weight);
+        }
+
+        private static Tuple<bool, string, char> CharConverter(string input)
+        {
+            char symbol;
+            bool success = char.TryParse(input, out symbol);
+            return new Tuple<bool, string, char>(success, string.Empty, symbol);
+        }
+
+        private static Tuple<bool, string> FirstNameValidator(string firstName)
+        {
+            bool result = true;
+            if (isCustom)
+            {
+                if ((firstName.Length < 1) || (firstName.Length > 8) || string.IsNullOrWhiteSpace(firstName))
+                {
+                    result = false;
+                }
+            }
+            else
+            {
+                if ((firstName.Length < 2) || (firstName.Length > 60) || string.IsNullOrWhiteSpace(firstName))
+                {
+                    result = false;
+                }
+            }
+
+            return new Tuple<bool, string>(result, string.Empty);
+        }
+
+        private static Tuple<bool, string> LastNameValidator(string firstName)
+        {
+            bool result = true;
+            if (isCustom)
+            {
+                if ((firstName.Length < 1) || (firstName.Length > 7) || string.IsNullOrWhiteSpace(firstName))
+                {
+                    result = false;
+                }
+            }
+            else
+            {
+                if ((firstName.Length < 2) || (firstName.Length > 60) || string.IsNullOrWhiteSpace(firstName))
+                {
+                    result = false;
+                }
+            }
+
+            return new Tuple<bool, string>(result, string.Empty);
+        }
+
+        private static Tuple<bool, string> DateOfBirthValidator(DateTime dateOfBirth)
+        {
+            bool result = true;
+            if (isCustom)
+            {
+                if ((DateTime.Compare(dateOfBirth, DateTime.Today) > 0) || (DateTime.Compare(dateOfBirth, new DateTime(1800, 1, 1)) < 0))
+                {
+                    result = false;
+                }
+            }
+            else
+            {
+                if ((DateTime.Compare(dateOfBirth, DateTime.Today) > 0) || (DateTime.Compare(dateOfBirth, new DateTime(1950, 1, 1)) < 0))
+                {
+                    result = false;
+                }
+            }
+
+            return new Tuple<bool, string>(result, string.Empty);
+        }
+
+        private static Tuple<bool, string> HeightValidator(short height)
+        {
+            bool result = true;
+            if (isCustom)
+            {
+                if (height < 10 || height > 20)
+                {
+                    result = false;
+                }
+            }
+            else
+            {
+                if (height < 0 || height > 250)
+                {
+                    result = false;
+                }
+            }
+
+            return new Tuple<bool, string>(result, string.Empty);
+        }
+
+        private static Tuple<bool, string> WeightValidator(decimal weight)
+        {
+            bool result = true;
+            if (isCustom)
+            {
+                if (weight < 10 || weight > 20)
+                {
+                    result = false;
+                }
+            }
+            else
+            {
+                if (weight < 0 || weight > 180)
+                {
+                    result = false;
+                }
+            }
+
+            return new Tuple<bool, string>(result, string.Empty);
+        }
+
+        private static Tuple<bool, string> LicenseCategoryValidator(char drivingLicenseCategory)
+        {
+            bool result = true;
+            if (isCustom)
+            {
+                if ((drivingLicenseCategory != 'A') && (drivingLicenseCategory != 'B') && (drivingLicenseCategory != 'C') && (drivingLicenseCategory != 'Q'))
+                {
+                    result = false;
+                }
+            }
+            else
+            {
+                if ((drivingLicenseCategory != 'A') && (drivingLicenseCategory != 'B') && (drivingLicenseCategory != 'C') && (drivingLicenseCategory != 'D'))
+                {
+                    result = false;
+                }
+            }
+
+            return new Tuple<bool, string>(result, string.Empty);
         }
     }
 }

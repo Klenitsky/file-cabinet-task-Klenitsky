@@ -53,8 +53,8 @@ namespace FileCabinetApp
         /// <summary>
         /// Finds all records with given date of Birth.
         /// </summary>
-        /// <param name="date">The date of birth of the person.</param>
+        /// <param name="dateTime">The date of birth of the person.</param>
         /// <returns>A list of records found.</returns>
-        public IReadOnlyCollection<FileCabinetRecord> FindByDateOfBirth(DateTime date);
+        public IReadOnlyCollection<FileCabinetRecord> FindByDateOfBirth(DateTime dateTime);
     }
 }
