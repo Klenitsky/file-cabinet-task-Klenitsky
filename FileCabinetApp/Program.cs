@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Text;
 
 namespace FileCabinetApp
@@ -29,6 +30,7 @@ namespace FileCabinetApp
             new Tuple<string, Action<string>>("list", List),
             new Tuple<string, Action<string>>("edit", Edit),
             new Tuple<string, Action<string>>("find", Find),
+            new Tuple<string, Action<string>>("export", Export),
         };
 
         private static string[][] helpMessages = new string[][]
@@ -40,6 +42,7 @@ namespace FileCabinetApp
             new string[] { "list", "returns a list of records", "The 'list' command returns a list of recordscre." },
             new string[] { "edit", "edits the record with entered id.", "The 'edit' command edits the record with entered id" },
             new string[] { "find", "finds the record according to the parameters.", "The 'edit' command finds the record according to the parameters." },
+            new string[] { "export", "exports the data into file", "The 'export' exports the data." },
         };
 
         private static IFileCabinetService fileCabinetService = new FileCabinetService(new DefaultValidator());
@@ -279,6 +282,69 @@ namespace FileCabinetApp
             foreach (FileCabinetRecord record in result)
             {
                 Console.WriteLine(record.ToString());
+            }
+        }
+
+        private static void Export(string parameters)
+        {
+            if (parameters[0..3] == "csv")
+            {
+                string filename = parameters[4..];
+                try
+                {
+                    if (File.Exists(filename))
+                    {
+                        Console.WriteLine("File is exist - rewrite " + filename + "?[Y/n]");
+                        if (Console.ReadLine().ToUpperInvariant() == "y".ToUpperInvariant())
+                        {
+                            StreamWriter writer = new StreamWriter(filename);
+                            fileCabinetService.MakeSnapshot().SaveToCSV(writer);
+                            writer.Close();
+                            Console.WriteLine("All records are exported to file " + filename + ".");
+                        }
+                    }
+                    else
+                    {
+                        StreamWriter writer = new StreamWriter(filename);
+                        fileCabinetService.MakeSnapshot().SaveToCSV(writer);
+                        writer.Close();
+                        Console.WriteLine("All records are exported to file " + filename + ".");
+                    }
+                }
+                catch (DirectoryNotFoundException)
+                {
+                    Console.WriteLine("Export failed: can't open file " + filename + ".");
+                }
+            }
+
+            if (parameters[0..3] == "xml")
+            {
+                string filename = parameters[4..];
+                try
+                {
+                    if (File.Exists(filename))
+                    {
+                        Console.WriteLine("File is exist - rewrite " + filename + "?[Y/n]");
+                        if (Console.ReadLine().ToUpperInvariant() == "y".ToUpperInvariant())
+                        {
+                            StreamWriter writer = new StreamWriter(filename);
+                            fileCabinetService.MakeSnapshot().SaveToXml(writer);
+                            writer.Close();
+                            Console.WriteLine("All records are exported to file " + filename + ".");
+                        }
+                    }
+                    else
+                    {
+                        StreamWriter writer = new StreamWriter(filename);
+                        fileCabinetService.MakeSnapshot().SaveToXml(writer);
+                        writer.Close();
+                        Console.WriteLine("All records are exported to file " + filename + ".");
+                    }
+                }
+                catch (DirectoryNotFoundException)
+                {
+                    Console.WriteLine("Export failed: can't open file " + filename + ".");
+                }
             }
         }
 

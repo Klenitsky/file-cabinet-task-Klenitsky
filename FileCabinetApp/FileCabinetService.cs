@@ -194,11 +194,20 @@ namespace FileCabinetApp
         /// <summary>
         /// Finds all records with given date of Birth.
         /// </summary>
-        /// <param name="date">The date of birth of the person.</param>
+        /// <param name="dateTime">The date of birth of the person.</param>
         /// <returns>A list of records found.</returns>
-        public IReadOnlyCollection<FileCabinetRecord> FindByDateOfBirth(DateTime date)
+        public IReadOnlyCollection<FileCabinetRecord> FindByDateOfBirth(DateTime dateTime)
         {
-            return this.dateOfBirthDictionary[date.ToString(CultureInfo.CurrentCulture)].ToArray();
+            return this.dateOfBirthDictionary[dateTime.ToString(CultureInfo.CurrentCulture)].ToArray();
+        }
+
+        /// <summary>
+        /// Generates snapshot of the service.
+        /// </summary>
+        /// <returns>A snapshot of this service.</returns>
+        public FileCabinetServiceSnapshot MakeSnapshot()
+        {
+            return new FileCabinetServiceSnapshot(this.list);
         }
     }
 }
