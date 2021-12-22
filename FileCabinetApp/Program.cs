@@ -294,7 +294,7 @@ namespace FileCabinetApp
                 {
                     if (File.Exists(filename))
                     {
-                        Console.WriteLine("File is exist - rewrite " + filename + "?[Y/n] Y");
+                        Console.WriteLine("File is exist - rewrite " + filename + "?[Y/n]");
                         if (Console.ReadLine().ToUpperInvariant() == "y".ToUpperInvariant())
                         {
                             StreamWriter writer = new StreamWriter(filename);
@@ -307,6 +307,36 @@ namespace FileCabinetApp
                     {
                         StreamWriter writer = new StreamWriter(filename);
                         fileCabinetService.MakeSnapshot().SaveToCSV(writer);
+                        writer.Close();
+                        Console.WriteLine("All records are exported to file " + filename + ".");
+                    }
+                }
+                catch (DirectoryNotFoundException)
+                {
+                    Console.WriteLine("Export failed: can't open file " + filename + ".");
+                }
+            }
+
+            if (parameters[0..3] == "xml")
+            {
+                string filename = parameters[4..];
+                try
+                {
+                    if (File.Exists(filename))
+                    {
+                        Console.WriteLine("File is exist - rewrite " + filename + "?[Y/n]");
+                        if (Console.ReadLine().ToUpperInvariant() == "y".ToUpperInvariant())
+                        {
+                            StreamWriter writer = new StreamWriter(filename);
+                            fileCabinetService.MakeSnapshot().SaveToXml(writer);
+                            writer.Close();
+                            Console.WriteLine("All records are exported to file " + filename + ".");
+                        }
+                    }
+                    else
+                    {
+                        StreamWriter writer = new StreamWriter(filename);
+                        fileCabinetService.MakeSnapshot().SaveToXml(writer);
                         writer.Close();
                         Console.WriteLine("All records are exported to file " + filename + ".");
                     }

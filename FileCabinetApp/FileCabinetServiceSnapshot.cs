@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Xml;
 
 namespace FileCabinetApp
 {
@@ -11,6 +12,7 @@ namespace FileCabinetApp
     public class FileCabinetServiceSnapshot
     {
         private readonly FileCabinetRecord[] list;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="FileCabinetServiceSnapshot"/> class.
         /// </summary>
@@ -42,6 +44,37 @@ namespace FileCabinetApp
             {
                 writer.Write(record);
             }
+        }
+
+        /// <summary>
+        /// Saves the information in xml format.
+        /// </summary>
+        /// <param name="stream">Stream for saving.</param>
+        public void SaveToXml(StreamWriter stream)
+        {
+            if (stream == null)
+            {
+                throw new ArgumentNullException(nameof(stream));
+            }
+
+            XmlWriterSettings settings = new XmlWriterSettings
+            {
+                Encoding = Encoding.UTF8,
+                Indent = true,
+                IndentChars = "\t",
+                NewLineHandling = NewLineHandling.Replace,
+            };
+            XmlWriter xmlWriter = XmlWriter.Create(stream, settings);
+            FileCabinetRecordXmlWriter writer = new FileCabinetRecordXmlWriter(xmlWriter);
+            xmlWriter.WriteStartElement("records");
+            xmlWriter.Flush();
+            foreach (FileCabinetRecord record in this.list)
+            {
+                writer.Write(record);
+            }
+
+            xmlWriter.WriteEndElement();
+            xmlWriter.Flush();
         }
     }
 }
