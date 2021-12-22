@@ -45,7 +45,7 @@ namespace FileCabinetApp
             new string[] { "export", "exports the data into file", "The 'export' exports the data." },
         };
 
-        private static IFileCabinetService fileCabinetService = new FileCabinetService(new DefaultValidator());
+        private static IFileCabinetService fileCabinetService = new FileCabinetMemoryService(new DefaultValidator());
 
         /// <summary>
         /// The main function of the application.
@@ -58,13 +58,13 @@ namespace FileCabinetApp
             {
                 if (args[0] == "-v" && args[1].ToLower(CultureInfo.CurrentCulture) == "custom")
                 {
-                    fileCabinetService = new FileCabinetService(new CustomValidator());
+                    fileCabinetService = new FileCabinetMemoryService(new CustomValidator());
                     isCustom = true;
                 }
 
                 if (args[0].Contains("--validation-rules=", StringComparison.InvariantCulture) && args[0][19..].ToLower(CultureInfo.CurrentCulture) == "custom")
                 {
-                    fileCabinetService = new FileCabinetService(new CustomValidator());
+                    fileCabinetService = new FileCabinetMemoryService(new CustomValidator());
                     isCustom = true;
                 }
             }
