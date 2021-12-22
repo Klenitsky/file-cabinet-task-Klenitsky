@@ -159,6 +159,23 @@
             </summary>
             <returns>String with information about record.</returns>
         </member>
+        <member name="T:FileCabinetApp.FileCabinetRecordCsvWriter">
+            <summary>
+            Writes the information in csv file.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetRecordCsvWriter.#ctor(System.IO.TextWriter)">
+            <summary>
+            Initializes a new instance of the <see cref="T:FileCabinetApp.FileCabinetRecordCsvWriter"/> class.
+            </summary>
+            <param name="writer">A writer to work with.</param>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetRecordCsvWriter.Write(FileCabinetApp.FileCabinetRecord)">
+            <summary>
+            Write the information about record.
+            </summary>
+            <param name="record">A record to write.</param>
+        </member>
         <member name="T:FileCabinetApp.FileCabinetService">
             <summary>
             Stores a list of records.
@@ -221,8 +238,31 @@
             <summary>
             Finds all records with given date of Birth.
             </summary>
-            <param name="date">The date of birth of the person.</param>
+            <param name="dateTime">The date of birth of the person.</param>
             <returns>A list of records found.</returns>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetService.MakeSnapshot">
+            <summary>
+            Generates snapshot of the service.
+            </summary>
+            <returns>A snapshot of this service.</returns>
+        </member>
+        <member name="T:FileCabinetApp.FileCabinetServiceSnapshot">
+            <summary>
+            Snapshot of a FileCabinetService.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetServiceSnapshot.#ctor(System.Collections.Generic.List{FileCabinetApp.FileCabinetRecord})">
+            <summary>
+            Initializes a new instance of the <see cref="T:FileCabinetApp.FileCabinetServiceSnapshot"/> class.
+            </summary>
+            <param name="lst">List of records from service.</param>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetServiceSnapshot.SaveToCSV(System.IO.StreamWriter)">
+            <summary>
+            Saves the information in csv format.
+            </summary>
+            <param name="stream">Stream for saving.</param>
         </member>
         <member name="T:FileCabinetApp.IFileCabinetService">
             <summary>
@@ -276,6 +316,12 @@
             </summary>
             <param name="dateTime">The date of birth of the person.</param>
             <returns>A list of records found.</returns>
+        </member>
+        <member name="M:FileCabinetApp.IFileCabinetService.MakeSnapshot">
+            <summary>
+            Generates snapshot of the service.
+            </summary>
+            <returns>A snapshot of this service.</returns>
         </member>
         <member name="T:FileCabinetApp.IRecordValidator">
             <summary>

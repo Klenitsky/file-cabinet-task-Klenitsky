@@ -56,5 +56,11 @@ namespace FileCabinetApp
         /// <param name="dateTime">The date of birth of the person.</param>
         /// <returns>A list of records found.</returns>
         public IReadOnlyCollection<FileCabinetRecord> FindByDateOfBirth(DateTime dateTime);
+
+        /// <summary>
+        /// Generates snapshot of the service.
+        /// </summary>
+        /// <returns>A snapshot of this service.</returns>
+        public FileCabinetServiceSnapshot MakeSnapshot();
     }
 }
