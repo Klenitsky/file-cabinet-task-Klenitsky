@@ -8,7 +8,7 @@ namespace FileCabinetApp
     /// <summary>
     /// Service that works with FileStream.
     /// </summary>
-    public class FileCabinetFilesystemService: IFileCabinetService
+    public class FileCabinetFilesystemService : IFileCabinetService
     {
         private readonly FileStream fileStream;
 

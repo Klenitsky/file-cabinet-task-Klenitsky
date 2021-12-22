@@ -18,6 +18,7 @@ namespace FileCabinetApp
         private const int DescriptionHelpIndex = 1;
         private const int ExplanationHelpIndex = 2;
         private static bool isCustom;
+        private static FileStream fileStream = File.Open("cabinet-records.db", FileMode.OpenOrCreate);
 
         private static bool isRunning = true;
 
@@ -66,6 +67,21 @@ namespace FileCabinetApp
                 {
                     fileCabinetService = new FileCabinetMemoryService(new CustomValidator());
                     isCustom = true;
+                }
+
+                if (args[0] == "--storage" || args[0] == "-s")
+                {
+                    if (args[1].ToLower(CultureInfo.CurrentCulture) == "memory")
+                    {
+                        fileCabinetService = new FileCabinetMemoryService(new DefaultValidator());
+                    }
+                    else
+                    {
+                        if (args[1].ToLower(CultureInfo.CurrentCulture) == "file")
+                        {
+                            fileCabinetService = new FileCabinetFilesystemService(fileStream);
+                        }
+                    }
                 }
             }
 
@@ -146,6 +162,7 @@ namespace FileCabinetApp
         {
             Console.WriteLine("Exiting an application...");
             isRunning = false;
+            fileStream.Close();
         }
 
         private static void Stat(string parameters)
