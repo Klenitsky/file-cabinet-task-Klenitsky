@@ -153,7 +153,64 @@ namespace FileCabinetApp
         /// <exception cref="ArgumentException">One of the parameters is not valid.</exception>
         public void EditRecord(int id, Arguments arguments)
         {
-            throw new NotImplementedException();
+            if (arguments == null)
+            {
+                throw new ArgumentNullException(nameof(arguments));
+            }
+
+            int index = 0;
+            this.fileStream.Seek(index, SeekOrigin.Begin);
+            while (index < this.fileStream.Length)
+            {
+                byte[] buffer = new byte[270];
+                this.fileStream.Read(buffer, 0, buffer.Length);
+                byte[] recordIdBuf = buffer[2..6];
+
+                int recordId = BitConverter.ToInt32(recordIdBuf);
+                if (recordId == id)
+                {
+                    this.validator.ValidateParameters(arguments);
+                    this.fileStream.Seek(index, SeekOrigin.Begin);
+                    short st = 1;
+                    byte[] status = BitConverter.GetBytes(st);
+                    byte[] firstName = Encoding.UTF8.GetBytes(arguments.FirstName);
+
+                    byte[] firstNameResult = new byte[120];
+                    for (int i = 0; i < firstName.Length; i++)
+                    {
+                        firstNameResult[i] = firstName[i];
+                    }
+
+                    byte[] lastName = Encoding.UTF8.GetBytes(arguments.LastName);
+                    byte[] lastNameResult = new byte[120];
+                    for (int i = 0; i < lastName.Length; i++)
+                    {
+                        lastNameResult[i] = lastName[i];
+                    }
+
+                    byte[] year = BitConverter.GetBytes(arguments.DateOfBirth.Year);
+                    byte[] month = BitConverter.GetBytes(arguments.DateOfBirth.Month);
+                    byte[] day = BitConverter.GetBytes(arguments.DateOfBirth.Day);
+
+                    byte[] height = BitConverter.GetBytes(arguments.Height);
+                    byte[] weight = BitConverter.GetBytes(decimal.ToDouble(arguments.Weight));
+                    byte[] drivingLicenseCategory = BitConverter.GetBytes(arguments.DrivingLicenseCategory);
+                    this.fileStream.Write(status, 0, status.Length);
+                    this.fileStream.Write(recordIdBuf, 0, recordIdBuf.Length);
+                    this.fileStream.Write(firstNameResult, 0, firstNameResult.Length);
+                    this.fileStream.Write(lastNameResult, 0, lastNameResult.Length);
+                    this.fileStream.Write(year, 0, year.Length);
+                    this.fileStream.Write(month, 0, month.Length);
+                    this.fileStream.Write(day, 0, day.Length);
+                    this.fileStream.Write(height, 0, height.Length);
+                    this.fileStream.Write(weight, 0, weight.Length);
+                    this.fileStream.Write(drivingLicenseCategory, 0, drivingLicenseCategory.Length);
+                    this.fileStream.Flush();
+                    break;
+                }
+
+                index += 270;
+            }
         }
 
         /// <summary>
