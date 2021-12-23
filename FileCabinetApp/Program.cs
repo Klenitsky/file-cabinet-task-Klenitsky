@@ -269,7 +269,7 @@ namespace FileCabinetApp
 
             if (property.ToString().ToLower(CultureInfo.CurrentCulture) == "firstname".ToLower(CultureInfo.CurrentCulture))
             {
-                StringBuilder name = new StringBuilder(parameters, index + 2, parameters.Length - (index + 3), 255);
+                StringBuilder name = new StringBuilder(parameters, index + 1, parameters.Length - (index + 1), 255);
                 while ((name.Length < 2) || (name.Length > 60))
                 {
                     Console.WriteLine("First name is invalid, try again: ");
@@ -282,7 +282,7 @@ namespace FileCabinetApp
 
             if (property.ToString().ToLower(CultureInfo.CurrentCulture) == "lastname".ToLower(CultureInfo.CurrentCulture))
             {
-                StringBuilder name = new StringBuilder(parameters, index + 2, parameters.Length - index - 3, 255);
+                StringBuilder name = new StringBuilder(parameters, index + 1, parameters.Length - index - 1, 255);
                 while ((name.Length < 2) || (name.Length > 60))
                 {
                     Console.WriteLine("First name is invalid, try again: ");
@@ -295,7 +295,7 @@ namespace FileCabinetApp
 
             if (property.ToString().ToLower(CultureInfo.CurrentCulture) == "dateofbirth".ToLower(CultureInfo.CurrentCulture))
             {
-                StringBuilder date = new StringBuilder(parameters, index + 2, parameters.Length - index - 3, 255);
+                StringBuilder date = new StringBuilder(parameters, index + 1, parameters.Length - index - 1, 255);
                 DateTime dateTime;
                 bool success = DateTime.TryParse(date.ToString(), out dateTime);
                 while (!success)

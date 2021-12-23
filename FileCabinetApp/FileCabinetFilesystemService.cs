@@ -221,7 +221,60 @@ namespace FileCabinetApp
         /// <exception cref="ArgumentNullException">String firstName is null.</exception>
         public IReadOnlyCollection<FileCabinetRecord> FindByFirstName(string firstName)
         {
-            throw new NotImplementedException();
+            if (firstName == null)
+            {
+                throw new ArgumentNullException(nameof(firstName));
+            }
+
+            List<FileCabinetRecord> result = new List<FileCabinetRecord>();
+            if (this.fileStream.Length % 270 != 0)
+            {
+                return result;
+            }
+
+            int index = 0;
+            this.fileStream.Seek(index, SeekOrigin.Begin);
+            while (index < this.fileStream.Length)
+            {
+                byte[] buffer = new byte[270];
+                this.fileStream.Read(buffer, 0, buffer.Length);
+                byte[] firstNameBuf = buffer[6..126];
+                string firstNameRecord = Encoding.UTF8.GetString(firstNameBuf);
+                if (firstNameRecord[0..firstName.Length].ToUpperInvariant() == firstName.ToUpperInvariant())
+                {
+                    FileCabinetRecord record;
+                    byte[] recordIdBuf = buffer[2..6];
+                    byte[] lastNameBuf = buffer[126..246];
+                    byte[] yearBuf = buffer[246..250];
+                    byte[] monthBuf = buffer[250..254];
+                    byte[] dayBuf = buffer[254..258];
+                    byte[] heightBuf = buffer[258..260];
+                    byte[] weightBuf = buffer[260..268];
+                    byte[] drivingLicenseCategoryBuf = buffer[268..270];
+                    int recordId = BitConverter.ToInt32(recordIdBuf);
+                    string lastName = Encoding.UTF8.GetString(lastNameBuf);
+                    DateTime dateOfBirth = new DateTime(BitConverter.ToInt32(yearBuf), BitConverter.ToInt32(monthBuf), BitConverter.ToInt32(dayBuf));
+                    short height = BitConverter.ToInt16(heightBuf);
+                    decimal weight = new decimal(BitConverter.ToDouble(weightBuf));
+                    char drivingLicenseCategory = Encoding.UTF8.GetString(drivingLicenseCategoryBuf)[0];
+
+                    record = new FileCabinetRecord
+                    {
+                        Id = recordId,
+                        FirstName = firstNameRecord,
+                        LastName = lastName,
+                        DateOfBirth = dateOfBirth,
+                        Height = height,
+                        Weight = weight,
+                        DrivingLicenseCategory = drivingLicenseCategory,
+                    };
+                    result.Add(record);
+                }
+
+                index += 270;
+            }
+
+            return result;
         }
 
         /// <summary>
@@ -232,7 +285,61 @@ namespace FileCabinetApp
         /// <exception cref="ArgumentNullException">String firstName is null.</exception>
         public IReadOnlyCollection<FileCabinetRecord> FindByLastName(string lastName)
         {
-            throw new NotImplementedException();
+            if (lastName == null)
+            {
+                throw new ArgumentNullException(nameof(lastName));
+            }
+
+            List<FileCabinetRecord> result = new List<FileCabinetRecord>();
+            if (this.fileStream.Length % 270 != 0)
+            {
+                return result;
+            }
+
+            int index = 0;
+            this.fileStream.Seek(index, SeekOrigin.Begin);
+            while (index < this.fileStream.Length)
+            {
+                byte[] buffer = new byte[270];
+                this.fileStream.Read(buffer, 0, buffer.Length);
+
+                byte[] lastNameBuf = buffer[126..246];
+                string lastNameRecord = Encoding.UTF8.GetString(lastNameBuf);
+                if (lastNameRecord[0..lastName.Length].ToUpperInvariant() == lastName.ToUpperInvariant())
+                {
+                    FileCabinetRecord record;
+                    byte[] recordIdBuf = buffer[2..6];
+                    byte[] firstNameBuf = buffer[6..126];
+                    byte[] yearBuf = buffer[246..250];
+                    byte[] monthBuf = buffer[250..254];
+                    byte[] dayBuf = buffer[254..258];
+                    byte[] heightBuf = buffer[258..260];
+                    byte[] weightBuf = buffer[260..268];
+                    byte[] drivingLicenseCategoryBuf = buffer[268..270];
+                    int recordId = BitConverter.ToInt32(recordIdBuf);
+                    string firstNameRecord = Encoding.UTF8.GetString(firstNameBuf);
+                    DateTime dateOfBirth = new DateTime(BitConverter.ToInt32(yearBuf), BitConverter.ToInt32(monthBuf), BitConverter.ToInt32(dayBuf));
+                    short height = BitConverter.ToInt16(heightBuf);
+                    decimal weight = new decimal(BitConverter.ToDouble(weightBuf));
+                    char drivingLicenseCategory = Encoding.UTF8.GetString(drivingLicenseCategoryBuf)[0];
+
+                    record = new FileCabinetRecord
+                    {
+                        Id = recordId,
+                        FirstName = firstNameRecord,
+                        LastName = lastNameRecord,
+                        DateOfBirth = dateOfBirth,
+                        Height = height,
+                        Weight = weight,
+                        DrivingLicenseCategory = drivingLicenseCategory,
+                    };
+                    result.Add(record);
+                }
+
+                index += 270;
+            }
+
+            return result;
         }
 
         /// <summary>
@@ -242,7 +349,57 @@ namespace FileCabinetApp
         /// <returns>A list of records found.</returns>
         public IReadOnlyCollection<FileCabinetRecord> FindByDateOfBirth(DateTime dateTime)
         {
-            throw new NotImplementedException();
+            List<FileCabinetRecord> result = new List<FileCabinetRecord>();
+            if (this.fileStream.Length % 270 != 0)
+            {
+                return result;
+            }
+
+            int index = 0;
+            this.fileStream.Seek(index, SeekOrigin.Begin);
+            while (index < this.fileStream.Length)
+            {
+                byte[] buffer = new byte[270];
+                this.fileStream.Read(buffer, 0, buffer.Length);
+
+                byte[] yearBuf = buffer[246..250];
+                byte[] monthBuf = buffer[250..254];
+                byte[] dayBuf = buffer[254..258];
+
+                if (BitConverter.ToInt32(yearBuf) == dateTime.Year && BitConverter.ToInt32(monthBuf) == dateTime.Month && BitConverter.ToInt32(dayBuf) == dateTime.Day)
+                {
+                    FileCabinetRecord record;
+                    byte[] recordIdBuf = buffer[2..6];
+                    byte[] firstNameBuf = buffer[6..126];
+                    byte[] lastNameBuf = buffer[126..246];
+                    byte[] heightBuf = buffer[258..260];
+                    byte[] weightBuf = buffer[260..268];
+                    byte[] drivingLicenseCategoryBuf = buffer[268..270];
+                    int recordId = BitConverter.ToInt32(recordIdBuf);
+                    string firstNameRecord = Encoding.UTF8.GetString(firstNameBuf);
+                    string lastNameRecord = Encoding.UTF8.GetString(lastNameBuf);
+                    DateTime dateOfBirth = new DateTime(BitConverter.ToInt32(yearBuf), BitConverter.ToInt32(monthBuf), BitConverter.ToInt32(dayBuf));
+                    short height = BitConverter.ToInt16(heightBuf);
+                    decimal weight = new decimal(BitConverter.ToDouble(weightBuf));
+                    char drivingLicenseCategory = Encoding.UTF8.GetString(drivingLicenseCategoryBuf)[0];
+
+                    record = new FileCabinetRecord
+                    {
+                        Id = recordId,
+                        FirstName = firstNameRecord,
+                        LastName = lastNameRecord,
+                        DateOfBirth = dateOfBirth,
+                        Height = height,
+                        Weight = weight,
+                        DrivingLicenseCategory = drivingLicenseCategory,
+                    };
+                    result.Add(record);
+                }
+
+                index += 270;
+            }
+
+            return result;
         }
 
         /// <summary>
@@ -251,7 +408,68 @@ namespace FileCabinetApp
         /// <returns>A snapshot of this service.</returns>
         public FileCabinetServiceSnapshot MakeSnapshot()
         {
-            throw new NotImplementedException();
+            List<FileCabinetRecord> result = new List<FileCabinetRecord>();
+            if (this.fileStream.Length % 270 != 0)
+            {
+                return new FileCabinetServiceSnapshot(result);
+            }
+
+            int index = 0;
+            this.fileStream.Seek(index, SeekOrigin.Begin);
+            while (index < this.fileStream.Length)
+            {
+                FileCabinetRecord record;
+                byte[] buffer = new byte[270];
+                this.fileStream.Read(buffer, 0, buffer.Length);
+                byte[] recordIdBuf = buffer[2..6];
+                byte[] firstNameBuf = buffer[6..126];
+                byte[] lastNameBuf = buffer[126..246];
+                byte[] yearBuf = buffer[246..250];
+                byte[] monthBuf = buffer[250..254];
+                byte[] dayBuf = buffer[254..258];
+                byte[] heightBuf = buffer[258..260];
+                byte[] weightBuf = buffer[260..268];
+                byte[] drivingLicenseCategoryBuf = buffer[268..270];
+
+                int recordId = BitConverter.ToInt32(recordIdBuf);
+                string firstName = Encoding.UTF8.GetString(firstNameBuf);
+                string lastName = Encoding.UTF8.GetString(lastNameBuf);
+                for (int i = 0; i < firstName.Length; i++)
+                {
+                    if (firstName[i] == '\0')
+                    {
+                        firstName = firstName[0..i];
+                    }
+                }
+
+                for (int i = 0; i < lastName.Length; i++)
+                {
+                    if (lastName[i] == '\0')
+                    {
+                        lastName = lastName[0..i];
+                    }
+                }
+
+                DateTime dateOfBirth = new DateTime(BitConverter.ToInt32(yearBuf), BitConverter.ToInt32(monthBuf), BitConverter.ToInt32(dayBuf));
+                short height = BitConverter.ToInt16(heightBuf);
+                decimal weight = new decimal(BitConverter.ToDouble(weightBuf));
+                char drivingLicenseCategory = Encoding.UTF8.GetString(drivingLicenseCategoryBuf)[0];
+
+                record = new FileCabinetRecord
+                {
+                    Id = recordId,
+                    FirstName = firstName,
+                    LastName = lastName,
+                    DateOfBirth = dateOfBirth,
+                    Height = height,
+                    Weight = weight,
+                    DrivingLicenseCategory = drivingLicenseCategory,
+                };
+                result.Add(record);
+                index += 270;
+            }
+
+            return new FileCabinetServiceSnapshot(result);
         }
     }
 }
