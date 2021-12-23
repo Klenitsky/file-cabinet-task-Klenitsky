@@ -23,6 +23,7 @@ namespace FileCabinetApp
         {
             this.fileStream = fileStream;
             this.validator = validator;
+            this.id = (int)(this.fileStream.Length / 270) + 1;
         }
 
         /// <summary>
@@ -86,7 +87,52 @@ namespace FileCabinetApp
         /// <returns>Array of records.</returns>
         public IReadOnlyCollection<FileCabinetRecord> GetRecords()
         {
-            throw new NotImplementedException();
+            List<FileCabinetRecord> result = new List<FileCabinetRecord>();
+            if (this.fileStream.Length % 270 != 0)
+            {
+                return result;
+            }
+
+            int index = 0;
+            this.fileStream.Seek(index, SeekOrigin.Begin);
+            while (index < this.fileStream.Length)
+            {
+                FileCabinetRecord record;
+                byte[] buffer = new byte[270];
+                this.fileStream.Read(buffer, 0, buffer.Length);
+                byte[] recordIdBuf = buffer[2..6];
+                byte[] firstNameBuf = buffer[6..126];
+                byte[] lastNameBuf = buffer[126..246];
+                byte[] yearBuf = buffer[246..250];
+                byte[] monthBuf = buffer[250..254];
+                byte[] dayBuf = buffer[254..258];
+                byte[] heightBuf = buffer[258..260];
+                byte[] weightBuf = buffer[260..268];
+                byte[] drivingLicenseCategoryBuf = buffer[268..270];
+
+                int recordId = BitConverter.ToInt32(recordIdBuf);
+                string firstName = Encoding.UTF8.GetString(firstNameBuf);
+                string lastName = Encoding.UTF8.GetString(lastNameBuf);
+                DateTime dateOfBirth = new DateTime(BitConverter.ToInt32(yearBuf), BitConverter.ToInt32(monthBuf), BitConverter.ToInt32(dayBuf));
+                short height = BitConverter.ToInt16(heightBuf);
+                decimal weight = new decimal(BitConverter.ToDouble(weightBuf));
+                char drivingLicenseCategory = Encoding.UTF8.GetString(drivingLicenseCategoryBuf)[0];
+
+                record = new FileCabinetRecord
+                {
+                    Id = recordId,
+                    FirstName = firstName,
+                    LastName = lastName,
+                    DateOfBirth = dateOfBirth,
+                    Height = height,
+                    Weight = weight,
+                    DrivingLicenseCategory = drivingLicenseCategory,
+                };
+                result.Add(record);
+                index += 270;
+            }
+
+            return result;
         }
 
         /// <summary>
@@ -95,7 +141,7 @@ namespace FileCabinetApp
         /// <returns>Number of records.</returns>
         public int GetStat()
         {
-            return this.id;
+            return this.id - 1;
         }
 
         /// <summary>
