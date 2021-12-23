@@ -18,6 +18,7 @@ namespace FileCabinetApp
         private const int DescriptionHelpIndex = 1;
         private const int ExplanationHelpIndex = 2;
         private static bool isCustom;
+        private static FileStream fileStream = File.Open("cabinet-records.db", FileMode.OpenOrCreate);
 
         private static bool isRunning = true;
 
@@ -45,7 +46,7 @@ namespace FileCabinetApp
             new string[] { "export", "exports the data into file", "The 'export' exports the data." },
         };
 
-        private static IFileCabinetService fileCabinetService = new FileCabinetService(new DefaultValidator());
+        private static IFileCabinetService fileCabinetService = new FileCabinetFilesystemService(fileStream, new DefaultValidator());
 
         /// <summary>
         /// The main function of the application.
@@ -58,14 +59,47 @@ namespace FileCabinetApp
             {
                 if (args[0] == "-v" && args[1].ToLower(CultureInfo.CurrentCulture) == "custom")
                 {
-                    fileCabinetService = new FileCabinetService(new CustomValidator());
+                    fileCabinetService = new FileCabinetMemoryService(new CustomValidator());
                     isCustom = true;
                 }
 
                 if (args[0].Contains("--validation-rules=", StringComparison.InvariantCulture) && args[0][19..].ToLower(CultureInfo.CurrentCulture) == "custom")
                 {
-                    fileCabinetService = new FileCabinetService(new CustomValidator());
+                    fileCabinetService = new FileCabinetMemoryService(new CustomValidator());
                     isCustom = true;
+                }
+
+                if (args[0] == "--storage" || args[0] == "-s")
+                {
+                    if (args[1].ToLower(CultureInfo.CurrentCulture) == "memory")
+                    {
+                        if (isCustom)
+                        {
+                            fileCabinetService = new FileCabinetMemoryService(new CustomValidator());
+                            Console.WriteLine($"Using memory.");
+                        }
+                        else
+                        {
+                            fileCabinetService = new FileCabinetMemoryService(new DefaultValidator());
+                            Console.WriteLine($"Using memory.");
+                        }
+                    }
+                    else
+                    {
+                        if (args[1].ToLower(CultureInfo.CurrentCulture) == "file")
+                        {
+                            if (isCustom)
+                            {
+                                fileCabinetService = new FileCabinetFilesystemService(fileStream, new CustomValidator());
+                                Console.WriteLine($"Using filesystem.");
+                            }
+                            else
+                            {
+                                fileCabinetService = new FileCabinetFilesystemService(fileStream, new DefaultValidator());
+                                Console.WriteLine($"Using filesystem.");
+                            }
+                        }
+                    }
                 }
             }
 
@@ -146,6 +180,7 @@ namespace FileCabinetApp
         {
             Console.WriteLine("Exiting an application...");
             isRunning = false;
+            fileStream.Close();
         }
 
         private static void Stat(string parameters)
@@ -234,7 +269,7 @@ namespace FileCabinetApp
 
             if (property.ToString().ToLower(CultureInfo.CurrentCulture) == "firstname".ToLower(CultureInfo.CurrentCulture))
             {
-                StringBuilder name = new StringBuilder(parameters, index + 2, parameters.Length - (index + 3), 255);
+                StringBuilder name = new StringBuilder(parameters, index + 1, parameters.Length - (index + 1), 255);
                 while ((name.Length < 2) || (name.Length > 60))
                 {
                     Console.WriteLine("First name is invalid, try again: ");
@@ -247,7 +282,7 @@ namespace FileCabinetApp
 
             if (property.ToString().ToLower(CultureInfo.CurrentCulture) == "lastname".ToLower(CultureInfo.CurrentCulture))
             {
-                StringBuilder name = new StringBuilder(parameters, index + 2, parameters.Length - index - 3, 255);
+                StringBuilder name = new StringBuilder(parameters, index + 1, parameters.Length - index - 1, 255);
                 while ((name.Length < 2) || (name.Length > 60))
                 {
                     Console.WriteLine("First name is invalid, try again: ");
@@ -260,7 +295,7 @@ namespace FileCabinetApp
 
             if (property.ToString().ToLower(CultureInfo.CurrentCulture) == "dateofbirth".ToLower(CultureInfo.CurrentCulture))
             {
-                StringBuilder date = new StringBuilder(parameters, index + 2, parameters.Length - index - 3, 255);
+                StringBuilder date = new StringBuilder(parameters, index + 1, parameters.Length - index - 1, 255);
                 DateTime dateTime;
                 bool success = DateTime.TryParse(date.ToString(), out dateTime);
                 while (!success)
