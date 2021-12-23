@@ -141,7 +141,7 @@ namespace FileCabinetApp
         /// <returns>Number of records.</returns>
         public int GetStat()
         {
-            return this.id - 1;
+            return (int)(this.fileStream.Length / 270);
         }
 
         /// <summary>
