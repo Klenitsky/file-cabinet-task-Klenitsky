@@ -11,14 +11,18 @@ namespace FileCabinetApp
     public class FileCabinetFilesystemService : IFileCabinetService
     {
         private readonly FileStream fileStream;
+        private readonly IRecordValidator validator;
+        private int id = 1;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FileCabinetFilesystemService"/> class.
         /// </summary>
-        /// <param name="fileStream">Filestream providet.</param>
-        public FileCabinetFilesystemService(FileStream fileStream)
+        /// <param name="fileStream">Filestream provided.</param>
+        /// <param name="validator">Validator provided.</param>
+        public FileCabinetFilesystemService(FileStream fileStream, IRecordValidator validator)
         {
             this.fileStream = fileStream;
+            this.validator = validator;
         }
 
         /// <summary>
@@ -28,7 +32,52 @@ namespace FileCabinetApp
         /// <returns>New record's Id.</returns>
         public int CreateRecord(Arguments arguments)
         {
-            throw new NotImplementedException();
+            if (arguments == null)
+            {
+                throw new ArgumentNullException(nameof(arguments));
+            }
+
+            this.validator.ValidateParameters(arguments);
+            short st = 1;
+            byte[] status = BitConverter.GetBytes(st);
+            byte[] recordId = BitConverter.GetBytes(this.id);
+            byte[] firstName = Encoding.UTF8.GetBytes(arguments.FirstName);
+
+            byte[] firstNameResult = new byte[120];
+            for (int i = 0; i < firstName.Length; i++)
+            {
+                firstNameResult[i] = firstName[i];
+            }
+
+            byte[] lastName = Encoding.UTF8.GetBytes(arguments.LastName);
+            byte[] lastNameResult = new byte[120];
+            for (int i = 0; i < lastName.Length; i++)
+            {
+                lastNameResult[i] = lastName[i];
+            }
+
+            byte[] year = BitConverter.GetBytes(arguments.DateOfBirth.Year);
+            byte[] month = BitConverter.GetBytes(arguments.DateOfBirth.Month);
+            byte[] day = BitConverter.GetBytes(arguments.DateOfBirth.Day);
+
+            byte[] height = BitConverter.GetBytes(arguments.Height);
+            byte[] weight = BitConverter.GetBytes(decimal.ToDouble(arguments.Weight));
+            byte[] drivingLicenseCategory = BitConverter.GetBytes(arguments.DrivingLicenseCategory);
+            this.id++;
+
+            this.fileStream.Write(status, 0, status.Length);
+            this.fileStream.Write(recordId, 0, recordId.Length);
+            this.fileStream.Write(firstNameResult, 0, firstNameResult.Length);
+            this.fileStream.Write(lastNameResult, 0, lastNameResult.Length);
+            this.fileStream.Write(year, 0, year.Length);
+            this.fileStream.Write(month, 0, month.Length);
+            this.fileStream.Write(day, 0, day.Length);
+            this.fileStream.Write(height, 0, height.Length);
+            this.fileStream.Write(weight, 0, weight.Length);
+            this.fileStream.Write(drivingLicenseCategory, 0, drivingLicenseCategory.Length);
+            this.fileStream.Flush();
+
+            return this.id;
         }
 
         /// <summary>
@@ -46,7 +95,7 @@ namespace FileCabinetApp
         /// <returns>Number of records.</returns>
         public int GetStat()
         {
-            throw new NotImplementedException();
+            return this.id;
         }
 
         /// <summary>

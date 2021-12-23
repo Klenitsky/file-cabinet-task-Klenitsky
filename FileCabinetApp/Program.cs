@@ -46,7 +46,7 @@ namespace FileCabinetApp
             new string[] { "export", "exports the data into file", "The 'export' exports the data." },
         };
 
-        private static IFileCabinetService fileCabinetService = new FileCabinetMemoryService(new DefaultValidator());
+        private static IFileCabinetService fileCabinetService = new FileCabinetFilesystemService(fileStream, new DefaultValidator());
 
         /// <summary>
         /// The main function of the application.
@@ -73,13 +73,31 @@ namespace FileCabinetApp
                 {
                     if (args[1].ToLower(CultureInfo.CurrentCulture) == "memory")
                     {
-                        fileCabinetService = new FileCabinetMemoryService(new DefaultValidator());
+                        if (isCustom)
+                        {
+                            fileCabinetService = new FileCabinetMemoryService(new CustomValidator());
+                            Console.WriteLine($"Using memory.");
+                        }
+                        else
+                        {
+                            fileCabinetService = new FileCabinetMemoryService(new DefaultValidator());
+                            Console.WriteLine($"Using memory.");
+                        }
                     }
                     else
                     {
                         if (args[1].ToLower(CultureInfo.CurrentCulture) == "file")
                         {
-                            fileCabinetService = new FileCabinetFilesystemService(fileStream);
+                            if (isCustom)
+                            {
+                                fileCabinetService = new FileCabinetFilesystemService(fileStream, new CustomValidator());
+                                Console.WriteLine($"Using filesystem.");
+                            }
+                            else
+                            {
+                                fileCabinetService = new FileCabinetFilesystemService(fileStream, new DefaultValidator());
+                                Console.WriteLine($"Using filesystem.");
+                            }
                         }
                     }
                 }
