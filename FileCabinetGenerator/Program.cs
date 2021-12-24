@@ -233,6 +233,7 @@ namespace FileCabinetGenerator
             }
 
             serializer.Serialize(XmlWriter.Create(filename,settings),new RecordsXml(array));
+            Console.WriteLine(amount + " records were written to " + filename);
 
         }
     }

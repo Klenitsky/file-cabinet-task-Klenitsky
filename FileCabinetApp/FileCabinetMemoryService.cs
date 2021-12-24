@@ -209,5 +209,30 @@ namespace FileCabinetApp
         {
             return new FileCabinetServiceSnapshot(this.list);
         }
+
+        /// <summary>
+        /// Adds records loaded from file.
+        /// </summary>
+        /// <param name="snapshot">Properties of the record.</param>
+        public void Restore(FileCabinetServiceSnapshot snapshot)
+        {
+            if (snapshot == null)
+            {
+                throw new ArgumentNullException(nameof(snapshot));
+            }
+
+            foreach (FileCabinetRecord record in snapshot.Records)
+            {
+                if (record.Id < this.list.Count)
+                {
+                    this.EditRecord(record.Id, new Arguments(record.FirstName, record.LastName, record.DateOfBirth, record.Height, record.Weight, record.DrivingLicenseCategory));
+                }
+                else
+                {
+                    this.CreateRecord(new Arguments(record.FirstName, record.LastName, record.DateOfBirth, record.Height, record.Weight, record.DrivingLicenseCategory));
+                    this.list[this.list.Count - 1].Id = record.Id;
+                }
+            }
+        }
     }
 }

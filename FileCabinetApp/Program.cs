@@ -32,6 +32,7 @@ namespace FileCabinetApp
             new Tuple<string, Action<string>>("edit", Edit),
             new Tuple<string, Action<string>>("find", Find),
             new Tuple<string, Action<string>>("export", Export),
+            new Tuple<string, Action<string>>("import", Import),
         };
 
         private static string[][] helpMessages = new string[][]
@@ -43,7 +44,8 @@ namespace FileCabinetApp
             new string[] { "list", "returns a list of records", "The 'list' command returns a list of recordscre." },
             new string[] { "edit", "edits the record with entered id.", "The 'edit' command edits the record with entered id" },
             new string[] { "find", "finds the record according to the parameters.", "The 'edit' command finds the record according to the parameters." },
-            new string[] { "export", "exports the data into file", "The 'export' exports the data." },
+            new string[] { "export", "exports the data into file", "The 'export' command exports the data." },
+            new string[] { "import", "imports the data from file", "The 'import' command imports the data." },
         };
 
         private static IFileCabinetService fileCabinetService = new FileCabinetFilesystemService(fileStream, new DefaultValidator());
@@ -380,6 +382,29 @@ namespace FileCabinetApp
                 {
                     Console.WriteLine("Export failed: can't open file " + filename + ".");
                 }
+            }
+        }
+
+        private static void Import(string parameters)
+        {
+            string[] parametersArray = parameters.Split(' ');
+            if (parametersArray[0] == "csv")
+            {
+                StreamReader file = null;
+                try
+                {
+                    file = new StreamReader(parametersArray[1]);
+                }
+                catch (FileNotFoundException)
+                {
+                    Console.WriteLine("Import error: file  " + parametersArray[1] + " is not exist.");
+                }
+
+                FileCabinetServiceSnapshot snapshot = new FileCabinetServiceSnapshot(new List<FileCabinetRecord>());
+                snapshot.LoadFromCsv(file);
+                fileCabinetService.Restore(snapshot);
+                file.Close();
+                Console.WriteLine(snapshot.Records.Count + " records were imported from " + parametersArray[1]);
             }
         }
 
