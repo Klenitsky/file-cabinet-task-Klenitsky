@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text;
 
 namespace FileCabinetGenerator
 {
-    class FileCabinetRecord
+    public class FileCabinetRecord
     {
         /// <summary>
         /// Gets or sets id of a person.
@@ -80,4 +81,4 @@ namespace FileCabinetGenerator
         }
     }
 }
-}
+
