@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 
 namespace FileCabinetGenerator
@@ -110,6 +111,12 @@ namespace FileCabinetGenerator
             }
 
             Console.WriteLine("Filename" + filename);
+
+            List<FileCabinetRecord> list O
+            for(int i=0; i < amount; i++)
+            {
+
+            }
         }
     }
 }
