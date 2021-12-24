@@ -345,6 +345,23 @@
             </summary>
             <param name="record">A record to write.</param>
         </member>
+        <member name="T:FileCabinetApp.FileCabinetRecordXmlReader">
+            <summary>
+            Reads the record from csv file.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetRecordXmlReader.#ctor(System.IO.StreamReader)">
+            <summary>
+            Initializes a new instance of the <see cref="T:FileCabinetApp.FileCabinetRecordXmlReader"/> class.
+            </summary>
+            <param name="reader"> Reader provided.</param>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetRecordXmlReader.ReadAll">
+            <summary>
+            Reads records from the file.
+            </summary>
+            <returns> List of records.</returns>
+        </member>
         <member name="T:FileCabinetApp.FileCabinetRecordXmlWriter">
             <summary>
             Writes the information in csv file.
@@ -394,6 +411,12 @@
             <param name="stream">Stream for saving.</param>
         </member>
         <member name="M:FileCabinetApp.FileCabinetServiceSnapshot.LoadFromCsv(System.IO.StreamReader)">
+            <summary>
+            Saves the information in xml format.
+            </summary>
+            <param name="stream">Stream for reading.</param>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetServiceSnapshot.LoadFromXml(System.IO.StreamReader)">
             <summary>
             Saves the information in xml format.
             </summary>
@@ -485,6 +508,104 @@
             The main function of the application.
             </summary>
             <param name="args">Array of arguments.</param>
+        </member>
+        <member name="T:FileCabinetApp.XmlName">
+            <summary>
+            Calss of xml name.
+            </summary>
+        </member>
+        <member name="P:FileCabinetApp.XmlName.First">
+            <summary>
+            Gets or sets firstname.
+            </summary>
+            <value>
+            Firstname.
+            </value>
+        </member>
+        <member name="P:FileCabinetApp.XmlName.Last">
+            <summary>
+            Gets or sets last.
+            </summary>
+            <value>
+            LastName.
+            </value>
+        </member>
+        <member name="T:FileCabinetApp.XmlRecord">
+            <summary>
+            Xml Record  class.
+            </summary>
+        </member>
+        <member name="P:FileCabinetApp.XmlRecord.Id">
+            <summary>
+            Gets or sets id .
+            </summary>
+            <value>
+            Id.
+            </value>
+        </member>
+        <member name="P:FileCabinetApp.XmlRecord.Name">
+            <summary>
+            Gets or sets Name .
+            </summary>
+            <value>
+            Name.
+            </value>
+        </member>
+        <member name="P:FileCabinetApp.XmlRecord.DateOfBirth">
+            <summary>
+            Gets or sets Date of Birth .
+            </summary>
+            <value>
+            Date of birth.
+            </value>
+        </member>
+        <member name="P:FileCabinetApp.XmlRecord.Height">
+            <summary>
+            Gets or sets height.
+            </summary>
+            <value>
+            Height.
+            </value>
+        </member>
+        <member name="P:FileCabinetApp.XmlRecord.Weight">
+            <summary>
+            Gets or sets weight.
+            </summary>
+            <value>
+            Weight.
+            </value>
+        </member>
+        <member name="P:FileCabinetApp.XmlRecord.DrivingLicenseCategory">
+            <summary>
+            Gets or sets driving license category.
+            </summary>
+            <value>
+            Driving license category.
+            </value>
+        </member>
+        <member name="T:FileCabinetApp.XmlRecords">
+            <summary>
+            XmlRecords array class.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.XmlRecords.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:FileCabinetApp.XmlRecords"/> class.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.XmlRecords.#ctor(System.Collections.Generic.List{FileCabinetApp.XmlRecord})">
+            <summary>
+            Initializes a new instance of the <see cref="T:FileCabinetApp.XmlRecords"/> class.
+            </summary>
+            <param name="records">List of records provided.</param>
+        </member>
+        <member name="P:FileCabinetApp.XmlRecords.Records">
+            <summary>
+            Gets list of xml records.
+            </summary>
+            <value>
+            List of xml records.
+            </value>
         </member>
     </members>
 </doc>

@@ -97,5 +97,18 @@ namespace FileCabinetApp
             listOfRecords.CopyTo(this.list, 0);
             this.Records = (IReadOnlyCollection<FileCabinetRecord>)listOfRecords;
         }
+
+        /// <summary>
+        /// Saves the information in xml format.
+        /// </summary>
+        /// <param name="stream">Stream for reading.</param>
+        public void LoadFromXml(StreamReader stream)
+        {
+            FileCabinetRecordXmlReader reader = new FileCabinetRecordXmlReader(stream);
+            IList<FileCabinetRecord> listOfRecords = reader.ReadAll();
+            this.list = new FileCabinetRecord[listOfRecords.Count];
+            listOfRecords.CopyTo(this.list, 0);
+            this.Records = (IReadOnlyCollection<FileCabinetRecord>)listOfRecords;
+        }
     }
 }

@@ -491,8 +491,8 @@ namespace FileCabinetApp
                 }
                 else
                 {
+                    this.id = record.Id;
                     this.CreateRecord(new Arguments(record.FirstName, record.LastName, record.DateOfBirth, record.Height, record.Weight, record.DrivingLicenseCategory));
-                    this.id++;
                 }
             }
         }

@@ -406,6 +406,25 @@ namespace FileCabinetApp
                 file.Close();
                 Console.WriteLine(snapshot.Records.Count + " records were imported from " + parametersArray[1]);
             }
+
+            if (parametersArray[0] == "xml")
+            {
+                StreamReader file = null;
+                try
+                {
+                    file = new StreamReader(parametersArray[1]);
+                }
+                catch (FileNotFoundException)
+                {
+                    Console.WriteLine("Import error: file  " + parametersArray[1] + " is not exist.");
+                }
+
+                FileCabinetServiceSnapshot snapshot = new FileCabinetServiceSnapshot(new List<FileCabinetRecord>());
+                snapshot.LoadFromXml(file);
+                fileCabinetService.Restore(snapshot);
+                file.Close();
+                Console.WriteLine(snapshot.Records.Count + " records were imported from " + parametersArray[1]);
+            }
         }
 
         private static void EnterParameters(out string firstName, out string lastName, out DateTime dateOfBirth, out short height, out decimal weight, out char drivingLicenseCategory)
