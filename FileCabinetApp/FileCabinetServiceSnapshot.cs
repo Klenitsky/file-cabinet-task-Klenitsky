@@ -11,7 +11,7 @@ namespace FileCabinetApp
     /// </summary>
     public class FileCabinetServiceSnapshot
     {
-        private readonly FileCabinetRecord[] list;
+        private FileCabinetRecord[] list;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FileCabinetServiceSnapshot"/> class.
@@ -26,6 +26,14 @@ namespace FileCabinetApp
 
             this.list = lst.ToArray();
         }
+
+        /// <summary>
+        /// Gets or sets records to load.
+        /// </summary>
+        /// <value>
+        /// Collecton of records.
+        /// </value>
+        public IReadOnlyCollection<FileCabinetRecord> Records { get; set; }
 
         /// <summary>
         /// Saves the information in csv format.
@@ -75,6 +83,32 @@ namespace FileCabinetApp
 
             xmlWriter.WriteEndElement();
             xmlWriter.Flush();
+        }
+
+        /// <summary>
+        /// Saves the information in xml format.
+        /// </summary>
+        /// <param name="stream">Stream for reading.</param>
+        public void LoadFromCsv(StreamReader stream)
+        {
+            FileCabinetRecordCsvReader reader = new FileCabinetRecordCsvReader(stream);
+            IList<FileCabinetRecord> listOfRecords = reader.ReadAll();
+            this.list = new FileCabinetRecord[listOfRecords.Count];
+            listOfRecords.CopyTo(this.list, 0);
+            this.Records = (IReadOnlyCollection<FileCabinetRecord>)listOfRecords;
+        }
+
+        /// <summary>
+        /// Saves the information in xml format.
+        /// </summary>
+        /// <param name="stream">Stream for reading.</param>
+        public void LoadFromXml(StreamReader stream)
+        {
+            FileCabinetRecordXmlReader reader = new FileCabinetRecordXmlReader(stream);
+            IList<FileCabinetRecord> listOfRecords = reader.ReadAll();
+            this.list = new FileCabinetRecord[listOfRecords.Count];
+            listOfRecords.CopyTo(this.list, 0);
+            this.Records = (IReadOnlyCollection<FileCabinetRecord>)listOfRecords;
         }
     }
 }

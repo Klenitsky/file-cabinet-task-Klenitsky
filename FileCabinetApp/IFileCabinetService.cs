@@ -62,5 +62,11 @@ namespace FileCabinetApp
         /// </summary>
         /// <returns>A snapshot of this service.</returns>
         public FileCabinetServiceSnapshot MakeSnapshot();
+
+        /// <summary>
+        /// Adds records loaded from file.
+        /// </summary>
+        /// <param name="snapshot">Properties of the record.</param>
+        public void Restore(FileCabinetServiceSnapshot snapshot);
     }
 }
