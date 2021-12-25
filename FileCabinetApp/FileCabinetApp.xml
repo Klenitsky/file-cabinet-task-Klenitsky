@@ -167,6 +167,42 @@
             </summary>
             <param name="snapshot">Properties of the record.</param>
         </member>
+        <member name="M:FileCabinetApp.FileCabinetFilesystemService.Remove(System.Int32)">
+            <summary>
+            Removes a record.
+            </summary>
+            <param name="id">Id of a record to remove.</param>
+            <returns>A bool result of removing.</returns>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetFilesystemService.GetID">
+            <summary>
+            Gets the Id of the last record.
+            </summary>
+            <returns>Int id.</returns>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetFilesystemService.Purge">
+            <summary>
+            Purges deleted records.
+            </summary>
+            <returns>Num of purged records.</returns>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetFilesystemService.Dispose">
+            <summary>
+            Disposes service.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetFilesystemService.GetDeletedStat">
+            <summary>
+            Gets the number of deleted records.
+            </summary>
+            <returns>Int id.</returns>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetFilesystemService.Dispose(System.Boolean)">
+            <summary>
+            Disposes service.
+            </summary>
+            <param name="disposing">Indicator.</param>
+        </member>
         <member name="T:FileCabinetApp.FileCabinetMemoryService">
             <summary>
             Stores a list of records.
@@ -243,6 +279,31 @@
             Adds records loaded from file.
             </summary>
             <param name="snapshot">Properties of the record.</param>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetMemoryService.Remove(System.Int32)">
+            <summary>
+            Removes a record.
+            </summary>
+            <param name="id">Id of a record to remove.</param>
+            <returns>A bool result of removing.</returns>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetMemoryService.GetID">
+            <summary>
+            Gets the Id of the last record.
+            </summary>
+            <returns>Int id.</returns>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetMemoryService.Purge">
+            <summary>
+            Purges deleted records.
+            </summary>
+            <returns>Amount of purged values.</returns>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetMemoryService.GetDeletedStat">
+            <summary>
+            Gets the number of deleted records.
+            </summary>
+            <returns>Int id.</returns>
         </member>
         <member name="T:FileCabinetApp.FileCabinetRecord">
             <summary>
@@ -486,6 +547,31 @@
             Adds records loaded from file.
             </summary>
             <param name="snapshot">Properties of the record.</param>
+        </member>
+        <member name="M:FileCabinetApp.IFileCabinetService.Remove(System.Int32)">
+            <summary>
+            Removes a record.
+            </summary>
+            <param name="id">Id of a record to remove.</param>
+            <returns>A bool result of removing.</returns>
+        </member>
+        <member name="M:FileCabinetApp.IFileCabinetService.GetID">
+            <summary>
+            Gets the Id of the last record.
+            </summary>
+            <returns>Int id.</returns>
+        </member>
+        <member name="M:FileCabinetApp.IFileCabinetService.Purge">
+            <summary>
+            Purges deleted records.
+            </summary>
+            <returns>Amount of purged records.</returns>
+        </member>
+        <member name="M:FileCabinetApp.IFileCabinetService.GetDeletedStat">
+            <summary>
+            Gets the number of deleted records.
+            </summary>
+            <returns>Int id.</returns>
         </member>
         <member name="T:FileCabinetApp.IRecordValidator">
             <summary>

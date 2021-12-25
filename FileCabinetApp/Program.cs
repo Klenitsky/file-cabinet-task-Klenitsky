@@ -33,6 +33,8 @@ namespace FileCabinetApp
             new Tuple<string, Action<string>>("find", Find),
             new Tuple<string, Action<string>>("export", Export),
             new Tuple<string, Action<string>>("import", Import),
+            new Tuple<string, Action<string>>("remove", Remove),
+            new Tuple<string, Action<string>>("purge", Purge),
         };
 
         private static string[][] helpMessages = new string[][]
@@ -46,6 +48,8 @@ namespace FileCabinetApp
             new string[] { "find", "finds the record according to the parameters.", "The 'edit' command finds the record according to the parameters." },
             new string[] { "export", "exports the data into file", "The 'export' command exports the data." },
             new string[] { "import", "imports the data from file", "The 'import' command imports the data." },
+            new string[] { "remove", "removes the record with selected id", "The 'remove' command removes records." },
+            new string[] { "purge", "purges deleted records", "The 'purge' command purges deleted records." },
         };
 
         private static IFileCabinetService fileCabinetService = new FileCabinetFilesystemService(fileStream, new DefaultValidator());
@@ -188,7 +192,8 @@ namespace FileCabinetApp
         private static void Stat(string parameters)
         {
             var recordsCount = Program.fileCabinetService.GetStat();
-            Console.WriteLine($"{recordsCount} record(s).");
+            int deletedCount = Program.fileCabinetService.GetDeletedStat();
+            Console.WriteLine($"{recordsCount} record(s).{deletedCount} records were deleted");
         }
 
         private static void Create(string parameters)
@@ -211,7 +216,7 @@ namespace FileCabinetApp
                     return;
             }
 
-            Console.WriteLine($"\nRecord #" + Program.fileCabinetService.GetStat().ToString(CultureInfo.CurrentCulture) + " created ");
+            Console.WriteLine($"\nRecord #" + Program.fileCabinetService.GetID().ToString(CultureInfo.InvariantCulture) + " created ");
         }
 
         private static void List(string parameters)
@@ -425,6 +430,33 @@ namespace FileCabinetApp
                 file.Close();
                 Console.WriteLine(snapshot.Records.Count + " records were imported from " + parametersArray[1]);
             }
+        }
+
+        private static void Remove(string parameters)
+        {
+            int removeId;
+            bool success = int.TryParse(parameters, out removeId);
+            if (!success)
+            {
+                Console.WriteLine("Error occured: Invalid Id");
+            }
+
+            success = fileCabinetService.Remove(removeId);
+            if (success)
+            {
+                Console.WriteLine("Record #" + removeId + " is removed.");
+            }
+            else
+            {
+                Console.WriteLine("Record #" + removeId + " doesn't exist.");
+            }
+        }
+
+        private static void Purge(string parameters)
+        {
+            int stat = fileCabinetService.GetStat();
+            int result = fileCabinetService.Purge();
+            Console.WriteLine("Data file processing is completed:" + result + " of " + stat + "  records were purged.");
         }
 
         private static void EnterParameters(out string firstName, out string lastName, out DateTime dateOfBirth, out short height, out decimal weight, out char drivingLicenseCategory)

@@ -68,5 +68,30 @@ namespace FileCabinetApp
         /// </summary>
         /// <param name="snapshot">Properties of the record.</param>
         public void Restore(FileCabinetServiceSnapshot snapshot);
+
+        /// <summary>
+        /// Removes a record.
+        /// </summary>
+        /// <param name="id">Id of a record to remove.</param>
+        /// <returns>A bool result of removing.</returns>
+        public bool Remove(int id);
+
+        /// <summary>
+        /// Gets the Id of the last record.
+        /// </summary>
+        /// <returns>Int id.</returns>
+        public int GetID();
+
+        /// <summary>
+        /// Purges deleted records.
+        /// </summary>
+        /// <returns>Amount of purged records.</returns>
+        public int Purge();
+
+        /// <summary>
+        /// Gets the number of deleted records.
+        /// </summary>
+        /// <returns>Int id.</returns>
+        public int GetDeletedStat();
     }
 }

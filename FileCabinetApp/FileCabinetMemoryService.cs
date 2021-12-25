@@ -15,6 +15,7 @@ namespace FileCabinetApp
         private readonly Dictionary<string, List<FileCabinetRecord>> lastNameDictionary = new Dictionary<string, List<FileCabinetRecord>>();
         private readonly Dictionary<string, List<FileCabinetRecord>> dateOfBirthDictionary = new Dictionary<string, List<FileCabinetRecord>>();
         private readonly IRecordValidator validator;
+        private int id = 1;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FileCabinetMemoryService"/> class.
@@ -41,9 +42,14 @@ namespace FileCabinetApp
             }
 
             this.validator.ValidateParameters(arguments);
+            if (this.list.Count > 0)
+            {
+                this.id = this.list[this.list.Count - 1].Id;
+            }
+
             var record = new FileCabinetRecord
             {
-                Id = this.list.Count + 1,
+                Id = this.id,
                 FirstName = arguments.FirstName,
                 LastName = arguments.LastName,
                 DateOfBirth = arguments.DateOfBirth,
@@ -51,6 +57,8 @@ namespace FileCabinetApp
                 Weight = arguments.Weight,
                 DrivingLicenseCategory = arguments.DrivingLicenseCategory,
             };
+
+            this.id++;
 
             if (!this.firstNameDictionary.ContainsKey(record.FirstName))
             {
@@ -233,6 +241,58 @@ namespace FileCabinetApp
                     this.list[this.list.Count - 1].Id = record.Id;
                 }
             }
+        }
+
+        /// <summary>
+        /// Removes a record.
+        /// </summary>
+        /// <param name="id">Id of a record to remove.</param>
+        /// <returns>A bool result of removing.</returns>
+        public bool Remove(int id)
+        {
+            bool hasFound = false;
+            for (int i = 0; i < this.list.Count; i++)
+            {
+                FileCabinetRecord record = this.list[i];
+                if (record.Id == id)
+                {
+                    this.list.Remove(record);
+                    this.firstNameDictionary[record.FirstName].Remove(record);
+                    this.lastNameDictionary[record.LastName].Remove(record);
+                    this.dateOfBirthDictionary[record.DateOfBirth.ToString(CultureInfo.CurrentCulture)].Remove(record);
+                    hasFound = true;
+                    i--;
+                }
+            }
+
+            return hasFound;
+        }
+
+        /// <summary>
+        /// Gets the Id of the last record.
+        /// </summary>
+        /// <returns>Int id.</returns>
+        public int GetID()
+        {
+            return this.id;
+        }
+
+        /// <summary>
+        /// Purges deleted records.
+        /// </summary>
+        /// <returns>Amount of purged values.</returns>
+        public int Purge()
+        {
+            return 0;
+        }
+
+        /// <summary>
+        /// Gets the number of deleted records.
+        /// </summary>
+        /// <returns>Int id.</returns>
+        public int GetDeletedStat()
+        {
+            return 0;
         }
     }
 }
