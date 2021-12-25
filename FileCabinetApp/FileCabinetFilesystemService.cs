@@ -8,10 +8,10 @@ namespace FileCabinetApp
     /// <summary>
     /// Service that works with FileStream.
     /// </summary>
-    public class FileCabinetFilesystemService : IFileCabinetService
+    public class FileCabinetFilesystemService : IFileCabinetService, IDisposable
     {
-        private readonly FileStream fileStream;
         private readonly IRecordValidator validator;
+        private FileStream fileStream;
         private int id = 1;
 
         /// <summary>
@@ -578,6 +578,84 @@ namespace FileCabinetApp
         public int GetID()
         {
             return this.id;
+        }
+
+        /// <summary>
+        /// Purges deleted records.
+        /// </summary>
+        /// <returns>Num of purged records.</returns>
+        public int Purge()
+        {
+            int result = (int)(this.fileStream.Length / 270);
+            List<FileCabinetRecord> lst = (List<FileCabinetRecord>)this.GetRecords();
+            this.fileStream.Seek(0, SeekOrigin.Begin);
+            string name = this.fileStream.Name;
+            this.fileStream.Close();
+            File.Delete(name);
+            this.fileStream = new FileStream(name, FileMode.CreateNew);
+            foreach (FileCabinetRecord record in lst)
+            {
+                short st = 0;
+                byte[] status = BitConverter.GetBytes(st);
+                byte[] recordId = BitConverter.GetBytes(record.Id);
+                byte[] firstName = Encoding.UTF8.GetBytes(record.FirstName);
+
+                byte[] firstNameResult = new byte[120];
+                for (int i = 0; i < firstName.Length; i++)
+                {
+                    firstNameResult[i] = firstName[i];
+                }
+
+                byte[] lastName = Encoding.UTF8.GetBytes(record.LastName);
+                byte[] lastNameResult = new byte[120];
+                for (int i = 0; i < lastName.Length; i++)
+                {
+                    lastNameResult[i] = lastName[i];
+                }
+
+                byte[] year = BitConverter.GetBytes(record.DateOfBirth.Year);
+                byte[] month = BitConverter.GetBytes(record.DateOfBirth.Month);
+                byte[] day = BitConverter.GetBytes(record.DateOfBirth.Day);
+
+                byte[] height = BitConverter.GetBytes(record.Height);
+                byte[] weight = BitConverter.GetBytes(decimal.ToDouble(record.Weight));
+                byte[] drivingLicenseCategory = BitConverter.GetBytes(record.DrivingLicenseCategory);
+                this.id++;
+
+                this.fileStream.Write(status, 0, status.Length);
+                this.fileStream.Write(recordId, 0, recordId.Length);
+                this.fileStream.Write(firstNameResult, 0, firstNameResult.Length);
+                this.fileStream.Write(lastNameResult, 0, lastNameResult.Length);
+                this.fileStream.Write(year, 0, year.Length);
+                this.fileStream.Write(month, 0, month.Length);
+                this.fileStream.Write(day, 0, day.Length);
+                this.fileStream.Write(height, 0, height.Length);
+                this.fileStream.Write(weight, 0, weight.Length);
+                this.fileStream.Write(drivingLicenseCategory, 0, drivingLicenseCategory.Length);
+                this.fileStream.Flush();
+                result--;
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Disposes service.
+        /// </summary>
+        public void Dispose()
+        {
+            this.Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Disposes service.
+        /// </summary>
+        /// <param name="disposing">Indicator.</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            this.fileStream.Dispose();
+
         }
     }
 }

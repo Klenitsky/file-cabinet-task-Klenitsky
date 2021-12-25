@@ -180,6 +180,23 @@
             </summary>
             <returns>Int id.</returns>
         </member>
+        <member name="M:FileCabinetApp.FileCabinetFilesystemService.Purge">
+            <summary>
+            Purges deleted records.
+            </summary>
+            <returns>Num of purged records.</returns>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetFilesystemService.Dispose">
+            <summary>
+            Disposes service.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetFilesystemService.Dispose(System.Boolean)">
+            <summary>
+            Disposes service.
+            </summary>
+            <param name="disposing">Indicator.</param>
+        </member>
         <member name="T:FileCabinetApp.FileCabinetMemoryService">
             <summary>
             Stores a list of records.
@@ -269,6 +286,12 @@
             Gets the Id of the last record.
             </summary>
             <returns>Int id.</returns>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetMemoryService.Purge">
+            <summary>
+            Purges deleted records.
+            </summary>
+            <returns>Amount of purged values.</returns>
         </member>
         <member name="T:FileCabinetApp.FileCabinetRecord">
             <summary>
@@ -525,6 +548,12 @@
             Gets the Id of the last record.
             </summary>
             <returns>Int id.</returns>
+        </member>
+        <member name="M:FileCabinetApp.IFileCabinetService.Purge">
+            <summary>
+            Purges deleted records.
+            </summary>
+            <returns>Amount of purged records.</returns>
         </member>
         <member name="T:FileCabinetApp.IRecordValidator">
             <summary>

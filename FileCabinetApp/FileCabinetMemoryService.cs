@@ -276,5 +276,14 @@ namespace FileCabinetApp
         {
             return this.id;
         }
+
+        /// <summary>
+        /// Purges deleted records.
+        /// </summary>
+        /// <returns>Amount of purged values.</returns>
+        public int Purge()
+        {
+            return 0;
+        }
     }
 }

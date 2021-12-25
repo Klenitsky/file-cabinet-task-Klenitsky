@@ -81,5 +81,11 @@ namespace FileCabinetApp
         /// </summary>
         /// <returns>Int id.</returns>
         public int GetID();
+
+        /// <summary>
+        /// Purges deleted records.
+        /// </summary>
+        /// <returns>Amount of purged records.</returns>
+        public int Purge();
     }
 }

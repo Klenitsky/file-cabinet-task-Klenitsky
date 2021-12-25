@@ -34,6 +34,7 @@ namespace FileCabinetApp
             new Tuple<string, Action<string>>("export", Export),
             new Tuple<string, Action<string>>("import", Import),
             new Tuple<string, Action<string>>("remove", Remove),
+            new Tuple<string, Action<string>>("purge", Purge),
         };
 
         private static string[][] helpMessages = new string[][]
@@ -48,6 +49,7 @@ namespace FileCabinetApp
             new string[] { "export", "exports the data into file", "The 'export' command exports the data." },
             new string[] { "import", "imports the data from file", "The 'import' command imports the data." },
             new string[] { "remove", "removes the record with selected id", "The 'remove' command removes records." },
+            new string[] { "purge", "purges deleted records", "The 'purge' command purges deleted records." },
         };
 
         private static IFileCabinetService fileCabinetService = new FileCabinetFilesystemService(fileStream, new DefaultValidator());
@@ -447,6 +449,13 @@ namespace FileCabinetApp
             {
                 Console.WriteLine("Record #" + removeId + " doesn't exist.");
             }
+        }
+
+        private static void Purge(string parameters)
+        {
+            int stat = fileCabinetService.GetStat();
+            int result = fileCabinetService.Purge();
+            Console.WriteLine("Data file processing is completed:" + result + " of " + stat + "  records were purged.");
         }
 
         private static void EnterParameters(out string firstName, out string lastName, out DateTime dateOfBirth, out short height, out decimal weight, out char drivingLicenseCategory)
