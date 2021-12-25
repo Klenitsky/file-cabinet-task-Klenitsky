@@ -191,6 +191,12 @@
             Disposes service.
             </summary>
         </member>
+        <member name="M:FileCabinetApp.FileCabinetFilesystemService.GetDeletedStat">
+            <summary>
+            Gets the number of deleted records.
+            </summary>
+            <returns>Int id.</returns>
+        </member>
         <member name="M:FileCabinetApp.FileCabinetFilesystemService.Dispose(System.Boolean)">
             <summary>
             Disposes service.
@@ -292,6 +298,12 @@
             Purges deleted records.
             </summary>
             <returns>Amount of purged values.</returns>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetMemoryService.GetDeletedStat">
+            <summary>
+            Gets the number of deleted records.
+            </summary>
+            <returns>Int id.</returns>
         </member>
         <member name="T:FileCabinetApp.FileCabinetRecord">
             <summary>
@@ -554,6 +566,12 @@
             Purges deleted records.
             </summary>
             <returns>Amount of purged records.</returns>
+        </member>
+        <member name="M:FileCabinetApp.IFileCabinetService.GetDeletedStat">
+            <summary>
+            Gets the number of deleted records.
+            </summary>
+            <returns>Int id.</returns>
         </member>
         <member name="T:FileCabinetApp.IRecordValidator">
             <summary>

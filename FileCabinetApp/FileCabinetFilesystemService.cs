@@ -13,6 +13,7 @@ namespace FileCabinetApp
         private readonly IRecordValidator validator;
         private FileStream fileStream;
         private int id = 1;
+        private int deleted;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FileCabinetFilesystemService"/> class.
@@ -148,7 +149,7 @@ namespace FileCabinetApp
         /// <returns>Number of records.</returns>
         public int GetStat()
         {
-            return (int)(this.fileStream.Length / 270);
+            return (int)(this.fileStream.Length / 270) - this.deleted;
         }
 
         /// <summary>
@@ -554,6 +555,7 @@ namespace FileCabinetApp
                 int recordId = BitConverter.ToInt32(recordIdBuf);
                 if (recordId == id)
                 {
+                    this.deleted++;
                     hasFound = true;
                     this.fileStream.Seek(index, SeekOrigin.Begin);
                     byte[] statusBuf = buffer[0..2];
@@ -636,6 +638,7 @@ namespace FileCabinetApp
                 result--;
             }
 
+            this.deleted = 0;
             return result;
         }
 
@@ -649,13 +652,21 @@ namespace FileCabinetApp
         }
 
         /// <summary>
+        /// Gets the number of deleted records.
+        /// </summary>
+        /// <returns>Int id.</returns>
+        public int GetDeletedStat()
+        {
+            return this.deleted;
+        }
+
+        /// <summary>
         /// Disposes service.
         /// </summary>
         /// <param name="disposing">Indicator.</param>
         protected virtual void Dispose(bool disposing)
         {
             this.fileStream.Dispose();
-
         }
     }
 }

@@ -285,5 +285,14 @@ namespace FileCabinetApp
         {
             return 0;
         }
+
+        /// <summary>
+        /// Gets the number of deleted records.
+        /// </summary>
+        /// <returns>Int id.</returns>
+        public int GetDeletedStat()
+        {
+            return 0;
+        }
     }
 }
