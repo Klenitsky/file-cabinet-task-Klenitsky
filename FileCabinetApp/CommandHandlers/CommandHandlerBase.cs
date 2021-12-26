@@ -9,7 +9,7 @@ namespace FileCabinetApp.CommandHandlers
     /// </summary>
     public class CommandHandlerBase : ICommandHandler
     {
-        private ICommandHandler nextHandler;
+        protected ICommandHandler nextHandler;
 
         /// <summary>
         /// Sets the next handler.

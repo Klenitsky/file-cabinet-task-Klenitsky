@@ -11,7 +11,7 @@ namespace FileCabinetApp.CommandHandlers
     /// </summary>
     public class CommandHandler : CommandHandlerBase
     {
-        private const int CommandHelpIndex = 0;
+      /*  private const int CommandHelpIndex = 0;
         private const int DescriptionHelpIndex = 1;
         private const int ExplanationHelpIndex = 2;
         private static string[][] helpMessages = new string[][]
@@ -47,7 +47,7 @@ namespace FileCabinetApp.CommandHandlers
                     break;
 
                 case "exit":
-                    Exit(request.Parameters);
+                    //Exit(request.Parameters);
                     break;
                 case "stat":
                     Stat(request.Parameters);
@@ -108,13 +108,6 @@ namespace FileCabinetApp.CommandHandlers
 
         Console.WriteLine();
     }
-
-        private static void Exit(string parameters)
-        {
-            Console.WriteLine("Exiting an application...");
-            Program.isRunning = false;
-            Program.fileStream.Close();
-        }
 
         private static void Stat(string parameters)
         {
@@ -593,6 +586,6 @@ namespace FileCabinetApp.CommandHandlers
             }
 
             return new Tuple<bool, string>(result, string.Empty);
-        }
+        }*/
     }
 }
