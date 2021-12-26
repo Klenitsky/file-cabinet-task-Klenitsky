@@ -7,9 +7,8 @@ namespace FileCabinetApp.CommandHandlers
     /// <summary>
     /// Handler of edit command.
     /// </summary>
-    public class EditCommandHandler : CommandHandlerBase
-    {
-        private static IFileCabinetService fileCabinetService = new FileCabinetMemoryService(new DefaultValidator());
+    public class EditCommandHandler : ServiceCommandHandlerBase
+    { 
 
         /// <summary>
         /// Initializes a new instance of the <see cref="EditCommandHandler"/> class.

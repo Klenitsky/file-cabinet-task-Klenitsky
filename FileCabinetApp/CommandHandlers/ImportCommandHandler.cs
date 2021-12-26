@@ -8,10 +8,8 @@ namespace FileCabinetApp.CommandHandlers
     /// <summary>
     /// Handler of import command.
     /// </summary>
-    public class ImportCommandHandler : CommandHandlerBase
+    public class ImportCommandHandler : ServiceCommandHandlerBase
     {
-        private static IFileCabinetService fileCabinetService = new FileCabinetMemoryService(new DefaultValidator());
-
         /// <summary>
         /// Initializes a new instance of the <see cref="ImportCommandHandler"/> class.
         /// </summary>

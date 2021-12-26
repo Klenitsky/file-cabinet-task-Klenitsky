@@ -7,10 +7,8 @@ namespace FileCabinetApp.CommandHandlers
     /// <summary>
     /// Handler of list command.
     /// </summary>
-    public class ListCommandHandler : CommandHandlerBase
+    public class ListCommandHandler : ServiceCommandHandlerBase
     {
-        private static IFileCabinetService fileCabinetService = new FileCabinetMemoryService(new DefaultValidator());
-
         /// <summary>
         /// Initializes a new instance of the <see cref="ListCommandHandler"/> class.
         /// </summary>

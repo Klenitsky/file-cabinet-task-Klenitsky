@@ -7,10 +7,8 @@ namespace FileCabinetApp.CommandHandlers
     /// <summary>
     /// Handler of Stat command.
     /// </summary>
-    public class StatCommandHandler : CommandHandlerBase
+    public class StatCommandHandler : ServiceCommandHandlerBase
     {
-        private static IFileCabinetService fileCabinetService = new FileCabinetMemoryService(new DefaultValidator());
-
         /// <summary>
         /// Initializes a new instance of the <see cref="StatCommandHandler"/> class.
         /// </summary>

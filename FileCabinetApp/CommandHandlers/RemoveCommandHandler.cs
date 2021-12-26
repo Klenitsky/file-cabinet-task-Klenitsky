@@ -7,10 +7,8 @@ namespace FileCabinetApp.CommandHandlers
     /// <summary>
     /// Handler of remove command.
     /// </summary>
-    public class RemoveCommandHandler : CommandHandlerBase
+    public class RemoveCommandHandler : ServiceCommandHandlerBase
     {
-        private static IFileCabinetService fileCabinetService = new FileCabinetMemoryService(new DefaultValidator());
-
         /// <summary>
         /// Initializes a new instance of the <see cref="RemoveCommandHandler"/> class.
         /// </summary>

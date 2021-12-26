@@ -7,10 +7,8 @@ namespace FileCabinetApp.CommandHandlers
     /// <summary>
     /// Handler of purge command.
     /// </summary>
-    public class PurgeCommandHandler : CommandHandlerBase
+    public class PurgeCommandHandler : ServiceCommandHandlerBase
     {
-        private static IFileCabinetService fileCabinetService = new FileCabinetMemoryService(new DefaultValidator());
-
         /// <summary>
         /// Initializes a new instance of the <see cref="PurgeCommandHandler"/> class.
         /// </summary>

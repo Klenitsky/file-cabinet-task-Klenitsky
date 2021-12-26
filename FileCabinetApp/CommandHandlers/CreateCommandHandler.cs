@@ -8,24 +8,23 @@ namespace FileCabinetApp.CommandHandlers
     /// <summary>
     /// Handler of Create command.
     /// </summary>
-    public class CreateCommandHandler : CommandHandlerBase
+    public class CreateCommandHandler : ServiceCommandHandlerBase
     {
-        private static IFileCabinetService fileCabinetService = new FileCabinetMemoryService(new DefaultValidator());
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CreateCommandHandler"/> class.
         /// </summary>
-        /// <param name="fileCabinetService">Service provided.</param>
-        public CreateCommandHandler(IFileCabinetService fileCabinetService)
+        /// <param name="service">Service provided.</param>
+        public CreateCommandHandler(IFileCabinetService service) 
         {
-            CreateCommandHandler.fileCabinetService = fileCabinetService;
+            fileCabinetService = service;
         }
 
         /// <summary>
         /// Handles the request.
         /// </summary>
         /// <param name="request">Request provided.</param>
-        public override void Handle(AppCommandRequest request)
+        public override void Handle(AppCommandRequest request) 
         {
             if (request == null)
             {
@@ -54,7 +53,7 @@ namespace FileCabinetApp.CommandHandlers
 
             try
             {
-                fileCabinetService.CreateRecord(new Arguments(firstName, lastName, dateTime, height, weight, drivingLicenseCategory));
+                 fileCabinetService.CreateRecord(new Arguments(firstName, lastName, dateTime, height, weight, drivingLicenseCategory));
             }
             catch (ArgumentException)
             {

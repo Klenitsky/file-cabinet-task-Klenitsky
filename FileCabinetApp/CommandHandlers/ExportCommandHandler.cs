@@ -8,10 +8,8 @@ namespace FileCabinetApp.CommandHandlers
     /// <summary>
     /// Handler of export command.
     /// </summary>
-    public class ExportCommandHandler : CommandHandlerBase
+    public class ExportCommandHandler : ServiceCommandHandlerBase
     {
-        private static IFileCabinetService fileCabinetService = new FileCabinetMemoryService(new DefaultValidator());
-
         /// <summary>
         /// Initializes a new instance of the <see cref="ExportCommandHandler"/> class.
         /// </summary>

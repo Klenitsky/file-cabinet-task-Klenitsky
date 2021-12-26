@@ -122,7 +122,7 @@
             <summary>
             Initializes a new instance of the <see cref="T:FileCabinetApp.CommandHandlers.CreateCommandHandler"/> class.
             </summary>
-            <param name="fileCabinetService">Service provided.</param>
+            <param name="service">Service provided.</param>
         </member>
         <member name="M:FileCabinetApp.CommandHandlers.CreateCommandHandler.Handle(FileCabinetApp.CommandHandlers.AppCommandRequest)">
             <summary>
@@ -298,6 +298,11 @@
             Handles the request.
             </summary>
             <param name="request">Request provided.</param>
+        </member>
+        <member name="T:FileCabinetApp.CommandHandlers.ServiceCommandHandlerBase">
+            <summary>
+            Handler of commands that need service.
+            </summary>
         </member>
         <member name="T:FileCabinetApp.CommandHandlers.StatCommandHandler">
             <summary>

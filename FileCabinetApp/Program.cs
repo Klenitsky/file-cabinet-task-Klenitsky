@@ -18,7 +18,7 @@ namespace FileCabinetApp
         public static bool isCustom;
         private static FileStream fileStream = File.Open("cabinet-records.db", FileMode.OpenOrCreate);
 
-        public static bool isRunning = true;
+        private static bool isRunning = true;
 
         private static IFileCabinetService fileCabinetService = new FileCabinetFilesystemService(fileStream, new DefaultValidator());
 
@@ -125,7 +125,7 @@ namespace FileCabinetApp
         private static FileCabinetApp.CommandHandlers.ICommandHandler CreateCommandHandlers()
         {
             var helpCommandHandler = new HelpCommandHandler();
-            var exitCommandHandler = new ExitCommandHandler();
+            var exitCommandHandler = new ExitCommandHandler(ExitOperation);
             var statCommandHandler = new StatCommandHandler(fileCabinetService);
             var createCommandHandler = new CreateCommandHandler(fileCabinetService);
             var listCommandHandler = new ListCommandHandler(fileCabinetService);
@@ -149,6 +149,11 @@ namespace FileCabinetApp
             removeCommandHandler.SetNext(purgeCommandHandler);
             purgeCommandHandler.SetNext(commandMissHandler);
             return helpCommandHandler;
+        }
+
+        private static void ExitOperation(bool status)
+        {
+            isRunning = status;
         }
     }
 }

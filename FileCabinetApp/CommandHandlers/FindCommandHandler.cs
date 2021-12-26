@@ -8,10 +8,8 @@ namespace FileCabinetApp.CommandHandlers
     /// <summary>
     /// Handler of find command.
     /// </summary>
-    public class FindCommandHandler : CommandHandlerBase
-    {
-        private static IFileCabinetService fileCabinetService = new FileCabinetMemoryService(new DefaultValidator());
-
+    public class FindCommandHandler : ServiceCommandHandlerBase
+    { 
         /// <summary>
         /// Initializes a new instance of the <see cref="FindCommandHandler"/> class.
         /// </summary>
