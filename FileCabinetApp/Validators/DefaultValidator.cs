@@ -8,31 +8,23 @@ namespace FileCabinetApp
     /// <summary>
     /// Validator with default settings.
     /// </summary>
-    public class DefaultValidator : IRecordValidator
+    public class DefaultValidator : CompositeValidator
     {
         /// <summary>
-        /// Checks the parameters.
+        /// Initializes a new instance of the <see cref="DefaultValidator"/> class.
         /// </summary>
-        /// <param name="arguments">Properties of the record.</param>
-        public void ValidateParameters(Arguments arguments)
+        public DefaultValidator()
+            : base(
+        new List<IRecordValidator>(new IRecordValidator[]
         {
-            if (arguments == null)
-            {
-                throw new ArgumentNullException(nameof(arguments));
-            }
-
-            DefaultFirstNameValidator firstNameValidator = new DefaultFirstNameValidator();
-            firstNameValidator.ValidateParameters(arguments);
-            DefaultLastNameValidator lastNameValidator = new DefaultLastNameValidator();
-            lastNameValidator.ValidateParameters(arguments);
-            DefaultDateOfBirthValidator dateOfBirthValidator = new DefaultDateOfBirthValidator();
-            dateOfBirthValidator.ValidateParameters(arguments);
-            DefaultHeightValidator heightValidator = new DefaultHeightValidator();
-            heightValidator.ValidateParameters(arguments);
-            DefaultWeightValidator weightValidator = new DefaultWeightValidator();
-            weightValidator.ValidateParameters(arguments);
-            DefaultDrivingLicenseCategoryValidator licenseValidator = new DefaultDrivingLicenseCategoryValidator();
-            licenseValidator.ValidateParameters(arguments);
+           new FirstNameValidator(2, 60),
+           new LastNameValidator(2, 60),
+           new DateOfBirthValidator(new DateTime(1950, 1, 1), DateTime.Today),
+           new HeightValidator(0, 250),
+           new WeightValidator(0, 180),
+           new DrivingLicenseCategoryValidator(new char[] { 'A', 'B', 'C', 'D' }),
+        }))
+        {
         }
     }
 }

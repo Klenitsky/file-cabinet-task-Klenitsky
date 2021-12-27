@@ -5,10 +5,24 @@ using System.Text;
 namespace FileCabinetApp.Validators
 {
     /// <summary>
-    /// Default firstname validator.
+    /// Validator of first name.
     /// </summary>
-    public class DefaultFirstNameValidator : IRecordValidator
+    public class FirstNameValidator : IRecordValidator
     {
+        private readonly int minLength;
+        private readonly int maxLength;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FirstNameValidator"/> class.
+        /// </summary>
+        /// <param name="min">min length.</param>
+        /// <param name="max">max length.</param>
+        public FirstNameValidator(int min, int max)
+        {
+            this.minLength = min;
+            this.maxLength = max;
+        }
+
         /// <summary>
         /// Checks the parameters.
         /// </summary>
@@ -20,17 +34,12 @@ namespace FileCabinetApp.Validators
                 throw new ArgumentNullException(nameof(arguments));
             }
 
-            this.ValidateFirstName(arguments);
-        }
-
-        private void ValidateFirstName(Arguments arguments)
-        {
             if (string.IsNullOrEmpty(arguments.FirstName))
             {
                 throw new ArgumentNullException(nameof(arguments));
             }
 
-            if ((arguments.FirstName.Length < 2) || (arguments.FirstName.Length > 60) || string.IsNullOrWhiteSpace(arguments.FirstName))
+            if ((arguments.FirstName.Length < this.minLength) || (arguments.FirstName.Length > this.maxLength) || string.IsNullOrWhiteSpace(arguments.FirstName))
             {
                 throw new ArgumentException("Invalid First Name", nameof(arguments));
             }

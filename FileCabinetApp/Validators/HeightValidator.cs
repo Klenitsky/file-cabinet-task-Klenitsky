@@ -5,10 +5,24 @@ using System.Text;
 namespace FileCabinetApp.Validators
 {
     /// <summary>
-    /// Default weight validator.
+    /// Validator of height.
     /// </summary>
-    public class DefaultWeightValidator : IRecordValidator
+    public class HeightValidator : IRecordValidator
     {
+        private readonly int minValue;
+        private readonly int maxValue;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="HeightValidator"/> class.
+        /// </summary>
+        /// <param name="min">min length.</param>
+        /// <param name="max">max length.</param>
+        public HeightValidator(int min, int max)
+        {
+            this.minValue = min;
+            this.maxValue = max;
+        }
+
         /// <summary>
         /// Checks the parameters.
         /// </summary>
@@ -20,12 +34,7 @@ namespace FileCabinetApp.Validators
                 throw new ArgumentNullException(nameof(arguments));
             }
 
-            this.ValidateWeight(arguments);
-        }
-
-        private void ValidateWeight(Arguments arguments)
-        {
-            if ((arguments.Weight < 0) || (arguments.Weight > 180))
+            if ((arguments.Height < this.minValue) || (arguments.Height > this.maxValue))
             {
                 throw new ArgumentException("Invalid height", nameof(arguments));
             }

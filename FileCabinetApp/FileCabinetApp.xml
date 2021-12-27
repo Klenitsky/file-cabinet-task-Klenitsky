@@ -328,7 +328,7 @@
             Service that works with FileStream.
             </summary>
         </member>
-        <member name="M:FileCabinetApp.FileCabinetFilesystemService.#ctor(System.IO.FileStream,FileCabinetApp.IRecordValidator)">
+        <member name="M:FileCabinetApp.FileCabinetFilesystemService.#ctor(System.IO.FileStream,FileCabinetApp.Validators.IRecordValidator)">
             <summary>
             Initializes a new instance of the <see cref="T:FileCabinetApp.FileCabinetFilesystemService"/> class.
             </summary>
@@ -439,7 +439,7 @@
             Stores a list of records.
             </summary>
         </member>
-        <member name="M:FileCabinetApp.FileCabinetMemoryService.#ctor(FileCabinetApp.IRecordValidator)">
+        <member name="M:FileCabinetApp.FileCabinetMemoryService.#ctor(FileCabinetApp.Validators.IRecordValidator)">
             <summary>
             Initializes a new instance of the <see cref="T:FileCabinetApp.FileCabinetMemoryService"/> class.
             Creates a new Record.
@@ -804,17 +804,6 @@
             </summary>
             <returns>Int id.</returns>
         </member>
-        <member name="T:FileCabinetApp.IRecordValidator">
-            <summary>
-            Interface for validators.
-            </summary>
-        </member>
-        <member name="M:FileCabinetApp.IRecordValidator.ValidateParameters(FileCabinetApp.Arguments)">
-            <summary>
-            Checks the parameters.
-            </summary>
-            <param name="arguments">Properties of the record.</param>
-        </member>
         <member name="T:FileCabinetApp.Program">
             <summary>
             The class of the programm.
@@ -826,133 +815,89 @@
             </summary>
             <param name="args">Array of arguments.</param>
         </member>
-        <member name="T:FileCabinetApp.Validators.CustomDateOfBirthValidator">
+        <member name="T:FileCabinetApp.Validators.CompositeValidator">
             <summary>
-            Custom date of birth validator.
+            Initializes a new instance of the <see cref="T:FileCabinetApp.Validators.CompositeValidator"/> class.
             </summary>
         </member>
-        <member name="M:FileCabinetApp.Validators.CustomDateOfBirthValidator.ValidateParameters(FileCabinetApp.Arguments)">
+        <member name="M:FileCabinetApp.Validators.CompositeValidator.#ctor(System.Collections.Generic.List{FileCabinetApp.Validators.IRecordValidator})">
             <summary>
-            Checks the parameters.
+            Initializes a new instance of the <see cref="T:FileCabinetApp.Validators.CompositeValidator"/> class.
             </summary>
-            <param name="arguments">Properties of the record.</param>
+            <param name="validators"> Validators provided.</param>
         </member>
-        <member name="T:FileCabinetApp.Validators.CustomDrivingLicenseCategoryValidator">
+        <member name="M:FileCabinetApp.Validators.CompositeValidator.ValidateParameters(FileCabinetApp.Arguments)">
             <summary>
-            Custom driving license validator.
+            Validates the parameters.
             </summary>
+            <param name="arguments"> Arguments provided.</param>
         </member>
-        <member name="M:FileCabinetApp.Validators.CustomDrivingLicenseCategoryValidator.ValidateParameters(FileCabinetApp.Arguments)">
+        <member name="T:FileCabinetApp.Validators.DateOfBirthValidator">
             <summary>
-            Checks the parameters.
-            </summary>
-            <param name="arguments">Properties of the record.</param>
-        </member>
-        <member name="T:FileCabinetApp.Validators.CustomFirstNameValidator">
-            <summary>
-            Custom firstname validator
+            Validator of date of birth.
             </summary>
         </member>
-        <member name="M:FileCabinetApp.Validators.CustomFirstNameValidator.ValidateParameters(FileCabinetApp.Arguments)">
+        <member name="M:FileCabinetApp.Validators.DateOfBirthValidator.#ctor(System.DateTime,System.DateTime)">
             <summary>
-            Checks the parameters.
+            Initializes a new instance of the <see cref="T:FileCabinetApp.Validators.DateOfBirthValidator"/> class.
             </summary>
-            <param name="arguments">Properties of the record.</param>
+            <param name="from">Start date</param>
+            <param name="to">End date.</param>
         </member>
-        <member name="T:FileCabinetApp.Validators.CustomHeightValidator">
-            <summary>
-            Custom height validator.
-            </summary>
-        </member>
-        <member name="M:FileCabinetApp.Validators.CustomHeightValidator.ValidateParameters(FileCabinetApp.Arguments)">
+        <member name="M:FileCabinetApp.Validators.DateOfBirthValidator.ValidateParameters(FileCabinetApp.Arguments)">
             <summary>
             Checks the parameters.
             </summary>
             <param name="arguments">Properties of the record.</param>
         </member>
-        <member name="T:FileCabinetApp.Validators.CustomLastNameValidator">
+        <member name="T:FileCabinetApp.Validators.DrivingLicenseCategoryValidator">
             <summary>
-            Custom last name validator.
+            Validator of driving license category.
             </summary>
         </member>
-        <member name="M:FileCabinetApp.Validators.CustomLastNameValidator.ValidateParameters(FileCabinetApp.Arguments)">
+        <member name="M:FileCabinetApp.Validators.DrivingLicenseCategoryValidator.#ctor(System.Char[])">
             <summary>
-            Checks the parameters.
+            Initializes a new instance of the <see cref="T:FileCabinetApp.Validators.DrivingLicenseCategoryValidator"/> class.
             </summary>
-            <param name="arguments">Properties of the record.</param>
+            <param name="categories">List of license categories</param>
         </member>
-        <member name="T:FileCabinetApp.Validators.CustomWeightValidator">
-            <summary>
-            Custom weight validator.
-            </summary>
-        </member>
-        <member name="M:FileCabinetApp.Validators.CustomWeightValidator.ValidateParameters(FileCabinetApp.Arguments)">
+        <member name="M:FileCabinetApp.Validators.DrivingLicenseCategoryValidator.ValidateParameters(FileCabinetApp.Arguments)">
             <summary>
             Checks the parameters.
             </summary>
             <param name="arguments">Properties of the record.</param>
         </member>
-        <member name="T:FileCabinetApp.Validators.DefaultDateOfBirthValidator">
+        <member name="T:FileCabinetApp.Validators.FirstNameValidator">
             <summary>
-            Default date of birth validator
+            Validator of first name.
             </summary>
         </member>
-        <member name="M:FileCabinetApp.Validators.DefaultDateOfBirthValidator.ValidateParameters(FileCabinetApp.Arguments)">
+        <member name="M:FileCabinetApp.Validators.FirstNameValidator.#ctor(System.Int32,System.Int32)">
             <summary>
-            Checks the parameters.
+            Initializes a new instance of the <see cref="T:FileCabinetApp.Validators.FirstNameValidator"/> class.
             </summary>
-            <param name="arguments">Properties of the record.</param>
+            <param name="min">min length.</param>
+            <param name="max">max length.</param>
         </member>
-        <member name="T:FileCabinetApp.Validators.DefaultDrivingLicenseCategoryValidator">
-            <summary>
-            Default driving license validator.
-            </summary>
-        </member>
-        <member name="M:FileCabinetApp.Validators.DefaultDrivingLicenseCategoryValidator.ValidateParameters(FileCabinetApp.Arguments)">
+        <member name="M:FileCabinetApp.Validators.FirstNameValidator.ValidateParameters(FileCabinetApp.Arguments)">
             <summary>
             Checks the parameters.
             </summary>
             <param name="arguments">Properties of the record.</param>
         </member>
-        <member name="T:FileCabinetApp.Validators.DefaultFirstNameValidator">
+        <member name="T:FileCabinetApp.Validators.HeightValidator">
             <summary>
-            Default firstname validator.
+            Validator of height.
             </summary>
         </member>
-        <member name="M:FileCabinetApp.Validators.DefaultFirstNameValidator.ValidateParameters(FileCabinetApp.Arguments)">
+        <member name="M:FileCabinetApp.Validators.HeightValidator.#ctor(System.Int32,System.Int32)">
             <summary>
-            Checks the parameters.
+            Initializes a new instance of the <see cref="T:FileCabinetApp.Validators.HeightValidator"/> class.
             </summary>
-            <param name="arguments">Properties of the record.</param>
+            <param name="min">min length.</param>
+            <param name="max">max length.</param>
         </member>
-        <member name="T:FileCabinetApp.Validators.DefaultHeightValidator">
-            <summary>
-            Default height validator.
-            </summary>
-        </member>
-        <member name="M:FileCabinetApp.Validators.DefaultHeightValidator.ValidateParameters(FileCabinetApp.Arguments)">
-            <summary>
-            Checks the parameters.
-            </summary>
-            <param name="arguments">Properties of the record.</param>
-        </member>
-        <member name="T:FileCabinetApp.Validators.DefaultLastNameValidator">
-            <summary>
-            Default last name validator.
-            </summary>
-        </member>
-        <member name="M:FileCabinetApp.Validators.DefaultLastNameValidator.ValidateParameters(FileCabinetApp.Arguments)">
-            <summary>
-            Checks the parameters.
-            </summary>
-            <param name="arguments">Properties of the record.</param>
-        </member>
-        <member name="T:FileCabinetApp.Validators.DefaultWeightValidator">
-            <summary>
-            Default weight validator.
-            </summary>
-        </member>
-        <member name="M:FileCabinetApp.Validators.DefaultWeightValidator.ValidateParameters(FileCabinetApp.Arguments)">
+        <member name="M:FileCabinetApp.Validators.HeightValidator.ValidateParameters(FileCabinetApp.Arguments)">
             <summary>
             Checks the parameters.
             </summary>
@@ -969,27 +914,61 @@
             </summary>
             <param name="arguments">Properties of the record.</param>
         </member>
+        <member name="T:FileCabinetApp.Validators.LastNameValidator">
+            <summary>
+            Validator of last name.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.Validators.LastNameValidator.#ctor(System.Int32,System.Int32)">
+            <summary>
+            Initializes a new instance of the <see cref="T:FileCabinetApp.Validators.LastNameValidator"/> class.
+            </summary>
+            <param name="min">min length.</param>
+            <param name="max">max length.</param>
+        </member>
+        <member name="M:FileCabinetApp.Validators.LastNameValidator.ValidateParameters(FileCabinetApp.Arguments)">
+            <summary>
+            Checks the parameters.
+            </summary>
+            <param name="arguments">Properties of the record.</param>
+        </member>
+        <member name="T:FileCabinetApp.Validators.WeightValidator">
+            <summary>
+            Validator of weight.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.Validators.WeightValidator.#ctor(System.Int32,System.Int32)">
+            <summary>
+            Initializes a new instance of the <see cref="T:FileCabinetApp.Validators.WeightValidator"/> class.
+            </summary>
+            <param name="min">min length.</param>
+            <param name="max">max length.</param>
+        </member>
+        <member name="M:FileCabinetApp.Validators.WeightValidator.ValidateParameters(FileCabinetApp.Arguments)">
+            <summary>
+            Checks the parameters.
+            </summary>
+            <param name="arguments">Properties of the record.</param>
+        </member>
         <member name="T:FileCabinetApp.CustomValidator">
             <summary>
             Validator with custom settings.
             </summary>
         </member>
-        <member name="M:FileCabinetApp.CustomValidator.ValidateParameters(FileCabinetApp.Arguments)">
+        <member name="M:FileCabinetApp.CustomValidator.#ctor">
             <summary>
-            Checks the parameters.
+            Initializes a new instance of the <see cref="T:FileCabinetApp.CustomValidator"/> class.
             </summary>
-            <param name="arguments">Properties of the record.</param>
         </member>
         <member name="T:FileCabinetApp.DefaultValidator">
             <summary>
             Validator with default settings.
             </summary>
         </member>
-        <member name="M:FileCabinetApp.DefaultValidator.ValidateParameters(FileCabinetApp.Arguments)">
+        <member name="M:FileCabinetApp.DefaultValidator.#ctor">
             <summary>
-            Checks the parameters.
+            Initializes a new instance of the <see cref="T:FileCabinetApp.DefaultValidator"/> class.
             </summary>
-            <param name="arguments">Properties of the record.</param>
         </member>
         <member name="T:FileCabinetApp.XmlName">
             <summary>

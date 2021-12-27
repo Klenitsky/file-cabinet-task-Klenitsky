@@ -8,31 +8,24 @@ namespace FileCabinetApp
     /// <summary>
     /// Validator with custom settings.
     /// </summary>
-    public class CustomValidator : IRecordValidator
+    public class CustomValidator : CompositeValidator
     {
-        /// <summary>
-        /// Checks the parameters.
-        /// </summary>
-        /// <param name="arguments">Properties of the record.</param>
-        public void ValidateParameters(Arguments arguments)
-        {
-            if (arguments == null)
-            {
-                throw new ArgumentNullException(nameof(arguments));
-            }
 
-            CustomFirstNameValidator firstNameValidator = new CustomFirstNameValidator();
-            firstNameValidator.ValidateParameters(arguments);
-            CustomLastNameValidator lastNameValidator = new CustomLastNameValidator();
-            lastNameValidator.ValidateParameters(arguments);
-            CustomDateOfBirthValidator dateOfBirthValidator = new CustomDateOfBirthValidator();
-            dateOfBirthValidator.ValidateParameters(arguments);
-            CustomHeightValidator heightValidator = new CustomHeightValidator();
-            heightValidator.ValidateParameters(arguments);
-            CustomWeightValidator weightValidator = new CustomWeightValidator();
-            weightValidator.ValidateParameters(arguments);
-            CustomDrivingLicenseCategoryValidator licenseValidator = new CustomDrivingLicenseCategoryValidator();
-            licenseValidator.ValidateParameters(arguments);
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CustomValidator"/> class.
+        /// </summary>
+        public CustomValidator()
+            : base(
+        new List<IRecordValidator> ( new IRecordValidator[]
+        {
+           new FirstNameValidator(1, 8),
+           new LastNameValidator(1, 7),
+           new DateOfBirthValidator(new DateTime(1800, 1, 1), DateTime.Today),
+           new HeightValidator(10, 20),
+           new WeightValidator(10, 20),
+           new DrivingLicenseCategoryValidator(new char[] { 'A', 'B', 'C', 'Q' }),
+        }))
+        {
         }
     }
 }
