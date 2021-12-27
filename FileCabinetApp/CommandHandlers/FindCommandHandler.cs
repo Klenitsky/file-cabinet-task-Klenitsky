@@ -10,14 +10,14 @@ namespace FileCabinetApp.CommandHandlers
     /// </summary>
     public class FindCommandHandler : ServiceCommandHandlerBase
     {
-        private readonly IRecordPrinter printer;
+        private readonly Action<IEnumerable<FileCabinetRecord>> printer;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FindCommandHandler"/> class.
         /// </summary>
         /// <param name="fileCabinetService">Service provided.</param>
-        /// /// <param name="recordPrinter">Printer provided.</param>
-        public FindCommandHandler(IFileCabinetService fileCabinetService, IRecordPrinter recordPrinter)
+        /// <param name="recordPrinter">Printer provided.</param>
+        public FindCommandHandler(IFileCabinetService fileCabinetService, Action<IEnumerable<FileCabinetRecord>> recordPrinter)
         {
             FindCommandHandler.fileCabinetService = fileCabinetService;
             this.printer = recordPrinter;
@@ -36,7 +36,7 @@ namespace FileCabinetApp.CommandHandlers
 
             if (request.Command == "find")
             {
-                this.printer.Print(Find(request.Parameters));
+                this.printer(Find(request.Parameters));
             }
             else
             {

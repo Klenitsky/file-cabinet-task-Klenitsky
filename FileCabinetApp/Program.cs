@@ -128,9 +128,9 @@ namespace FileCabinetApp
             var exitCommandHandler = new ExitCommandHandler(ExitOperation);
             var statCommandHandler = new StatCommandHandler(fileCabinetService);
             var createCommandHandler = new CreateCommandHandler(fileCabinetService);
-            var listCommandHandler = new ListCommandHandler(fileCabinetService, new DefaultRecordPrinter());
+            var listCommandHandler = new ListCommandHandler(fileCabinetService, DefaultRecordPrint);
             var editCommandHandler = new EditCommandHandler(fileCabinetService);
-            var findCommandHandler = new FindCommandHandler(fileCabinetService, new DefaultRecordPrinter());
+            var findCommandHandler = new FindCommandHandler(fileCabinetService, DefaultRecordPrint);
             var exportCommandHandler = new ExportCommandHandler(fileCabinetService);
             var importCommandHandler = new ImportCommandHandler(fileCabinetService);
             var removeCommandHandler = new RemoveCommandHandler(fileCabinetService);
@@ -154,6 +154,19 @@ namespace FileCabinetApp
         private static void ExitOperation(bool status)
         {
             isRunning = status;
+        }
+
+        private static void DefaultRecordPrint(IEnumerable<FileCabinetRecord> records)
+        {
+            if (records == null)
+            {
+                throw new ArgumentNullException(nameof(records));
+            }
+
+            foreach (FileCabinetRecord record in records)
+            {
+                Console.WriteLine(record.ToString());
+            }
         }
     }
 }
