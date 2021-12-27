@@ -9,15 +9,15 @@ namespace FileCabinetApp.Validators
     /// </summary>
     public class HeightValidator : IRecordValidator
     {
-        private readonly int minValue;
-        private readonly int maxValue;
+        private readonly short minValue;
+        private readonly short maxValue;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="HeightValidator"/> class.
         /// </summary>
         /// <param name="min">min length.</param>
         /// <param name="max">max length.</param>
-        public HeightValidator(int min, int max)
+        public HeightValidator(short min, short max)
         {
             this.minValue = min;
             this.maxValue = max;

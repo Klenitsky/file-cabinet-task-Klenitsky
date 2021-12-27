@@ -5,6 +5,7 @@ using System.Globalization;
 using System.IO;
 using System.Text;
 using FileCabinetApp.CommandHandlers;
+using FileCabinetApp.Validators;
 
 namespace FileCabinetApp
 {
@@ -13,12 +14,12 @@ namespace FileCabinetApp
     /// </summary>
     public static class Program
     {
-        public static bool isCustom;
         private const string DeveloperName = "Konstantin Klenitsky";
         private const string HintMessage = "Enter your command, or enter 'help' to get help.";
         private static FileStream fileStream = File.Open("cabinet-records.db", FileMode.OpenOrCreate);
 
         private static bool isRunning = true;
+        private static bool isCustom;
 
         private static IFileCabinetService fileCabinetService = new FileCabinetFilesystemService(fileStream, new DefaultValidator());
 
@@ -33,13 +34,13 @@ namespace FileCabinetApp
             {
                 if (args[0] == "-v" && args[1].ToLower(CultureInfo.CurrentCulture) == "custom")
                 {
-                    fileCabinetService = new FileCabinetMemoryService(new CustomValidator());
+                    fileCabinetService = new FileCabinetMemoryService(new ValidatorBuilder().CreateCustom());
                     isCustom = true;
                 }
 
                 if (args[0].Contains("--validation-rules=", StringComparison.InvariantCulture) && args[0][19..].ToLower(CultureInfo.CurrentCulture) == "custom")
                 {
-                    fileCabinetService = new FileCabinetMemoryService(new CustomValidator());
+                    fileCabinetService = new FileCabinetMemoryService(new ValidatorBuilder().CreateCustom());
                     isCustom = true;
                 }
 
@@ -49,12 +50,12 @@ namespace FileCabinetApp
                     {
                         if (isCustom)
                         {
-                            fileCabinetService = new FileCabinetMemoryService(new CustomValidator());
+                            fileCabinetService = new FileCabinetMemoryService(new ValidatorBuilder().CreateCustom());
                             Console.WriteLine($"Using memory.");
                         }
                         else
                         {
-                            fileCabinetService = new FileCabinetMemoryService(new DefaultValidator());
+                            fileCabinetService = new FileCabinetMemoryService(new ValidatorBuilder().CreateDefault());
                             Console.WriteLine($"Using memory.");
                         }
                     }
@@ -64,12 +65,12 @@ namespace FileCabinetApp
                         {
                             if (isCustom)
                             {
-                                fileCabinetService = new FileCabinetFilesystemService(fileStream, new CustomValidator());
+                                fileCabinetService = new FileCabinetFilesystemService(fileStream, new ValidatorBuilder().CreateCustom());
                                 Console.WriteLine($"Using filesystem.");
                             }
                             else
                             {
-                                fileCabinetService = new FileCabinetFilesystemService(fileStream, new DefaultValidator());
+                                fileCabinetService = new FileCabinetFilesystemService(fileStream, new ValidatorBuilder().CreateDefault());
                                 Console.WriteLine($"Using filesystem.");
                             }
                         }
@@ -127,9 +128,9 @@ namespace FileCabinetApp
             var helpCommandHandler = new HelpCommandHandler();
             var exitCommandHandler = new ExitCommandHandler(ExitOperation);
             var statCommandHandler = new StatCommandHandler(fileCabinetService);
-            var createCommandHandler = new CreateCommandHandler(fileCabinetService);
+            var createCommandHandler = new CreateCommandHandler(fileCabinetService, isCustom);
             var listCommandHandler = new ListCommandHandler(fileCabinetService, DefaultRecordPrint);
-            var editCommandHandler = new EditCommandHandler(fileCabinetService);
+            var editCommandHandler = new EditCommandHandler(fileCabinetService, isCustom);
             var findCommandHandler = new FindCommandHandler(fileCabinetService, DefaultRecordPrint);
             var exportCommandHandler = new ExportCommandHandler(fileCabinetService);
             var importCommandHandler = new ImportCommandHandler(fileCabinetService);

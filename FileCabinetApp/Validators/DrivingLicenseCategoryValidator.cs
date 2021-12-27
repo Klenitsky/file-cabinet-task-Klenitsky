@@ -14,7 +14,7 @@ namespace FileCabinetApp.Validators
         /// <summary>
         /// Initializes a new instance of the <see cref="DrivingLicenseCategoryValidator"/> class.
         /// </summary>
-        /// <param name="categories">List of license categories</param>
+        /// <param name="categories">List of license categories.</param>
         public DrivingLicenseCategoryValidator(char[] categories)
         {
             this.categories = categories;
@@ -30,6 +30,7 @@ namespace FileCabinetApp.Validators
             {
                 throw new ArgumentNullException(nameof(arguments));
             }
+
             bool isValid = false;
             foreach (char category in this.categories)
             {

@@ -9,6 +9,9 @@ namespace FileCabinetApp.CommandHandlers
     /// </summary>
     public class CommandHandlerBase : ICommandHandler
     {
+        /// <summary>
+        /// The next handler.
+        /// </summary>
         protected ICommandHandler nextHandler;
 
         /// <summary>

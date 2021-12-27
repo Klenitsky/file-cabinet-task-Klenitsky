@@ -15,7 +15,7 @@ namespace FileCabinetApp.Validators
         /// <summary>
         /// Initializes a new instance of the <see cref="DateOfBirthValidator"/> class.
         /// </summary>
-        /// <param name="from">Start date</param>
+        /// <param name="from">Start date.</param>
         /// <param name="to">End date.</param>
         public DateOfBirthValidator(DateTime from, DateTime to)
         {

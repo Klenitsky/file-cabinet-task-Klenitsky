@@ -10,13 +10,17 @@ namespace FileCabinetApp.CommandHandlers
     /// </summary>
     public class CreateCommandHandler : ServiceCommandHandlerBase
     {
+        private static bool isCustom;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="CreateCommandHandler"/> class.
         /// </summary>
         /// <param name="service">Service provided.</param>
-        public CreateCommandHandler(IFileCabinetService service)
+        /// /// <param name="custom">Is validation custom.</param>
+        public CreateCommandHandler(IFileCabinetService service, bool custom)
         {
             fileCabinetService = service;
+            isCustom = custom;
         }
 
         /// <summary>
@@ -149,7 +153,7 @@ namespace FileCabinetApp.CommandHandlers
         private static Tuple<bool, string> FirstNameValidator(string firstName)
         {
             bool result = true;
-            if (Program.isCustom)
+            if (isCustom)
             {
                 if ((firstName.Length < 1) || (firstName.Length > 8) || string.IsNullOrWhiteSpace(firstName))
                 {
@@ -170,7 +174,7 @@ namespace FileCabinetApp.CommandHandlers
         private static Tuple<bool, string> LastNameValidator(string firstName)
         {
             bool result = true;
-            if (Program.isCustom)
+            if (isCustom)
             {
                 if ((firstName.Length < 1) || (firstName.Length > 7) || string.IsNullOrWhiteSpace(firstName))
                 {
@@ -191,7 +195,7 @@ namespace FileCabinetApp.CommandHandlers
         private static Tuple<bool, string> DateOfBirthValidator(DateTime dateOfBirth)
         {
             bool result = true;
-            if (Program.isCustom)
+            if (isCustom)
             {
                 if ((DateTime.Compare(dateOfBirth, DateTime.Today) > 0) || (DateTime.Compare(dateOfBirth, new DateTime(1800, 1, 1)) < 0))
                 {
@@ -212,7 +216,7 @@ namespace FileCabinetApp.CommandHandlers
         private static Tuple<bool, string> HeightValidator(short height)
         {
             bool result = true;
-            if (Program.isCustom)
+            if (isCustom)
             {
                 if (height < 10 || height > 20)
                 {
@@ -233,7 +237,7 @@ namespace FileCabinetApp.CommandHandlers
         private static Tuple<bool, string> WeightValidator(decimal weight)
         {
             bool result = true;
-            if (Program.isCustom)
+            if (isCustom)
             {
                 if (weight < 10 || weight > 20)
                 {
@@ -254,7 +258,7 @@ namespace FileCabinetApp.CommandHandlers
         private static Tuple<bool, string> LicenseCategoryValidator(char drivingLicenseCategory)
         {
             bool result = true;
-            if (Program.isCustom)
+            if (isCustom)
             {
                 if ((drivingLicenseCategory != 'A') && (drivingLicenseCategory != 'B') && (drivingLicenseCategory != 'C') && (drivingLicenseCategory != 'Q'))
                 {

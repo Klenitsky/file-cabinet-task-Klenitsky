@@ -10,11 +10,12 @@ namespace FileCabinetApp.Validators
     public class CompositeValidator : IRecordValidator
     {
         private readonly List<IRecordValidator> validators;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="CompositeValidator"/> class.
         /// </summary>
         /// <param name="validators"> Validators provided.</param>
-        protected CompositeValidator(List<IRecordValidator> validators)
+        public CompositeValidator(List<IRecordValidator> validators)
         {
             this.validators = validators;
         }

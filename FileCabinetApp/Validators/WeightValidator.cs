@@ -9,15 +9,15 @@ namespace FileCabinetApp.Validators
     /// </summary>
     public class WeightValidator : IRecordValidator
     {
-        private readonly int minValue;
-        private readonly int maxValue;
+        private readonly decimal minValue;
+        private readonly decimal maxValue;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="WeightValidator"/> class.
         /// </summary>
         /// <param name="min">min length.</param>
         /// <param name="max">max length.</param>
-        public WeightValidator(int min, int max)
+        public WeightValidator(decimal min, decimal max)
         {
             this.minValue = min;
             this.maxValue = max;

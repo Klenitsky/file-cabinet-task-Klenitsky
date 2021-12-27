@@ -10,13 +10,12 @@ namespace FileCabinetApp
     /// </summary>
     public class CustomValidator : CompositeValidator
     {
-
         /// <summary>
         /// Initializes a new instance of the <see cref="CustomValidator"/> class.
         /// </summary>
         public CustomValidator()
             : base(
-        new List<IRecordValidator> ( new IRecordValidator[]
+        new List<IRecordValidator>(new IRecordValidator[]
         {
            new FirstNameValidator(1, 8),
            new LastNameValidator(1, 7),
