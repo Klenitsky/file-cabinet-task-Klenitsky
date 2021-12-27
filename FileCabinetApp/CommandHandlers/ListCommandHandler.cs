@@ -9,13 +9,17 @@ namespace FileCabinetApp.CommandHandlers
     /// </summary>
     public class ListCommandHandler : ServiceCommandHandlerBase
     {
+        private readonly IRecordPrinter printer;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="ListCommandHandler"/> class.
         /// </summary>
         /// <param name="fileCabinetService">Service provided.</param>
-        public ListCommandHandler(IFileCabinetService fileCabinetService)
+        /// <param name="recordPrinter">Printer provided.</param>
+        public ListCommandHandler(IFileCabinetService fileCabinetService, IRecordPrinter recordPrinter)
         {
             ListCommandHandler.fileCabinetService = fileCabinetService;
+            this.printer = recordPrinter;
         }
 
         /// <summary>
@@ -31,20 +35,12 @@ namespace FileCabinetApp.CommandHandlers
 
             if (request.Command == "list")
             {
-                List(request.Parameters);
+                IReadOnlyCollection<FileCabinetRecord> arrayOfRecords = fileCabinetService.GetRecords();
+                this.printer.Print(arrayOfRecords);
             }
             else
             {
                 this.nextHandler.Handle(request);
-            }
-        }
-
-        private static void List(string parameters)
-        {
-            IReadOnlyCollection<FileCabinetRecord> arrayOfRecords = fileCabinetService.GetRecords();
-            foreach (FileCabinetRecord record in arrayOfRecords)
-            {
-                Console.WriteLine(record.ToString());
             }
         }
     }

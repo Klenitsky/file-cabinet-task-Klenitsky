@@ -9,14 +9,18 @@ namespace FileCabinetApp.CommandHandlers
     /// Handler of find command.
     /// </summary>
     public class FindCommandHandler : ServiceCommandHandlerBase
-    { 
+    {
+        private readonly IRecordPrinter printer;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="FindCommandHandler"/> class.
         /// </summary>
         /// <param name="fileCabinetService">Service provided.</param>
-        public FindCommandHandler(IFileCabinetService fileCabinetService)
+        /// /// <param name="recordPrinter">Printer provided.</param>
+        public FindCommandHandler(IFileCabinetService fileCabinetService, IRecordPrinter recordPrinter)
         {
             FindCommandHandler.fileCabinetService = fileCabinetService;
+            this.printer = recordPrinter;
         }
 
         /// <summary>
@@ -32,7 +36,7 @@ namespace FileCabinetApp.CommandHandlers
 
             if (request.Command == "find")
             {
-                Find(request.Parameters);
+                this.printer.Print(Find(request.Parameters));
             }
             else
             {
@@ -40,7 +44,7 @@ namespace FileCabinetApp.CommandHandlers
             }
         }
 
-        private static void Find(string parameters)
+        private static IReadOnlyCollection<FileCabinetRecord> Find(string parameters)
         {
             int index = parameters.IndexOf(' ', StringComparison.InvariantCulture);
             StringBuilder property = new StringBuilder(parameters, 0, index, char.MaxValue);
@@ -93,10 +97,7 @@ namespace FileCabinetApp.CommandHandlers
                 Console.WriteLine("No elements with such property");
             }
 
-            foreach (FileCabinetRecord record in result)
-            {
-                Console.WriteLine(record.ToString());
-            }
+            return result;
         }
     }
 }

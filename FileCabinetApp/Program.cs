@@ -13,9 +13,9 @@ namespace FileCabinetApp
     /// </summary>
     public static class Program
     {
+        public static bool isCustom;
         private const string DeveloperName = "Konstantin Klenitsky";
         private const string HintMessage = "Enter your command, or enter 'help' to get help.";
-        public static bool isCustom;
         private static FileStream fileStream = File.Open("cabinet-records.db", FileMode.OpenOrCreate);
 
         private static bool isRunning = true;
@@ -128,9 +128,9 @@ namespace FileCabinetApp
             var exitCommandHandler = new ExitCommandHandler(ExitOperation);
             var statCommandHandler = new StatCommandHandler(fileCabinetService);
             var createCommandHandler = new CreateCommandHandler(fileCabinetService);
-            var listCommandHandler = new ListCommandHandler(fileCabinetService);
+            var listCommandHandler = new ListCommandHandler(fileCabinetService, new DefaultRecordPrinter());
             var editCommandHandler = new EditCommandHandler(fileCabinetService);
-            var findCommandHandler = new FindCommandHandler(fileCabinetService);
+            var findCommandHandler = new FindCommandHandler(fileCabinetService, new DefaultRecordPrinter());
             var exportCommandHandler = new ExportCommandHandler(fileCabinetService);
             var importCommandHandler = new ImportCommandHandler(fileCabinetService);
             var removeCommandHandler = new RemoveCommandHandler(fileCabinetService);
