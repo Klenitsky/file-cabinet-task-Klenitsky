@@ -10,12 +10,11 @@ namespace FileCabinetApp.CommandHandlers
     /// </summary>
     public class CreateCommandHandler : ServiceCommandHandlerBase
     {
-
         /// <summary>
         /// Initializes a new instance of the <see cref="CreateCommandHandler"/> class.
         /// </summary>
         /// <param name="service">Service provided.</param>
-        public CreateCommandHandler(IFileCabinetService service) 
+        public CreateCommandHandler(IFileCabinetService service)
         {
             fileCabinetService = service;
         }
@@ -24,7 +23,7 @@ namespace FileCabinetApp.CommandHandlers
         /// Handles the request.
         /// </summary>
         /// <param name="request">Request provided.</param>
-        public override void Handle(AppCommandRequest request) 
+        public override void Handle(AppCommandRequest request)
         {
             if (request == null)
             {

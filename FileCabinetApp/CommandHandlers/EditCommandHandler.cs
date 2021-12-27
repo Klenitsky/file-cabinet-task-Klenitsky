@@ -8,8 +8,7 @@ namespace FileCabinetApp.CommandHandlers
     /// Handler of edit command.
     /// </summary>
     public class EditCommandHandler : ServiceCommandHandlerBase
-    { 
-
+    {
         /// <summary>
         /// Initializes a new instance of the <see cref="EditCommandHandler"/> class.
         /// </summary>
