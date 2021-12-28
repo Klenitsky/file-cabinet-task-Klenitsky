@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Text;
 
 namespace FileCabinetApp.Validators
@@ -9,15 +10,23 @@ namespace FileCabinetApp.Validators
     /// </summary>
     public class DrivingLicenseCategoryValidator : IRecordValidator
     {
-        private readonly char[] categories;
+        private Collection<char> categories = new Collection<char>();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DrivingLicenseCategoryValidator"/> class.
         /// </summary>
         /// <param name="categories">List of license categories.</param>
-        public DrivingLicenseCategoryValidator(char[] categories)
+        public DrivingLicenseCategoryValidator(Collection<string> categories)
         {
-            this.categories = categories;
+            if (categories == null)
+            {
+                throw new ArgumentNullException(nameof(categories));
+            }
+
+            foreach (string category in categories)
+            {
+                this.categories.Add(category[0]);
+            }
         }
 
         /// <summary>

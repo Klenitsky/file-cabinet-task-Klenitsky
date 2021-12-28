@@ -1,0 +1,52 @@
+﻿{
+  "default": {
+    "firstName": {
+      "min": 2,
+      "max": 60
+    },
+    "lastName": {
+      "min": 2,
+      "max": 60
+    },
+    "dateOfBirth": {
+      "from": "1/1/1950",
+      "to": "28/12/2021"
+    },
+    "height": {
+      "min": 0,
+      "max": 250
+    },
+    "weight": {
+      "min": 0,
+      "max": 180
+    },
+    "drivingLicenseCategory": {
+      "values": [ "A", "B", "C", "D" ]
+    }
+  },
+  "custom": {
+    "firstName": {
+      "min": 1,
+      "max": 8
+    },
+    "lastName": {
+      "min": 1,
+      "max": 7
+    },
+    "dateOfBirth": {
+      "from": "1/1/1800",
+      "to": "28/12/2021"
+    },
+    "height": {
+      "min": 10,
+      "max": 20
+    },
+    "weight": {
+      "min": 10,
+      "max": 20
+    },
+    "drivingLicenseCategory": {
+      "values": [ "A", "B", "C", "Q" ]
+    }
+  }
+}

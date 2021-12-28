@@ -909,6 +909,165 @@
             </summary>
             <param name="args">Array of arguments.</param>
         </member>
+        <member name="T:FileCabinetApp.ValidationRules.Rules">
+            <summary>
+            Object with rules of validation.
+            </summary>
+        </member>
+        <member name="P:FileCabinetApp.ValidationRules.Rules.FirstName">
+            <summary>
+            Gets or sets first name validation rule.
+            </summary>
+            <value>
+            Last name validation rule.
+            </value>
+        </member>
+        <member name="P:FileCabinetApp.ValidationRules.Rules.LastName">
+            <summary>
+            Gets or sets first name validation rule.
+            </summary>
+            <value>
+            Last name validation rule.
+            </value>
+        </member>
+        <member name="P:FileCabinetApp.ValidationRules.Rules.DateOfBirth">
+            <summary>
+            Gets or sets date of birth validation rule.
+            </summary>
+            <value>
+            Date of birth validation rule.
+            </value>
+        </member>
+        <member name="P:FileCabinetApp.ValidationRules.Rules.Height">
+            <summary>
+            Gets or sets weight validation rule.
+            </summary>
+            <value>
+            Height validation rule.
+            </value>
+        </member>
+        <member name="P:FileCabinetApp.ValidationRules.Rules.Weight">
+            <summary>
+            Gets or sets weight validation rule.
+            </summary>
+            <value>
+            Weight validation rule.
+            </value>
+        </member>
+        <member name="P:FileCabinetApp.ValidationRules.Rules.DrivingLicenseCategory">
+            <summary>
+            Gets or sets driving license  validation rule.
+            </summary>
+            <value>
+            Driving license validation rule.
+            </value>
+        </member>
+        <member name="T:FileCabinetApp.ValidationRules.SpecifiedRules.DateOfBirth">
+            <summary>
+            Date of birth rule.
+            </summary>
+        </member>
+        <member name="P:FileCabinetApp.ValidationRules.SpecifiedRules.DateOfBirth.Min">
+            <summary>
+            Gets or sets date of birth min value.
+            </summary>
+            <value>
+            Date of birth min value.
+            </value>
+        </member>
+        <member name="P:FileCabinetApp.ValidationRules.SpecifiedRules.DateOfBirth.Max">
+            <summary>
+            Gets or sets date of birth max value.
+            </summary>
+            <value>
+            Date of birth max value.
+            </value>
+        </member>
+        <member name="T:FileCabinetApp.ValidationRules.SpecifiedRules.DrivingLicenseCategory">
+            <summary>
+            Driving license category rule.
+            </summary>
+        </member>
+        <member name="P:FileCabinetApp.ValidationRules.SpecifiedRules.DrivingLicenseCategory.Values">
+            <summary>
+            Gets or sets driving license category possible values.
+            </summary>
+            <value>
+            Driving license category possible values.
+            </value>
+        </member>
+        <member name="T:FileCabinetApp.ValidationRules.SpecifiedRules.Height">
+            <summary>
+            Height rule type.
+            </summary>
+        </member>
+        <member name="T:FileCabinetApp.ValidationRules.SpecifiedRules.Name">
+            <summary>
+            Name rule type.
+            </summary>
+        </member>
+        <member name="T:FileCabinetApp.ValidationRules.SpecifiedRules.Rule`1">
+            <summary>
+            Default rule type.
+            </summary>
+            <typeparam name = "T">
+            type of rule.
+            </typeparam>
+        </member>
+        <member name="P:FileCabinetApp.ValidationRules.SpecifiedRules.Rule`1.MinValue">
+            <summary>
+            Gets or sets rule min value.
+            </summary>
+            <value>
+            Rule min value.
+            </value>
+        </member>
+        <member name="P:FileCabinetApp.ValidationRules.SpecifiedRules.Rule`1.MaxValue">
+            <summary>
+            Gets or sets rule max value.
+            </summary>
+            <value>
+            Rule max value.
+            </value>
+        </member>
+        <member name="T:FileCabinetApp.ValidationRules.SpecifiedRules.Weight">
+            <summary>
+            Weight rule type.
+            </summary>
+        </member>
+        <member name="T:FileCabinetApp.ValidationRules.ValidationRulesReader">
+            <summary>
+            Validation rules reader class.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.ValidationRules.ValidationRulesReader.ReadRules(System.String)">
+            <summary>
+            Reads the rules.
+            </summary>
+            <param name="path">Path to read from.</param>
+            <returns>Validation rules.</returns>
+        </member>
+        <member name="T:FileCabinetApp.ValidationRules.ValidationTypes">
+            <summary>
+            Object with rules of validation.
+            </summary>
+        </member>
+        <member name="P:FileCabinetApp.ValidationRules.ValidationTypes.Default">
+            <summary>
+            Gets or sets default  validation rules.
+            </summary>
+            <value>
+             Validation rules.
+            </value>
+        </member>
+        <member name="P:FileCabinetApp.ValidationRules.ValidationTypes.Custom">
+            <summary>
+            Gets or sets custom validation rules.
+            </summary>
+            <value>
+            Validation rules.
+            </value>
+        </member>
         <member name="T:FileCabinetApp.Validators.CompositeValidator">
             <summary>
             Initializes a new instance of the <see cref="T:FileCabinetApp.Validators.CompositeValidator"/> class.
@@ -949,7 +1108,7 @@
             Validator of driving license category.
             </summary>
         </member>
-        <member name="M:FileCabinetApp.Validators.DrivingLicenseCategoryValidator.#ctor(System.Char[])">
+        <member name="M:FileCabinetApp.Validators.DrivingLicenseCategoryValidator.#ctor(System.Collections.ObjectModel.Collection{System.String})">
             <summary>
             Initializes a new instance of the <see cref="T:FileCabinetApp.Validators.DrivingLicenseCategoryValidator"/> class.
             </summary>
@@ -1031,6 +1190,11 @@
             Builder of the validators.
             </summary>
         </member>
+        <member name="M:FileCabinetApp.Validators.ValidatorBuilder.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:FileCabinetApp.Validators.ValidatorBuilder"/> class.
+            </summary>
+        </member>
         <member name="M:FileCabinetApp.Validators.ValidatorBuilder.CreateDefault">
             <summary>
             Builds default validator.
@@ -1089,7 +1253,7 @@
             <param name="max">max value.</param>
             <returns>this validator builder.</returns>
         </member>
-        <member name="M:FileCabinetApp.Validators.ValidatorBuilder.ValidateDrivingLicenseCategory(System.Char[])">
+        <member name="M:FileCabinetApp.Validators.ValidatorBuilder.ValidateDrivingLicenseCategory(System.Collections.ObjectModel.Collection{System.String})">
             <summary>
             Adds driving license category validator.
             </summary>

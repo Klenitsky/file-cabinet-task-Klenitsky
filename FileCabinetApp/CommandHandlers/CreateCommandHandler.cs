@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
+using FileCabinetApp.ValidationRules;
 
 namespace FileCabinetApp.CommandHandlers
 {
@@ -10,6 +11,7 @@ namespace FileCabinetApp.CommandHandlers
     /// </summary>
     public class CreateCommandHandler : ServiceCommandHandlerBase
     {
+        private readonly ValidationRules.ValidationTypes validationRules = ValidationRulesReader.ReadRules("validation-rules.json");
         private readonly bool isCustom;
 
         /// <summary>
@@ -155,14 +157,14 @@ namespace FileCabinetApp.CommandHandlers
             bool result = true;
             if (this.isCustom)
             {
-                if ((firstName.Length < 1) || (firstName.Length > 8) || string.IsNullOrWhiteSpace(firstName))
+                if ((firstName.Length < this.validationRules.Custom.FirstName.MinValue) || (firstName.Length > this.validationRules.Custom.FirstName.MaxValue) || string.IsNullOrWhiteSpace(firstName))
                 {
                     result = false;
                 }
             }
             else
             {
-                if ((firstName.Length < 2) || (firstName.Length > 60) || string.IsNullOrWhiteSpace(firstName))
+                if ((firstName.Length < this.validationRules.Default.FirstName.MinValue) || (firstName.Length > this.validationRules.Default.FirstName.MaxValue) || string.IsNullOrWhiteSpace(firstName))
                 {
                     result = false;
                 }
@@ -171,19 +173,19 @@ namespace FileCabinetApp.CommandHandlers
             return new Tuple<bool, string>(result, string.Empty);
         }
 
-        private Tuple<bool, string> LastNameValidator(string firstName)
+        private Tuple<bool, string> LastNameValidator(string lastName)
         {
             bool result = true;
             if (this.isCustom)
             {
-                if ((firstName.Length < 1) || (firstName.Length > 7) || string.IsNullOrWhiteSpace(firstName))
+                if ((lastName.Length < this.validationRules.Custom.LastName.MinValue) || (lastName.Length > this.validationRules.Custom.LastName.MaxValue) || string.IsNullOrWhiteSpace(lastName))
                 {
                     result = false;
                 }
             }
             else
             {
-                if ((firstName.Length < 2) || (firstName.Length > 60) || string.IsNullOrWhiteSpace(firstName))
+                if ((lastName.Length < this.validationRules.Default.LastName.MinValue) || (lastName.Length > this.validationRules.Default.LastName.MaxValue) || string.IsNullOrWhiteSpace(lastName))
                 {
                     result = false;
                 }
@@ -197,14 +199,42 @@ namespace FileCabinetApp.CommandHandlers
             bool result = true;
             if (this.isCustom)
             {
-                if ((DateTime.Compare(dateOfBirth, DateTime.Today) > 0) || (DateTime.Compare(dateOfBirth, new DateTime(1800, 1, 1)) < 0))
+                DateTime minDate;
+                bool success = DateTime.TryParse(this.validationRules.Custom.DateOfBirth.Min, out minDate);
+                if (!success)
+                {
+                    return null;
+                }
+
+                DateTime maxDate;
+                success = DateTime.TryParse(this.validationRules.Custom.DateOfBirth.Max, out maxDate);
+                if (!success)
+                {
+                    return null;
+                }
+
+                if ((DateTime.Compare(dateOfBirth, minDate) > 0) || (DateTime.Compare(dateOfBirth, maxDate) < 0))
                 {
                     result = false;
                 }
             }
             else
             {
-                if ((DateTime.Compare(dateOfBirth, DateTime.Today) > 0) || (DateTime.Compare(dateOfBirth, new DateTime(1950, 1, 1)) < 0))
+                DateTime minDate;
+                bool success = DateTime.TryParse(this.validationRules.Default.DateOfBirth.Min, out minDate);
+                if (!success)
+                {
+                    return null;
+                }
+
+                DateTime maxDate;
+                success = DateTime.TryParse(this.validationRules.Default.DateOfBirth.Max, out maxDate);
+                if (!success)
+                {
+                    return null;
+                }
+
+                if ((DateTime.Compare(dateOfBirth, maxDate) > 0) || (DateTime.Compare(dateOfBirth, minDate) < 0))
                 {
                     result = false;
                 }
@@ -218,14 +248,14 @@ namespace FileCabinetApp.CommandHandlers
             bool result = true;
             if (this.isCustom)
             {
-                if (height < 10 || height > 20)
+                if (height < this.validationRules.Custom.Height.MinValue || height > this.validationRules.Custom.Height.MaxValue)
                 {
                     result = false;
                 }
             }
             else
             {
-                if (height < 0 || height > 250)
+                if (height < this.validationRules.Default.Height.MinValue || height > this.validationRules.Default.Height.MaxValue)
                 {
                     result = false;
                 }
@@ -239,14 +269,14 @@ namespace FileCabinetApp.CommandHandlers
             bool result = true;
             if (this.isCustom)
             {
-                if (weight < 10 || weight > 20)
+                if (weight < this.validationRules.Custom.Weight.MinValue || weight > this.validationRules.Custom.Weight.MaxValue)
                 {
                     result = false;
                 }
             }
             else
             {
-                if (weight < 0 || weight > 180)
+                if (weight < this.validationRules.Default.Weight.MinValue || weight > this.validationRules.Default.Weight.MaxValue)
                 {
                     result = false;
                 }
@@ -260,17 +290,29 @@ namespace FileCabinetApp.CommandHandlers
             bool result = true;
             if (this.isCustom)
             {
-                if ((drivingLicenseCategory != 'A') && (drivingLicenseCategory != 'B') && (drivingLicenseCategory != 'C') && (drivingLicenseCategory != 'Q'))
+                bool isValid = false;
+                foreach (var category in this.validationRules.Custom.DrivingLicenseCategory.Values)
                 {
-                    result = false;
+                    if (drivingLicenseCategory == category[0])
+                    {
+                        isValid = true;
+                    }
                 }
+
+                result = isValid;
             }
             else
             {
-                if ((drivingLicenseCategory != 'A') && (drivingLicenseCategory != 'B') && (drivingLicenseCategory != 'C') && (drivingLicenseCategory != 'D'))
+                bool isValid = false;
+                foreach (var category in this.validationRules.Default.DrivingLicenseCategory.Values)
                 {
-                    result = false;
+                    if (drivingLicenseCategory == category[0])
+                    {
+                        isValid = true;
+                    }
                 }
+
+                result = isValid;
             }
 
             return new Tuple<bool, string>(result, string.Empty);

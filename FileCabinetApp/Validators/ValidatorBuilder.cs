@@ -1,6 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Text;
+using FileCabinetApp.ValidationRules;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Configuration.Json;
 
 namespace FileCabinetApp.Validators
 {
@@ -9,7 +13,16 @@ namespace FileCabinetApp.Validators
     /// </summary>
     public class ValidatorBuilder
     {
+        private readonly ValidationRules.ValidationTypes validationRules;
         private List<IRecordValidator> validators = new List<IRecordValidator>();
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ValidatorBuilder"/> class.
+        /// </summary>
+        public ValidatorBuilder()
+        {
+            this.validationRules = ValidationRulesReader.ReadRules("validation-rules.json");
+        }
 
         /// <summary>
         /// Builds default validator.
@@ -17,14 +30,30 @@ namespace FileCabinetApp.Validators
         /// <returns>new validator.</returns>
         public IRecordValidator CreateDefault()
         {
+            DateTime minDate;
+            bool success = DateTime.TryParse(this.validationRules.Default.DateOfBirth.Min, out minDate);
+            if (!success)
+            {
+                Console.WriteLine("Validation rules invalid.");
+                return null;
+            }
+
+            DateTime maxDate;
+            success = DateTime.TryParse(this.validationRules.Default.DateOfBirth.Max, out maxDate);
+            if (!success)
+            {
+                Console.WriteLine("Validation rules invalid.");
+                return null;
+            }
+
             this.validators = new List<IRecordValidator>
             {
-                new FirstNameValidator(2, 60),
-                new LastNameValidator(2, 60),
-                new DateOfBirthValidator(new DateTime(1950, 1, 1), DateTime.Today),
-                new HeightValidator(0, 250),
-                new WeightValidator(0, 180),
-                new DrivingLicenseCategoryValidator(new char[] { 'A', 'B', 'C', 'D' }),
+                new FirstNameValidator(this.validationRules.Default.FirstName.MinValue, this.validationRules.Default.FirstName.MaxValue),
+                new LastNameValidator(this.validationRules.Default.LastName.MinValue, this.validationRules.Default.LastName.MaxValue),
+                new DateOfBirthValidator(minDate, maxDate),
+                new HeightValidator(this.validationRules.Default.Height.MinValue, this.validationRules.Default.Height.MaxValue),
+                new WeightValidator(this.validationRules.Default.Weight.MinValue, this.validationRules.Default.Weight.MaxValue),
+                new DrivingLicenseCategoryValidator(this.validationRules.Default.DrivingLicenseCategory.Values),
             };
 
             return new CompositeValidator(this.validators);
@@ -36,14 +65,30 @@ namespace FileCabinetApp.Validators
         /// <returns>new validator.</returns>
         public IRecordValidator CreateCustom()
         {
+            DateTime minDate;
+            bool success = DateTime.TryParse(this.validationRules.Custom.DateOfBirth.Min, out minDate);
+            if (!success)
+            {
+                Console.WriteLine("Validation rules invalid.");
+                return null;
+            }
+
+            DateTime maxDate;
+            success = DateTime.TryParse(this.validationRules.Custom.DateOfBirth.Max, out maxDate);
+            if (!success)
+            {
+                Console.WriteLine("Validation rules invalid.");
+                return null;
+            }
+
             this.validators = new List<IRecordValidator>
             {
-                new FirstNameValidator(1, 8),
-                new LastNameValidator(1, 7),
-                new DateOfBirthValidator(new DateTime(1800, 1, 1), DateTime.Today),
-                new HeightValidator(10, 20),
-                new WeightValidator(10, 20),
-                new DrivingLicenseCategoryValidator(new char[] { 'A', 'B', 'C', 'Q' }),
+                new FirstNameValidator(this.validationRules.Custom.FirstName.MinValue, this.validationRules.Custom.FirstName.MaxValue),
+                new LastNameValidator(this.validationRules.Custom.LastName.MinValue, this.validationRules.Custom.LastName.MaxValue),
+                new DateOfBirthValidator(minDate, maxDate),
+                new HeightValidator(this.validationRules.Custom.Height.MinValue, this.validationRules.Custom.Height.MaxValue),
+                new WeightValidator(this.validationRules.Custom.Weight.MinValue, this.validationRules.Custom.Weight.MaxValue),
+                new DrivingLicenseCategoryValidator(this.validationRules.Custom.DrivingLicenseCategory.Values),
             };
 
             return new CompositeValidator(this.validators);
@@ -123,7 +168,7 @@ namespace FileCabinetApp.Validators
         /// </summary>
         /// <param name="categories">availiable categories.</param>
         /// <returns>this validator builder.</returns>
-        public ValidatorBuilder ValidateDrivingLicenseCategory(char[] categories)
+        public ValidatorBuilder ValidateDrivingLicenseCategory(Collection<string> categories)
         {
             this.validators.Add(new DrivingLicenseCategoryValidator(categories));
             return this;
