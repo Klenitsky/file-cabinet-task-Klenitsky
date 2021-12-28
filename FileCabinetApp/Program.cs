@@ -21,7 +21,7 @@ namespace FileCabinetApp
         private static bool isRunning = true;
         private static bool isCustom;
 
-        private static IFileCabinetService fileCabinetService = new ServiceMeter(new FileCabinetFilesystemService(fileStream, new ValidatorBuilder().CreateDefault()));
+        private static IFileCabinetService fileCabinetService = new ServiceLogger(new ServiceMeter(new FileCabinetFilesystemService(fileStream, new ValidatorBuilder().CreateDefault())), "applicationLog.log");
 
         /// <summary>
         /// The main function of the application.
@@ -74,6 +74,34 @@ namespace FileCabinetApp
                                 Console.WriteLine($"Using filesystem.");
                             }
                         }
+                    }
+                }
+
+                if (args[0] == "--use-stopwatch")
+                {
+                    if (isCustom)
+                    {
+                        fileCabinetService = new ServiceMeter(new FileCabinetMemoryService(new ValidatorBuilder().CreateCustom()));
+                        Console.WriteLine($"Using stopwatch");
+                    }
+                    else
+                    {
+                        fileCabinetService = new ServiceMeter(new FileCabinetMemoryService(new ValidatorBuilder().CreateDefault()));
+                        Console.WriteLine($"Using stopwatch");
+                    }
+                }
+
+                if (args[0] == "--use-logger")
+                {
+                    if (isCustom)
+                    {
+                        fileCabinetService = new ServiceLogger(new ServiceMeter(new FileCabinetMemoryService(new ValidatorBuilder().CreateCustom())), "applicationLog.log");
+                        Console.WriteLine($"Using logger");
+                    }
+                    else
+                    {
+                        fileCabinetService = new ServiceLogger(new ServiceMeter(new FileCabinetMemoryService(new ValidatorBuilder().CreateDefault())), "applicationLog.log");
+                        Console.WriteLine($"Using logger");
                     }
                 }
             }

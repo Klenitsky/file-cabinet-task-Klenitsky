@@ -909,6 +909,119 @@
             </summary>
             <param name="args">Array of arguments.</param>
         </member>
+        <member name="T:FileCabinetApp.ServiceLogger">
+            <summary>
+            Decorator that writes logs.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.ServiceLogger.#ctor(FileCabinetApp.IFileCabinetService,System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:FileCabinetApp.ServiceLogger"/> class.
+            </summary>
+            <param name="service">Service to be decorated.</param>
+            <param name="filename">File to save logs.</param>
+        </member>
+        <member name="M:FileCabinetApp.ServiceLogger.CreateRecord(FileCabinetApp.Arguments)">
+            <summary>
+            Creates a new Record.
+            </summary>
+            <param name="arguments">Properties of the record.</param>
+            <returns>New record's Id.</returns>
+            <exception cref="T:System.ArgumentNullException"> Parameters are null.</exception>
+            <exception cref="T:System.ArgumentException">One of the parameters is not valid.</exception>
+        </member>
+        <member name="M:FileCabinetApp.ServiceLogger.EditRecord(System.Int32,FileCabinetApp.Arguments)">
+            <summary>
+            Edits an existing record.
+            </summary>
+            <param name="id">The ID of a record.</param>
+            <param name="arguments">Properties of the record.</param>
+            <exception cref="T:System.ArgumentNullException">One of the parameters is null.</exception>
+            <exception cref="T:System.ArgumentException">One of the parameters is not valid.</exception>
+        </member>
+        <member name="M:FileCabinetApp.ServiceLogger.FindByDateOfBirth(System.DateTime)">
+            <summary>
+            Finds all records with given date of Birth.
+            </summary>
+            <param name="dateTime">The date of birth of the person.</param>
+            <returns>A list of records found.</returns>
+        </member>
+        <member name="M:FileCabinetApp.ServiceLogger.FindByFirstName(System.String)">
+            <summary>
+            Finds all records with given firstname.
+            </summary>
+            <param name="firstName">The first name of the person.</param>
+            <returns>A list of records found.</returns>
+            <exception cref="T:System.ArgumentNullException">String firstName is null.</exception>
+        </member>
+        <member name="M:FileCabinetApp.ServiceLogger.FindByLastName(System.String)">
+            <summary>
+            Finds all records with given lastname.
+            </summary>
+            <param name="lastName">The last name of the person.</param>
+            <returns>A list of records found.</returns>
+            <exception cref="T:System.ArgumentNullException">String firstName is null.</exception>
+        </member>
+        <member name="M:FileCabinetApp.ServiceLogger.GetDeletedStat">
+            <summary>
+            Gets the number of deleted records.
+            </summary>
+            <returns>Int id.</returns>
+        </member>
+        <member name="M:FileCabinetApp.ServiceLogger.GetID">
+            <summary>
+            Gets the Id of the last record.
+            </summary>
+            <returns>Int id.</returns>
+        </member>
+        <member name="M:FileCabinetApp.ServiceLogger.GetRecords">
+            <summary>
+            Gets a copy of the list.
+            </summary>
+            <returns>Array of records.</returns>
+        </member>
+        <member name="M:FileCabinetApp.ServiceLogger.GetStat">
+            <summary>
+            Gets a number of records.
+            </summary>
+            <returns>Number of records.</returns>
+        </member>
+        <member name="M:FileCabinetApp.ServiceLogger.MakeSnapshot">
+            <summary>
+            Generates snapshot of the service.
+            </summary>
+            <returns>A snapshot of this service.</returns>
+        </member>
+        <member name="M:FileCabinetApp.ServiceLogger.Purge">
+            <summary>
+            Purges deleted records.
+            </summary>
+            <returns>Amount of purged values.</returns>
+        </member>
+        <member name="M:FileCabinetApp.ServiceLogger.Remove(System.Int32)">
+            <summary>
+            Removes a record.
+            </summary>
+            <param name="id">Id of a record to remove.</param>
+            <returns>A bool result of removing.</returns>
+        </member>
+        <member name="M:FileCabinetApp.ServiceLogger.Restore(FileCabinetApp.FileCabinetServiceSnapshot)">
+            <summary>
+            Adds records loaded from file.
+            </summary>
+            <param name="snapshot">Properties of the record.</param>
+        </member>
+        <member name="M:FileCabinetApp.ServiceLogger.Dispose">
+            <summary>
+            Disposes the object.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.ServiceLogger.Dispose(System.Boolean)">
+            <summary>
+            Disposes the object.
+            </summary>
+            <param name="value">Bool flag of disposion.</param>
+        </member>
         <member name="T:FileCabinetApp.ServiceMeter">
             <summary>
             Service decorator that counts time.
