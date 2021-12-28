@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace FileCabinetApp
+namespace FileCabinetApp.Validators
 {
     /// <summary>
-    /// Interface for validators.
+    /// Validator interface.
     /// </summary>
     public interface IRecordValidator
     {
@@ -13,6 +13,6 @@ namespace FileCabinetApp
         /// Checks the parameters.
         /// </summary>
         /// <param name="arguments">Properties of the record.</param>
-        public abstract void ValidateParameters(Arguments arguments);
+        public void ValidateParameters(Arguments arguments);
     }
 }

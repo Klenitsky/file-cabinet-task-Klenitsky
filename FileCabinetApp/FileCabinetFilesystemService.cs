@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using FileCabinetApp.Consts;
+using FileCabinetApp.Validators;
 
 namespace FileCabinetApp
 {
@@ -24,7 +26,7 @@ namespace FileCabinetApp
         {
             this.fileStream = fileStream;
             this.validator = validator;
-            this.id = (int)(this.fileStream.Length / 270) + 1;
+            this.id = (int)(this.fileStream.Length / FileConsts.RecordSize) + 1;
         }
 
         /// <summary>
@@ -45,14 +47,14 @@ namespace FileCabinetApp
             byte[] recordId = BitConverter.GetBytes(this.id);
             byte[] firstName = Encoding.UTF8.GetBytes(arguments.FirstName);
 
-            byte[] firstNameResult = new byte[120];
+            byte[] firstNameResult = new byte[FileConsts.NameSize];
             for (int i = 0; i < firstName.Length; i++)
             {
                 firstNameResult[i] = firstName[i];
             }
 
             byte[] lastName = Encoding.UTF8.GetBytes(arguments.LastName);
-            byte[] lastNameResult = new byte[120];
+            byte[] lastNameResult = new byte[FileConsts.NameSize];
             for (int i = 0; i < lastName.Length; i++)
             {
                 lastNameResult[i] = lastName[i];
@@ -89,7 +91,7 @@ namespace FileCabinetApp
         public IReadOnlyCollection<FileCabinetRecord> GetRecords()
         {
             List<FileCabinetRecord> result = new List<FileCabinetRecord>();
-            if (this.fileStream.Length % 270 != 0)
+            if (this.fileStream.Length % FileConsts.RecordSize != 0)
             {
                 return result;
             }
@@ -99,22 +101,22 @@ namespace FileCabinetApp
             while (index < this.fileStream.Length)
             {
                 FileCabinetRecord record;
-                byte[] buffer = new byte[270];
+                byte[] buffer = new byte[FileConsts.RecordSize];
                 this.fileStream.Read(buffer, 0, buffer.Length);
-                byte[] statusBuf = buffer[0..2];
+                byte[] statusBuf = buffer[FileConsts.StatusBegin..FileConsts.IdBegin];
                 short status = BitConverter.ToInt16(statusBuf);
                 status &= 4;
                 if (status == 0)
                 {
-                byte[] recordIdBuf = buffer[2..6];
-                byte[] firstNameBuf = buffer[6..126];
-                byte[] lastNameBuf = buffer[126..246];
-                byte[] yearBuf = buffer[246..250];
-                byte[] monthBuf = buffer[250..254];
-                byte[] dayBuf = buffer[254..258];
-                byte[] heightBuf = buffer[258..260];
-                byte[] weightBuf = buffer[260..268];
-                byte[] drivingLicenseCategoryBuf = buffer[268..270];
+                byte[] recordIdBuf = buffer[FileConsts.IdBegin..FileConsts.FirstNameBegin];
+                byte[] firstNameBuf = buffer[FileConsts.FirstNameBegin..FileConsts.LastNameBegin];
+                byte[] lastNameBuf = buffer[FileConsts.LastNameBegin..FileConsts.YearBegin];
+                byte[] yearBuf = buffer[FileConsts.YearBegin..FileConsts.MonthBegin];
+                byte[] monthBuf = buffer[FileConsts.MonthBegin..FileConsts.DayBegin];
+                byte[] dayBuf = buffer[FileConsts.DayBegin..FileConsts.HeightBegin];
+                byte[] heightBuf = buffer[FileConsts.HeightBegin..FileConsts.WeightBegin];
+                byte[] weightBuf = buffer[FileConsts.WeightBegin..FileConsts.DrivingLicenseCategoryBegin];
+                byte[] drivingLicenseCategoryBuf = buffer[FileConsts.DrivingLicenseCategoryBegin..FileConsts.RecordSize];
 
                 int recordId = BitConverter.ToInt32(recordIdBuf);
                 string firstName = Encoding.UTF8.GetString(firstNameBuf);
@@ -137,7 +139,7 @@ namespace FileCabinetApp
                 result.Add(record);
                 }
 
-                index += 270;
+                index += FileConsts.RecordSize;
             }
 
             return result;
@@ -149,7 +151,7 @@ namespace FileCabinetApp
         /// <returns>Number of records.</returns>
         public int GetStat()
         {
-            return (int)(this.fileStream.Length / 270) - this.deleted;
+            return (int)(this.fileStream.Length / FileConsts.RecordSize) - this.deleted;
         }
 
         /// <summary>
@@ -170,14 +172,14 @@ namespace FileCabinetApp
             this.fileStream.Seek(index, SeekOrigin.Begin);
             while (index < this.fileStream.Length)
             {
-                byte[] buffer = new byte[270];
+                byte[] buffer = new byte[FileConsts.RecordSize];
                 this.fileStream.Read(buffer, 0, buffer.Length);
-                byte[] recordIdBuf = buffer[2..6];
+                byte[] recordIdBuf = buffer[FileConsts.IdBegin..FileConsts.FirstNameBegin];
 
                 int recordId = BitConverter.ToInt32(recordIdBuf);
                 if (recordId == id)
                 {
-                    byte[] statusBuf = buffer[0..2];
+                    byte[] statusBuf = buffer[FileConsts.StatusBegin..FileConsts.IdBegin];
                     short status = BitConverter.ToInt16(statusBuf);
                     status &= 4;
                     if (status == 0)
@@ -188,14 +190,14 @@ namespace FileCabinetApp
                         byte[] statusBf = BitConverter.GetBytes(st);
                         byte[] firstName = Encoding.UTF8.GetBytes(arguments.FirstName);
 
-                        byte[] firstNameResult = new byte[120];
+                        byte[] firstNameResult = new byte[FileConsts.NameSize];
                         for (int i = 0; i < firstName.Length; i++)
                         {
                             firstNameResult[i] = firstName[i];
                         }
 
                         byte[] lastName = Encoding.UTF8.GetBytes(arguments.LastName);
-                        byte[] lastNameResult = new byte[120];
+                        byte[] lastNameResult = new byte[FileConsts.NameSize];
                         for (int i = 0; i < lastName.Length; i++)
                         {
                             lastNameResult[i] = lastName[i];
@@ -223,7 +225,7 @@ namespace FileCabinetApp
                     }
                 }
 
-                index += 270;
+                index += FileConsts.RecordSize;
             }
         }
 
@@ -241,7 +243,7 @@ namespace FileCabinetApp
             }
 
             List<FileCabinetRecord> result = new List<FileCabinetRecord>();
-            if (this.fileStream.Length % 270 != 0)
+            if (this.fileStream.Length % FileConsts.RecordSize != 0)
             {
                 return result;
             }
@@ -250,9 +252,9 @@ namespace FileCabinetApp
             this.fileStream.Seek(index, SeekOrigin.Begin);
             while (index < this.fileStream.Length)
             {
-                byte[] buffer = new byte[270];
+                byte[] buffer = new byte[FileConsts.RecordSize];
                 this.fileStream.Read(buffer, 0, buffer.Length);
-                byte[] firstNameBuf = buffer[6..126];
+                byte[] firstNameBuf = buffer[FileConsts.FirstNameBegin..FileConsts.LastNameBegin];
                 string firstNameRecord = Encoding.UTF8.GetString(firstNameBuf);
                 if (firstNameRecord[0..firstName.Length].ToUpperInvariant() == firstName.ToUpperInvariant())
                 {
@@ -262,14 +264,14 @@ namespace FileCabinetApp
                     if (status == 0)
                     {
                         FileCabinetRecord record;
-                        byte[] recordIdBuf = buffer[2..6];
-                        byte[] lastNameBuf = buffer[126..246];
-                        byte[] yearBuf = buffer[246..250];
-                        byte[] monthBuf = buffer[250..254];
-                        byte[] dayBuf = buffer[254..258];
-                        byte[] heightBuf = buffer[258..260];
-                        byte[] weightBuf = buffer[260..268];
-                        byte[] drivingLicenseCategoryBuf = buffer[268..270];
+                        byte[] recordIdBuf = buffer[FileConsts.IdBegin..FileConsts.FirstNameBegin];
+                        byte[] lastNameBuf = buffer[FileConsts.LastNameBegin..FileConsts.YearBegin];
+                        byte[] yearBuf = buffer[FileConsts.YearBegin..FileConsts.MonthBegin];
+                        byte[] monthBuf = buffer[FileConsts.MonthBegin..FileConsts.DayBegin];
+                        byte[] dayBuf = buffer[FileConsts.DayBegin..FileConsts.HeightBegin];
+                        byte[] heightBuf = buffer[FileConsts.HeightBegin..FileConsts.WeightBegin];
+                        byte[] weightBuf = buffer[FileConsts.WeightBegin..FileConsts.DrivingLicenseCategoryBegin];
+                        byte[] drivingLicenseCategoryBuf = buffer[FileConsts.DrivingLicenseCategoryBegin..FileConsts.RecordSize];
                         int recordId = BitConverter.ToInt32(recordIdBuf);
                         string lastName = Encoding.UTF8.GetString(lastNameBuf);
                         DateTime dateOfBirth = new DateTime(BitConverter.ToInt32(yearBuf), BitConverter.ToInt32(monthBuf), BitConverter.ToInt32(dayBuf));
@@ -291,7 +293,7 @@ namespace FileCabinetApp
                     }
                 }
 
-                index += 270;
+                index += FileConsts.RecordSize;
             }
 
             return result;
@@ -311,7 +313,7 @@ namespace FileCabinetApp
             }
 
             List<FileCabinetRecord> result = new List<FileCabinetRecord>();
-            if (this.fileStream.Length % 270 != 0)
+            if (this.fileStream.Length % FileConsts.RecordSize != 0)
             {
                 return result;
             }
@@ -320,27 +322,27 @@ namespace FileCabinetApp
             this.fileStream.Seek(index, SeekOrigin.Begin);
             while (index < this.fileStream.Length)
             {
-                byte[] buffer = new byte[270];
+                byte[] buffer = new byte[FileConsts.RecordSize];
                 this.fileStream.Read(buffer, 0, buffer.Length);
 
-                byte[] lastNameBuf = buffer[126..246];
+                byte[] lastNameBuf = buffer[FileConsts.LastNameBegin..FileConsts.YearBegin];
                 string lastNameRecord = Encoding.UTF8.GetString(lastNameBuf);
                 if (lastNameRecord[0..lastName.Length].ToUpperInvariant() == lastName.ToUpperInvariant())
                 {
-                    byte[] statusBuf = buffer[0..2];
+                    byte[] statusBuf = buffer[FileConsts.StatusBegin..FileConsts.IdBegin];
                     short status = BitConverter.ToInt16(statusBuf);
                     status &= 4;
                     if (status == 0)
                     {
                         FileCabinetRecord record;
-                        byte[] recordIdBuf = buffer[2..6];
-                        byte[] firstNameBuf = buffer[6..126];
-                        byte[] yearBuf = buffer[246..250];
-                        byte[] monthBuf = buffer[250..254];
-                        byte[] dayBuf = buffer[254..258];
-                        byte[] heightBuf = buffer[258..260];
-                        byte[] weightBuf = buffer[260..268];
-                        byte[] drivingLicenseCategoryBuf = buffer[268..270];
+                        byte[] recordIdBuf = buffer[FileConsts.IdBegin..FileConsts.FirstNameBegin];
+                        byte[] firstNameBuf = buffer[FileConsts.FirstNameBegin..FileConsts.LastNameBegin];
+                        byte[] yearBuf = buffer[FileConsts.YearBegin..FileConsts.MonthBegin];
+                        byte[] monthBuf = buffer[FileConsts.MonthBegin..FileConsts.DayBegin];
+                        byte[] dayBuf = buffer[FileConsts.DayBegin..FileConsts.HeightBegin];
+                        byte[] heightBuf = buffer[FileConsts.HeightBegin..FileConsts.WeightBegin];
+                        byte[] weightBuf = buffer[FileConsts.WeightBegin..FileConsts.DrivingLicenseCategoryBegin];
+                        byte[] drivingLicenseCategoryBuf = buffer[FileConsts.DrivingLicenseCategoryBegin..FileConsts.RecordSize];
                         int recordId = BitConverter.ToInt32(recordIdBuf);
                         string firstNameRecord = Encoding.UTF8.GetString(firstNameBuf);
                         DateTime dateOfBirth = new DateTime(BitConverter.ToInt32(yearBuf), BitConverter.ToInt32(monthBuf), BitConverter.ToInt32(dayBuf));
@@ -362,7 +364,7 @@ namespace FileCabinetApp
                     }
                 }
 
-                index += 270;
+                index += FileConsts.RecordSize;
             }
 
             return result;
@@ -376,7 +378,7 @@ namespace FileCabinetApp
         public IReadOnlyCollection<FileCabinetRecord> FindByDateOfBirth(DateTime dateTime)
         {
             List<FileCabinetRecord> result = new List<FileCabinetRecord>();
-            if (this.fileStream.Length % 270 != 0)
+            if (this.fileStream.Length % FileConsts.RecordSize != 0)
             {
                 return result;
             }
@@ -385,27 +387,27 @@ namespace FileCabinetApp
             this.fileStream.Seek(index, SeekOrigin.Begin);
             while (index < this.fileStream.Length)
             {
-                byte[] buffer = new byte[270];
+                byte[] buffer = new byte[FileConsts.RecordSize];
                 this.fileStream.Read(buffer, 0, buffer.Length);
 
-                byte[] yearBuf = buffer[246..250];
-                byte[] monthBuf = buffer[250..254];
-                byte[] dayBuf = buffer[254..258];
+                byte[] yearBuf = buffer[FileConsts.YearBegin..FileConsts.MonthBegin];
+                byte[] monthBuf = buffer[FileConsts.MonthBegin..FileConsts.DayBegin];
+                byte[] dayBuf = buffer[FileConsts.DayBegin..FileConsts.HeightBegin];
 
                 if (BitConverter.ToInt32(yearBuf) == dateTime.Year && BitConverter.ToInt32(monthBuf) == dateTime.Month && BitConverter.ToInt32(dayBuf) == dateTime.Day)
                 {
-                    byte[] statusBuf = buffer[0..2];
+                    byte[] statusBuf = buffer[FileConsts.StatusBegin..FileConsts.IdBegin];
                     short status = BitConverter.ToInt16(statusBuf);
                     status &= 4;
                     if (status == 0)
                     {
                         FileCabinetRecord record;
-                        byte[] recordIdBuf = buffer[2..6];
-                        byte[] firstNameBuf = buffer[6..126];
-                        byte[] lastNameBuf = buffer[126..246];
-                        byte[] heightBuf = buffer[258..260];
-                        byte[] weightBuf = buffer[260..268];
-                        byte[] drivingLicenseCategoryBuf = buffer[268..270];
+                        byte[] recordIdBuf = buffer[FileConsts.IdBegin..FileConsts.FirstNameBegin];
+                        byte[] firstNameBuf = buffer[FileConsts.FirstNameBegin..FileConsts.LastNameBegin];
+                        byte[] lastNameBuf = buffer[FileConsts.LastNameBegin..FileConsts.YearBegin];
+                        byte[] heightBuf = buffer[FileConsts.HeightBegin..FileConsts.WeightBegin];
+                        byte[] weightBuf = buffer[FileConsts.WeightBegin..FileConsts.DrivingLicenseCategoryBegin];
+                        byte[] drivingLicenseCategoryBuf = buffer[FileConsts.DrivingLicenseCategoryBegin..FileConsts.RecordSize];
                         int recordId = BitConverter.ToInt32(recordIdBuf);
                         string firstNameRecord = Encoding.UTF8.GetString(firstNameBuf);
                         string lastNameRecord = Encoding.UTF8.GetString(lastNameBuf);
@@ -428,7 +430,7 @@ namespace FileCabinetApp
                     }
                 }
 
-                index += 270;
+                index += FileConsts.RecordSize;
             }
 
             return result;
@@ -441,7 +443,7 @@ namespace FileCabinetApp
         public FileCabinetServiceSnapshot MakeSnapshot()
         {
             List<FileCabinetRecord> result = new List<FileCabinetRecord>();
-            if (this.fileStream.Length % 270 != 0)
+            if (this.fileStream.Length % FileConsts.RecordSize != 0)
             {
                 return new FileCabinetServiceSnapshot(result);
             }
@@ -451,22 +453,22 @@ namespace FileCabinetApp
             while (index < this.fileStream.Length)
             {
                 FileCabinetRecord record;
-                byte[] buffer = new byte[270];
+                byte[] buffer = new byte[FileConsts.RecordSize];
                 this.fileStream.Read(buffer, 0, buffer.Length);
-                byte[] statusBuf = buffer[0..2];
+                byte[] statusBuf = buffer[FileConsts.StatusBegin..FileConsts.IdBegin];
                 short status = BitConverter.ToInt16(statusBuf);
                 status &= 4;
                 if (status == 0)
                 {
-                    byte[] recordIdBuf = buffer[2..6];
-                    byte[] firstNameBuf = buffer[6..126];
-                    byte[] lastNameBuf = buffer[126..246];
-                    byte[] yearBuf = buffer[246..250];
-                    byte[] monthBuf = buffer[250..254];
-                    byte[] dayBuf = buffer[254..258];
-                    byte[] heightBuf = buffer[258..260];
-                    byte[] weightBuf = buffer[260..268];
-                    byte[] drivingLicenseCategoryBuf = buffer[268..270];
+                    byte[] recordIdBuf = buffer[FileConsts.IdBegin..FileConsts.FirstNameBegin];
+                    byte[] firstNameBuf = buffer[FileConsts.FirstNameBegin..FileConsts.LastNameBegin];
+                    byte[] lastNameBuf = buffer[FileConsts.LastNameBegin..FileConsts.YearBegin];
+                    byte[] yearBuf = buffer[FileConsts.YearBegin..FileConsts.MonthBegin];
+                    byte[] monthBuf = buffer[FileConsts.MonthBegin..FileConsts.DayBegin];
+                    byte[] dayBuf = buffer[FileConsts.DayBegin..FileConsts.HeightBegin];
+                    byte[] heightBuf = buffer[FileConsts.HeightBegin..FileConsts.WeightBegin];
+                    byte[] weightBuf = buffer[FileConsts.WeightBegin..FileConsts.DrivingLicenseCategoryBegin];
+                    byte[] drivingLicenseCategoryBuf = buffer[FileConsts.DrivingLicenseCategoryBegin..FileConsts.RecordSize];
 
                     int recordId = BitConverter.ToInt32(recordIdBuf);
                     string firstName = Encoding.UTF8.GetString(firstNameBuf);
@@ -548,9 +550,9 @@ namespace FileCabinetApp
             this.fileStream.Seek(index, SeekOrigin.Begin);
             while (index < this.fileStream.Length)
             {
-                byte[] buffer = new byte[270];
+                byte[] buffer = new byte[FileConsts.RecordSize];
                 this.fileStream.Read(buffer, 0, buffer.Length);
-                byte[] recordIdBuf = buffer[2..6];
+                byte[] recordIdBuf = buffer[FileConsts.IdBegin..FileConsts.FirstNameBegin];
 
                 int recordId = BitConverter.ToInt32(recordIdBuf);
                 if (recordId == id)
@@ -558,7 +560,7 @@ namespace FileCabinetApp
                     this.deleted++;
                     hasFound = true;
                     this.fileStream.Seek(index, SeekOrigin.Begin);
-                    byte[] statusBuf = buffer[0..2];
+                    byte[] statusBuf = buffer[FileConsts.StatusBegin..FileConsts.IdBegin];
                     short status = BitConverter.ToInt16(statusBuf);
                     status |= 4;
                     statusBuf = BitConverter.GetBytes(status);
@@ -567,7 +569,7 @@ namespace FileCabinetApp
                     break;
                 }
 
-                index += 270;
+                index += FileConsts.RecordSize;
             }
 
             return hasFound;
@@ -588,7 +590,7 @@ namespace FileCabinetApp
         /// <returns>Num of purged records.</returns>
         public int Purge()
         {
-            int result = (int)(this.fileStream.Length / 270);
+            int result = (int)(this.fileStream.Length / FileConsts.RecordSize);
             List<FileCabinetRecord> lst = (List<FileCabinetRecord>)this.GetRecords();
             this.fileStream.Seek(0, SeekOrigin.Begin);
             string name = this.fileStream.Name;
@@ -602,14 +604,14 @@ namespace FileCabinetApp
                 byte[] recordId = BitConverter.GetBytes(record.Id);
                 byte[] firstName = Encoding.UTF8.GetBytes(record.FirstName);
 
-                byte[] firstNameResult = new byte[120];
+                byte[] firstNameResult = new byte[FileConsts.NameSize];
                 for (int i = 0; i < firstName.Length; i++)
                 {
                     firstNameResult[i] = firstName[i];
                 }
 
                 byte[] lastName = Encoding.UTF8.GetBytes(record.LastName);
-                byte[] lastNameResult = new byte[120];
+                byte[] lastNameResult = new byte[FileConsts.NameSize];
                 for (int i = 0; i < lastName.Length; i++)
                 {
                     lastNameResult[i] = lastName[i];
