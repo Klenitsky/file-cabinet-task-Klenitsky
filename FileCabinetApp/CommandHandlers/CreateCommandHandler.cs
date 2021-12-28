@@ -10,7 +10,7 @@ namespace FileCabinetApp.CommandHandlers
     /// </summary>
     public class CreateCommandHandler : ServiceCommandHandlerBase
     {
-        private static bool isCustom;
+        private readonly bool isCustom;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CreateCommandHandler"/> class.
@@ -19,8 +19,8 @@ namespace FileCabinetApp.CommandHandlers
         /// /// <param name="custom">Is validation custom.</param>
         public CreateCommandHandler(IFileCabinetService service, bool custom)
         {
-            fileCabinetService = service;
-            isCustom = custom;
+            this.fileCabinetService = service;
+            this.isCustom = custom;
         }
 
         /// <summary>
@@ -36,56 +36,12 @@ namespace FileCabinetApp.CommandHandlers
 
             if (request.Command == "create")
             {
-                Create(request.Parameters);
+                this.Create(request.Parameters);
             }
             else
             {
                 this.nextHandler.Handle(request);
             }
-        }
-
-        private static void Create(string parameters)
-        {
-            string firstName = string.Empty, lastName = string.Empty;
-            DateTime dateTime = default(DateTime);
-            short height = 0;
-            decimal weight = 0;
-            char drivingLicenseCategory = ' ';
-
-            EnterParameters(out firstName, out lastName, out dateTime, out height, out weight, out drivingLicenseCategory);
-
-            try
-            {
-                 fileCabinetService.CreateRecord(new Arguments(firstName, lastName, dateTime, height, weight, drivingLicenseCategory));
-            }
-            catch (ArgumentException)
-            {
-                Console.WriteLine("Data is invalid");
-                return;
-            }
-
-            Console.WriteLine($"\nRecord #" + fileCabinetService.GetID().ToString(CultureInfo.InvariantCulture) + " created ");
-        }
-
-        private static void EnterParameters(out string firstName, out string lastName, out DateTime dateOfBirth, out short height, out decimal weight, out char drivingLicenseCategory)
-        {
-            Console.Write("First name: ");
-            firstName = ReadInput(StringConverter, FirstNameValidator);
-
-            Console.Write("Last Name: ");
-            lastName = ReadInput(StringConverter, LastNameValidator);
-
-            Console.Write("Date of birth: ");
-            dateOfBirth = ReadInput(DateTimeConverter, DateOfBirthValidator);
-
-            Console.Write("Height: ");
-            height = ReadInput(ShortConverter, HeightValidator);
-
-            Console.Write("Weight: ");
-            weight = ReadInput(DecimalConverter, WeightValidator);
-
-            Console.Write("Driving license category: ");
-            drivingLicenseCategory = ReadInput(CharConverter, LicenseCategoryValidator);
         }
 
         private static T ReadInput<T>(Func<string, Tuple<bool, string, T>> converter, Func<T, Tuple<bool, string>> validator)
@@ -117,43 +73,87 @@ namespace FileCabinetApp.CommandHandlers
             while (true);
         }
 
-        private static Tuple<bool, string, string> StringConverter(string input)
+        private void Create(string parameters)
+        {
+            string firstName = string.Empty, lastName = string.Empty;
+            DateTime dateTime = default(DateTime);
+            short height = 0;
+            decimal weight = 0;
+            char drivingLicenseCategory = ' ';
+
+            this.EnterParameters(out firstName, out lastName, out dateTime, out height, out weight, out drivingLicenseCategory);
+
+            try
+            {
+                 this.fileCabinetService.CreateRecord(new Arguments(firstName, lastName, dateTime, height, weight, drivingLicenseCategory));
+            }
+            catch (ArgumentException)
+            {
+                Console.WriteLine("Data is invalid");
+                return;
+            }
+
+            Console.WriteLine($"\nRecord #" + this.fileCabinetService.GetID().ToString(CultureInfo.InvariantCulture) + " created ");
+        }
+
+        private void EnterParameters(out string firstName, out string lastName, out DateTime dateOfBirth, out short height, out decimal weight, out char drivingLicenseCategory)
+        {
+            Console.Write("First name: ");
+            firstName = ReadInput(this.StringConverter, this.FirstNameValidator);
+
+            Console.Write("Last Name: ");
+            lastName = ReadInput(this.StringConverter, this.LastNameValidator);
+
+            Console.Write("Date of birth: ");
+            dateOfBirth = ReadInput(this.DateTimeConverter, this.DateOfBirthValidator);
+
+            Console.Write("Height: ");
+            height = ReadInput(this.ShortConverter, this.HeightValidator);
+
+            Console.Write("Weight: ");
+            weight = ReadInput(this.DecimalConverter, this.WeightValidator);
+
+            Console.Write("Driving license category: ");
+            drivingLicenseCategory = ReadInput(this.CharConverter, this.LicenseCategoryValidator);
+        }
+
+        private Tuple<bool, string, string> StringConverter(string input)
         {
             return new Tuple<bool, string, string>(true, string.Empty, input);
         }
 
-        private static Tuple<bool, string, DateTime> DateTimeConverter(string input)
+        private Tuple<bool, string, DateTime> DateTimeConverter(string input)
         {
             DateTime dateOfBirth;
             bool success = DateTime.TryParse(input, out dateOfBirth);
             return new Tuple<bool, string, DateTime>(success, string.Empty, dateOfBirth);
         }
 
-        private static Tuple<bool, string, short> ShortConverter(string input)
+        private Tuple<bool, string, short> ShortConverter(string input)
         {
             short height;
             bool success = short.TryParse(input, out height);
             return new Tuple<bool, string, short>(success, string.Empty, height);
         }
 
-        private static Tuple<bool, string, decimal> DecimalConverter(string input)
+        private Tuple<bool, string, decimal> DecimalConverter(string input)
         {
             decimal weight;
             bool success = decimal.TryParse(input, out weight);
             return new Tuple<bool, string, decimal>(success, string.Empty, weight);
         }
 
-        private static Tuple<bool, string, char> CharConverter(string input)
+        private Tuple<bool, string, char> CharConverter(string input)
         {
             char symbol;
             bool success = char.TryParse(input, out symbol);
             return new Tuple<bool, string, char>(success, string.Empty, symbol);
         }
 
-        private static Tuple<bool, string> FirstNameValidator(string firstName)
+        private Tuple<bool, string> FirstNameValidator(string firstName)
         {
             bool result = true;
-            if (isCustom)
+            if (this.isCustom)
             {
                 if ((firstName.Length < 1) || (firstName.Length > 8) || string.IsNullOrWhiteSpace(firstName))
                 {
@@ -171,10 +171,10 @@ namespace FileCabinetApp.CommandHandlers
             return new Tuple<bool, string>(result, string.Empty);
         }
 
-        private static Tuple<bool, string> LastNameValidator(string firstName)
+        private Tuple<bool, string> LastNameValidator(string firstName)
         {
             bool result = true;
-            if (isCustom)
+            if (this.isCustom)
             {
                 if ((firstName.Length < 1) || (firstName.Length > 7) || string.IsNullOrWhiteSpace(firstName))
                 {
@@ -192,10 +192,10 @@ namespace FileCabinetApp.CommandHandlers
             return new Tuple<bool, string>(result, string.Empty);
         }
 
-        private static Tuple<bool, string> DateOfBirthValidator(DateTime dateOfBirth)
+        private Tuple<bool, string> DateOfBirthValidator(DateTime dateOfBirth)
         {
             bool result = true;
-            if (isCustom)
+            if (this.isCustom)
             {
                 if ((DateTime.Compare(dateOfBirth, DateTime.Today) > 0) || (DateTime.Compare(dateOfBirth, new DateTime(1800, 1, 1)) < 0))
                 {
@@ -213,10 +213,10 @@ namespace FileCabinetApp.CommandHandlers
             return new Tuple<bool, string>(result, string.Empty);
         }
 
-        private static Tuple<bool, string> HeightValidator(short height)
+        private Tuple<bool, string> HeightValidator(short height)
         {
             bool result = true;
-            if (isCustom)
+            if (this.isCustom)
             {
                 if (height < 10 || height > 20)
                 {
@@ -234,10 +234,10 @@ namespace FileCabinetApp.CommandHandlers
             return new Tuple<bool, string>(result, string.Empty);
         }
 
-        private static Tuple<bool, string> WeightValidator(decimal weight)
+        private Tuple<bool, string> WeightValidator(decimal weight)
         {
             bool result = true;
-            if (isCustom)
+            if (this.isCustom)
             {
                 if (weight < 10 || weight > 20)
                 {
@@ -255,10 +255,10 @@ namespace FileCabinetApp.CommandHandlers
             return new Tuple<bool, string>(result, string.Empty);
         }
 
-        private static Tuple<bool, string> LicenseCategoryValidator(char drivingLicenseCategory)
+        private Tuple<bool, string> LicenseCategoryValidator(char drivingLicenseCategory)
         {
             bool result = true;
-            if (isCustom)
+            if (this.isCustom)
             {
                 if ((drivingLicenseCategory != 'A') && (drivingLicenseCategory != 'B') && (drivingLicenseCategory != 'C') && (drivingLicenseCategory != 'Q'))
                 {

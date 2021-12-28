@@ -91,11 +91,6 @@
             Parameters of the record.
             </value>
         </member>
-        <member name="T:FileCabinetApp.CommandHandlers.CommandHandler">
-            <summary>
-            Handler of all commands.
-            </summary>
-        </member>
         <member name="T:FileCabinetApp.CommandHandlers.CommandHandlerBase">
             <summary>
             Base of Handler.
@@ -356,6 +351,71 @@
             Handles the request.
             </summary>
             <param name="request">Request provided.</param>
+        </member>
+        <member name="T:FileCabinetApp.Consts.FileConsts">
+            <summary>
+            Consts of byte files.
+            </summary>
+        </member>
+        <member name="F:FileCabinetApp.Consts.FileConsts.RecordSize">
+            <summary>
+            Size of a full record.
+            </summary>
+        </member>
+        <member name="F:FileCabinetApp.Consts.FileConsts.NameSize">
+            <summary>
+            Size of a name.
+            </summary>
+        </member>
+        <member name="F:FileCabinetApp.Consts.FileConsts.StatusBegin">
+            <summary>
+            Beginning of status data.
+            </summary>
+        </member>
+        <member name="F:FileCabinetApp.Consts.FileConsts.IdBegin">
+            <summary>
+            Beginning of id data.
+            </summary>
+        </member>
+        <member name="F:FileCabinetApp.Consts.FileConsts.FirstNameBegin">
+            <summary>
+            Beginning of first name data.
+            </summary>
+        </member>
+        <member name="F:FileCabinetApp.Consts.FileConsts.LastNameBegin">
+            <summary>
+            Beginning of last name data.
+            </summary>
+        </member>
+        <member name="F:FileCabinetApp.Consts.FileConsts.YearBegin">
+            <summary>
+            Beginning of Year data.
+            </summary>
+        </member>
+        <member name="F:FileCabinetApp.Consts.FileConsts.MonthBegin">
+            <summary>
+            Beginning of month data.
+            </summary>
+        </member>
+        <member name="F:FileCabinetApp.Consts.FileConsts.DayBegin">
+            <summary>
+            Beginning of day data.
+            </summary>
+        </member>
+        <member name="F:FileCabinetApp.Consts.FileConsts.HeightBegin">
+            <summary>
+            Beginning of height data.
+            </summary>
+        </member>
+        <member name="F:FileCabinetApp.Consts.FileConsts.WeightBegin">
+            <summary>
+            Beginning of weight data.
+            </summary>
+        </member>
+        <member name="F:FileCabinetApp.Consts.FileConsts.DrivingLicenseCategoryBegin">
+            <summary>
+            Beginning of driving license category data.
+            </summary>
         </member>
         <member name="T:FileCabinetApp.FileCabinetFilesystemService">
             <summary>
@@ -1053,26 +1113,6 @@
             Checks the parameters.
             </summary>
             <param name="arguments">Properties of the record.</param>
-        </member>
-        <member name="T:FileCabinetApp.CustomValidator">
-            <summary>
-            Validator with custom settings.
-            </summary>
-        </member>
-        <member name="M:FileCabinetApp.CustomValidator.#ctor">
-            <summary>
-            Initializes a new instance of the <see cref="T:FileCabinetApp.CustomValidator"/> class.
-            </summary>
-        </member>
-        <member name="T:FileCabinetApp.DefaultValidator">
-            <summary>
-            Validator with default settings.
-            </summary>
-        </member>
-        <member name="M:FileCabinetApp.DefaultValidator.#ctor">
-            <summary>
-            Initializes a new instance of the <see cref="T:FileCabinetApp.DefaultValidator"/> class.
-            </summary>
         </member>
         <member name="T:FileCabinetApp.XmlName">
             <summary>

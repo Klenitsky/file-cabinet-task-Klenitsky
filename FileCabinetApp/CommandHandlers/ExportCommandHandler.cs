@@ -16,7 +16,7 @@ namespace FileCabinetApp.CommandHandlers
         /// <param name="fileCabinetService">Service provided.</param>
         public ExportCommandHandler(IFileCabinetService fileCabinetService)
         {
-            ExportCommandHandler.fileCabinetService = fileCabinetService;
+            this.fileCabinetService = fileCabinetService;
         }
 
         /// <summary>
@@ -32,7 +32,7 @@ namespace FileCabinetApp.CommandHandlers
 
             if (request.Command == "export")
             {
-                Export(request.Parameters);
+                this.Export(request.Parameters);
             }
             else
             {
@@ -40,7 +40,7 @@ namespace FileCabinetApp.CommandHandlers
             }
         }
 
-        private static void Export(string parameters)
+        private void Export(string parameters)
         {
             if (parameters[0..3] == "csv")
             {
@@ -53,7 +53,7 @@ namespace FileCabinetApp.CommandHandlers
                         if (Console.ReadLine().ToUpperInvariant() == "y".ToUpperInvariant())
                         {
                             StreamWriter writer = new StreamWriter(filename);
-                            fileCabinetService.MakeSnapshot().SaveToCSV(writer);
+                            this.fileCabinetService.MakeSnapshot().SaveToCSV(writer);
                             writer.Close();
                             Console.WriteLine("All records are exported to file " + filename + ".");
                         }
@@ -61,7 +61,7 @@ namespace FileCabinetApp.CommandHandlers
                     else
                     {
                         StreamWriter writer = new StreamWriter(filename);
-                        fileCabinetService.MakeSnapshot().SaveToCSV(writer);
+                        this.fileCabinetService.MakeSnapshot().SaveToCSV(writer);
                         writer.Close();
                         Console.WriteLine("All records are exported to file " + filename + ".");
                     }
@@ -83,7 +83,7 @@ namespace FileCabinetApp.CommandHandlers
                         if (Console.ReadLine().ToUpperInvariant() == "y".ToUpperInvariant())
                         {
                             StreamWriter writer = new StreamWriter(filename);
-                            fileCabinetService.MakeSnapshot().SaveToXml(writer);
+                            this.fileCabinetService.MakeSnapshot().SaveToXml(writer);
                             writer.Close();
                             Console.WriteLine("All records are exported to file " + filename + ".");
                         }
@@ -91,7 +91,7 @@ namespace FileCabinetApp.CommandHandlers
                     else
                     {
                         StreamWriter writer = new StreamWriter(filename);
-                        fileCabinetService.MakeSnapshot().SaveToXml(writer);
+                        this.fileCabinetService.MakeSnapshot().SaveToXml(writer);
                         writer.Close();
                         Console.WriteLine("All records are exported to file " + filename + ".");
                     }

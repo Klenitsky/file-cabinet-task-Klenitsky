@@ -19,7 +19,7 @@ namespace FileCabinetApp.CommandHandlers
         /// <param name="recordPrinter">Printer provided.</param>
         public FindCommandHandler(IFileCabinetService fileCabinetService, Action<IEnumerable<FileCabinetRecord>> recordPrinter)
         {
-            FindCommandHandler.fileCabinetService = fileCabinetService;
+            this.fileCabinetService = fileCabinetService;
             this.printer = recordPrinter;
         }
 
@@ -36,7 +36,7 @@ namespace FileCabinetApp.CommandHandlers
 
             if (request.Command == "find")
             {
-                this.printer(Find(request.Parameters));
+                this.printer(this.Find(request.Parameters));
             }
             else
             {
@@ -44,7 +44,7 @@ namespace FileCabinetApp.CommandHandlers
             }
         }
 
-        private static IReadOnlyCollection<FileCabinetRecord> Find(string parameters)
+        private IReadOnlyCollection<FileCabinetRecord> Find(string parameters)
         {
             int index = parameters.IndexOf(' ', StringComparison.InvariantCulture);
             StringBuilder property = new StringBuilder(parameters, 0, index, char.MaxValue);
@@ -60,7 +60,7 @@ namespace FileCabinetApp.CommandHandlers
                     name = new StringBuilder(Console.ReadLine());
                 }
 
-                result = fileCabinetService.FindByFirstName(name.ToString());
+                result = this.fileCabinetService.FindByFirstName(name.ToString());
             }
 
             if (property.ToString().ToLower(CultureInfo.CurrentCulture) == "lastname".ToLower(CultureInfo.CurrentCulture))
@@ -73,7 +73,7 @@ namespace FileCabinetApp.CommandHandlers
                     name = new StringBuilder(Console.ReadLine());
                 }
 
-                result = fileCabinetService.FindByLastName(name.ToString());
+                result = this.fileCabinetService.FindByLastName(name.ToString());
             }
 
             if (property.ToString().ToLower(CultureInfo.CurrentCulture) == "dateofbirth".ToLower(CultureInfo.CurrentCulture))
@@ -89,7 +89,7 @@ namespace FileCabinetApp.CommandHandlers
                     success = DateTime.TryParse(date.ToString(), out dateTime);
                 }
 
-                result = fileCabinetService.FindByDateOfBirth(dateTime);
+                result = this.fileCabinetService.FindByDateOfBirth(dateTime);
             }
 
             if (result.Count == 0)

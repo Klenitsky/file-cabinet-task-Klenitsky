@@ -15,7 +15,7 @@ namespace FileCabinetApp.CommandHandlers
         /// <param name="fileCabinetService">Service provided.</param>
         public StatCommandHandler(IFileCabinetService fileCabinetService)
         {
-            StatCommandHandler.fileCabinetService = fileCabinetService;
+            this.fileCabinetService = fileCabinetService;
         }
 
         /// <summary>
@@ -31,7 +31,7 @@ namespace FileCabinetApp.CommandHandlers
 
             if (request.Command == "stat")
             {
-                Stat(request.Parameters);
+                this.Stat(request.Parameters);
             }
             else
             {
@@ -39,10 +39,10 @@ namespace FileCabinetApp.CommandHandlers
             }
         }
 
-        private static void Stat(string parameters)
+        private void Stat(string parameters)
         {
-            var recordsCount = fileCabinetService.GetStat();
-            int deletedCount = fileCabinetService.GetDeletedStat();
+            var recordsCount = this.fileCabinetService.GetStat();
+            int deletedCount = this.fileCabinetService.GetDeletedStat();
             Console.WriteLine($"{recordsCount} record(s).{deletedCount} records were deleted");
         }
     }

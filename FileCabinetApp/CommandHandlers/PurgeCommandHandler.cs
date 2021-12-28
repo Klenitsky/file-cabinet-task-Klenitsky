@@ -15,7 +15,7 @@ namespace FileCabinetApp.CommandHandlers
         /// <param name="fileCabinetService">Service provided.</param>
         public PurgeCommandHandler(IFileCabinetService fileCabinetService)
         {
-            PurgeCommandHandler.fileCabinetService = fileCabinetService;
+            this.fileCabinetService = fileCabinetService;
         }
 
         /// <summary>
@@ -31,7 +31,7 @@ namespace FileCabinetApp.CommandHandlers
 
             if (request.Command == "purge")
             {
-                Purge(request.Parameters);
+                this.Purge(request.Parameters);
             }
             else
             {
@@ -39,10 +39,10 @@ namespace FileCabinetApp.CommandHandlers
             }
         }
 
-        private static void Purge(string parameters)
+        private void Purge(string parameters)
         {
-            int stat = fileCabinetService.GetStat();
-            int result = fileCabinetService.Purge();
+            int stat = this.fileCabinetService.GetStat();
+            int result = this.fileCabinetService.Purge();
             Console.WriteLine("Data file processing is completed:" + result + " of " + stat + "  records were purged.");
         }
     }

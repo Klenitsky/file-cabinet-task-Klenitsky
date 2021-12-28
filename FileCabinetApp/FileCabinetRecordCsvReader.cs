@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using FileCabinetApp.Validators;
 
 namespace FileCabinetApp
 {
@@ -10,6 +11,14 @@ namespace FileCabinetApp
     /// </summary>
     public class FileCabinetRecordCsvReader
     {
+        private const int IdIndex = 0;
+        private const int FirstNameIndex = 1;
+        private const int LastNameIndex = 2;
+        private const int DateOfBirthIndex = 3;
+        private const int HeightIndex = 4;
+        private const int WeightIndex = 5;
+        private const int DrivingLicenseCategoryIndex = 6;
+
         private readonly StreamReader reader;
 
         /// <summary>
@@ -41,30 +50,30 @@ namespace FileCabinetApp
                 short height;
                 decimal weight;
                 char drivingLicenseCategory;
-                if (!int.TryParse(recordData[0], out id))
+                if (!int.TryParse(recordData[IdIndex], out id))
                 {
                     success = false;
                 }
 
-                firstName = recordData[1];
-                lastName = recordData[2];
+                firstName = recordData[FirstNameIndex];
+                lastName = recordData[LastNameIndex];
 
-                if (!DateTime.TryParse(recordData[3], out dateOfBirth))
+                if (!DateTime.TryParse(recordData[DateOfBirthIndex], out dateOfBirth))
                 {
                     success = false;
                 }
 
-                if (!short.TryParse(recordData[4], out height))
+                if (!short.TryParse(recordData[HeightIndex], out height))
                 {
                     success = false;
                 }
 
-                if (!decimal.TryParse(recordData[5], out weight))
+                if (!decimal.TryParse(recordData[WeightIndex], out weight))
                 {
                     success = false;
                 }
 
-                if (!char.TryParse(recordData[6], out drivingLicenseCategory))
+                if (!char.TryParse(recordData[DrivingLicenseCategoryIndex], out drivingLicenseCategory))
                 {
                     success = false;
                 }
@@ -76,7 +85,7 @@ namespace FileCabinetApp
                 }
 
                 Arguments arguments = new Arguments(firstName, lastName, dateOfBirth, height, weight, drivingLicenseCategory);
-                DefaultValidator validator = new DefaultValidator();
+                IRecordValidator validator = new ValidatorBuilder().CreateDefault();
                 try
                 {
                     validator.ValidateParameters(arguments);

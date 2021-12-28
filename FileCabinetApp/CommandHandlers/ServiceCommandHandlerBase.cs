@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using FileCabinetApp.Validators;
 
 namespace FileCabinetApp.CommandHandlers
 {
@@ -12,7 +13,7 @@ namespace FileCabinetApp.CommandHandlers
         /// <summary>
         /// Service to work with.
         /// </summary>
-        protected static IFileCabinetService fileCabinetService;
+        protected IFileCabinetService fileCabinetService;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ServiceCommandHandlerBase"/> class.
@@ -20,7 +21,7 @@ namespace FileCabinetApp.CommandHandlers
         /// <param name="service"> service provided.</param>
         public ServiceCommandHandlerBase(IFileCabinetService service)
         {
-            fileCabinetService = service;
+            this.fileCabinetService = service;
         }
 
         /// <summary>
@@ -33,7 +34,7 @@ namespace FileCabinetApp.CommandHandlers
         /// <summary>
         /// Handles the request.
         /// </summary>
-        public void Handle()
+        public static void Handle()
         {
             // Method intentionally left empty.
         }

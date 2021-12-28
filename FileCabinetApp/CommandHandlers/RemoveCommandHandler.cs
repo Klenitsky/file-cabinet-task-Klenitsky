@@ -15,7 +15,7 @@ namespace FileCabinetApp.CommandHandlers
         /// <param name="fileCabinetService">Service provided.</param>
         public RemoveCommandHandler(IFileCabinetService fileCabinetService)
         {
-            RemoveCommandHandler.fileCabinetService = fileCabinetService;
+            this.fileCabinetService = fileCabinetService;
         }
 
         /// <summary>
@@ -31,7 +31,7 @@ namespace FileCabinetApp.CommandHandlers
 
             if (request.Command == "remove")
             {
-                Remove(request.Parameters);
+                this.Remove(request.Parameters);
             }
             else
             {
@@ -39,7 +39,7 @@ namespace FileCabinetApp.CommandHandlers
             }
         }
 
-        private static void Remove(string parameters)
+        private void Remove(string parameters)
         {
             int removeId;
             bool success = int.TryParse(parameters, out removeId);
@@ -48,7 +48,7 @@ namespace FileCabinetApp.CommandHandlers
                 Console.WriteLine("Error occured: Invalid Id");
             }
 
-            success = fileCabinetService.Remove(removeId);
+            success = this.fileCabinetService.Remove(removeId);
             if (success)
             {
                 Console.WriteLine("Record #" + removeId + " is removed.");

@@ -18,7 +18,7 @@ namespace FileCabinetApp.CommandHandlers
         /// <param name="recordPrinter">Printer provided.</param>
         public ListCommandHandler(IFileCabinetService fileCabinetService, Action<IEnumerable<FileCabinetRecord>> recordPrinter)
         {
-            ListCommandHandler.fileCabinetService = fileCabinetService;
+            this.fileCabinetService = fileCabinetService;
             this.printer = recordPrinter;
         }
 
@@ -35,7 +35,7 @@ namespace FileCabinetApp.CommandHandlers
 
             if (request.Command == "list")
             {
-                IReadOnlyCollection<FileCabinetRecord> arrayOfRecords = fileCabinetService.GetRecords();
+                IReadOnlyCollection<FileCabinetRecord> arrayOfRecords = this.fileCabinetService.GetRecords();
                 this.printer(arrayOfRecords);
             }
             else

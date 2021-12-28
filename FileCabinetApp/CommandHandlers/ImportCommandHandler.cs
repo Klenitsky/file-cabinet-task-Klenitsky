@@ -16,7 +16,7 @@ namespace FileCabinetApp.CommandHandlers
         /// <param name="fileCabinetService">Service provided.</param>
         public ImportCommandHandler(IFileCabinetService fileCabinetService)
         {
-            ImportCommandHandler.fileCabinetService = fileCabinetService;
+           this.fileCabinetService = fileCabinetService;
         }
 
         /// <summary>
@@ -32,7 +32,7 @@ namespace FileCabinetApp.CommandHandlers
 
             if (request.Command == "import")
             {
-                Import(request.Parameters);
+               this.Import(request.Parameters);
             }
             else
             {
@@ -40,7 +40,7 @@ namespace FileCabinetApp.CommandHandlers
             }
         }
 
-        private static void Import(string parameters)
+        private void Import(string parameters)
         {
             string[] parametersArray = parameters.Split(' ');
             if (parametersArray[0] == "csv")
@@ -57,7 +57,7 @@ namespace FileCabinetApp.CommandHandlers
 
                 FileCabinetServiceSnapshot snapshot = new FileCabinetServiceSnapshot(new List<FileCabinetRecord>());
                 snapshot.LoadFromCsv(file);
-                fileCabinetService.Restore(snapshot);
+                this.fileCabinetService.Restore(snapshot);
                 file.Close();
                 Console.WriteLine(snapshot.Records.Count + " records were imported from " + parametersArray[1]);
             }
@@ -76,7 +76,7 @@ namespace FileCabinetApp.CommandHandlers
 
                 FileCabinetServiceSnapshot snapshot = new FileCabinetServiceSnapshot(new List<FileCabinetRecord>());
                 snapshot.LoadFromXml(file);
-                fileCabinetService.Restore(snapshot);
+                this.fileCabinetService.Restore(snapshot);
                 file.Close();
                 Console.WriteLine(snapshot.Records.Count + " records were imported from " + parametersArray[1]);
             }
