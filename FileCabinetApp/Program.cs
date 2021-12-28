@@ -21,7 +21,7 @@ namespace FileCabinetApp
         private static bool isRunning = true;
         private static bool isCustom;
 
-        private static IFileCabinetService fileCabinetService = new FileCabinetFilesystemService(fileStream, new ValidatorBuilder().CreateDefault());
+        private static IFileCabinetService fileCabinetService = new ServiceMeter(new FileCabinetFilesystemService(fileStream, new ValidatorBuilder().CreateDefault()));
 
         /// <summary>
         /// The main function of the application.
