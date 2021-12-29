@@ -1,8 +1,8 @@
-﻿using FileCabinetApp.Iterators;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
+using FileCabinetApp.Iterators;
 
 namespace FileCabinetApp.CommandHandlers
 {
@@ -11,14 +11,14 @@ namespace FileCabinetApp.CommandHandlers
     /// </summary>
     public class FindCommandHandler : ServiceCommandHandlerBase
     {
-        private readonly Action<IRecordIterator> printer;
+        private readonly Action<IEnumerable<FileCabinetRecord>> printer;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FindCommandHandler"/> class.
         /// </summary>
         /// <param name="fileCabinetService">Service provided.</param>
         /// <param name="recordPrinter">Printer provided.</param>
-        public FindCommandHandler(IFileCabinetService fileCabinetService, Action<IRecordIterator> recordPrinter)
+        public FindCommandHandler(IFileCabinetService fileCabinetService, Action<IEnumerable<FileCabinetRecord>> recordPrinter)
         {
             this.fileCabinetService = fileCabinetService;
             this.printer = recordPrinter;
@@ -45,11 +45,11 @@ namespace FileCabinetApp.CommandHandlers
             }
         }
 
-        private IRecordIterator Find(string parameters)
+        private IEnumerable<FileCabinetRecord> Find(string parameters)
         {
             int index = parameters.IndexOf(' ', StringComparison.InvariantCulture);
             StringBuilder property = new StringBuilder(parameters, 0, index, char.MaxValue);
-            IRecordIterator result = new MemoryIterator(new List<FileCabinetRecord>());
+            IEnumerable<FileCabinetRecord> result = new MemoryIterator(new List<FileCabinetRecord>());
 
             if (property.ToString().ToLower(CultureInfo.CurrentCulture) == "firstname".ToLower(CultureInfo.CurrentCulture))
             {
@@ -91,11 +91,6 @@ namespace FileCabinetApp.CommandHandlers
                 }
 
                 result = this.fileCabinetService.FindByDateOfBirth(dateTime);
-            }
-
-            if (!result.HasMore())
-            {
-                Console.WriteLine("No elements with such property");
             }
 
             return result;

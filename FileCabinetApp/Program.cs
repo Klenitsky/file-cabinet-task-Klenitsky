@@ -199,16 +199,16 @@ namespace FileCabinetApp
             }
         }
 
-        private static void DefaultRecordPrintIteator(IRecordIterator iterator)
+        private static void DefaultRecordPrintIteator(IEnumerable<FileCabinetRecord> iterator)
         {
             if (iterator == null)
             {
                 throw new ArgumentNullException(nameof(iterator));
             }
 
-            while (iterator.HasMore())
+            foreach (var record in iterator)
             {
-                Console.WriteLine(iterator.GetNext().ToString());
+                Console.WriteLine(record.ToString());
             }
         }
     }

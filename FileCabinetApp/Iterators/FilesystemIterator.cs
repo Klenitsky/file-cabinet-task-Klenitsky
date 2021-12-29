@@ -1,8 +1,9 @@
-﻿using FileCabinetApp.Consts;
-using System;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using FileCabinetApp.Consts;
 
 namespace FileCabinetApp.Iterators
 {
@@ -18,13 +19,25 @@ namespace FileCabinetApp.Iterators
         /// <summary>
         /// Initializes a new instance of the <see cref="FilesystemIterator"/> class.
         /// </summary>
-        /// <param name="positions">"List of positions in the file."</param>
+        /// <param name="positions">"List of positions in the file.</param>
         /// <param name="reader">Reader provided.</param>
         public FilesystemIterator(List<long> positions, FileStream reader)
         {
             this.fileStream = reader;
             this.positions = positions;
             this.currentPosition = 0;
+        }
+
+        /// <summary>
+        /// Gets the Enumerator.
+        /// </summary>
+        /// <returns>Enumerator.</returns>
+        public IEnumerator<FileCabinetRecord> GetEnumerator()
+        {
+            while (this.HasMore())
+            {
+                yield return this.GetNext();
+            }
         }
 
         /// <summary>
@@ -77,6 +90,15 @@ namespace FileCabinetApp.Iterators
         public bool HasMore()
         {
             return this.currentPosition < this.positions.Count;
+        }
+
+        /// <summary>
+        /// Gets the Enumerator.
+        /// </summary>
+        /// <returns>Enumerator.</returns>
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return this.GetEnumerator();
         }
     }
 }

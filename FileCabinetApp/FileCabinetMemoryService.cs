@@ -175,7 +175,7 @@ namespace FileCabinetApp
         /// <param name="firstName">The first name of the person.</param>
         /// <returns>A list of records found.</returns>
         /// <exception cref="ArgumentNullException">String firstName is null.</exception>
-        public IRecordIterator FindByFirstName(string firstName)
+        public IEnumerable<FileCabinetRecord> FindByFirstName(string firstName)
         {
             if (string.IsNullOrEmpty(firstName))
             {
@@ -192,7 +192,7 @@ namespace FileCabinetApp
         /// <param name="lastName">The last name of the person.</param>
         /// <returns>A list of records found.</returns>
         /// <exception cref="ArgumentNullException">String firstName is null.</exception>
-        public IRecordIterator FindByLastName(string lastName)
+        public IEnumerable<FileCabinetRecord> FindByLastName(string lastName)
         {
             if (string.IsNullOrEmpty(lastName))
             {
@@ -208,7 +208,7 @@ namespace FileCabinetApp
         /// </summary>
         /// <param name="dateTime">The date of birth of the person.</param>
         /// <returns>A list of records found.</returns>
-        public IRecordIterator FindByDateOfBirth(DateTime dateTime)
+        public IEnumerable<FileCabinetRecord> FindByDateOfBirth(DateTime dateTime)
         {
             MemoryIterator iterator = new MemoryIterator(this.dateOfBirthDictionary[dateTime.ToString(CultureInfo.CurrentCulture)]);
             return iterator;

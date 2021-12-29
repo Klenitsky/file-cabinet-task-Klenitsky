@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 
@@ -40,6 +41,27 @@ namespace FileCabinetApp.Iterators
         public bool HasMore()
         {
             return this.currentIndex < this.records.Count;
+        }
+
+        /// <summary>
+        /// Gets the Enumerator.
+        /// </summary>
+        /// <returns>Enumerator.</returns>
+        public IEnumerator<FileCabinetRecord> GetEnumerator()
+        {
+            while (this.HasMore())
+            {
+                yield return this.GetNext();
+            }
+        }
+
+        /// <summary>
+        /// Gets the Enumerator.
+        /// </summary>
+        /// <returns>Enumerator.</returns>
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return this.GetEnumerator();
         }
     }
 }

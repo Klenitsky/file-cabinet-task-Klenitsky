@@ -7,7 +7,7 @@ namespace FileCabinetApp.Iterators
     /// <summary>
     /// Iterator interface.
     /// </summary>
-    public interface IRecordIterator
+    public interface IRecordIterator : IEnumerable<FileCabinetRecord>
     {
         /// <summary>
         /// Returns next value of the collection.
@@ -20,6 +20,5 @@ namespace FileCabinetApp.Iterators
         /// </summary>
         /// <returns>Bool indicator.</returns>
         public bool HasMore();
-
     }
 }

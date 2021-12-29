@@ -58,10 +58,10 @@ namespace FileCabinetApp
         /// </summary>
         /// <param name="dateTime">The date of birth of the person.</param>
         /// <returns>A list of records found.</returns>
-        public IRecordIterator FindByDateOfBirth(DateTime dateTime)
+        public IEnumerable<FileCabinetRecord> FindByDateOfBirth(DateTime dateTime)
         {
             Stopwatch elapsedTime = Stopwatch.StartNew();
-            IRecordIterator result = this.service.FindByDateOfBirth(dateTime);
+            IEnumerable<FileCabinetRecord> result = this.service.FindByDateOfBirth(dateTime);
             elapsedTime.Stop();
             Console.WriteLine("Find method execution duration is " + elapsedTime.ElapsedTicks + " ticks.");
             return result;
@@ -73,10 +73,10 @@ namespace FileCabinetApp
         /// <param name="firstName">The first name of the person.</param>
         /// <returns>A list of records found.</returns>
         /// <exception cref="ArgumentNullException">String firstName is null.</exception>
-        public IRecordIterator FindByFirstName(string firstName)
+        public IEnumerable<FileCabinetRecord> FindByFirstName(string firstName)
         {
             Stopwatch elapsedTime = Stopwatch.StartNew();
-            IRecordIterator result = this.service.FindByFirstName(firstName);
+            IEnumerable<FileCabinetRecord> result = this.service.FindByFirstName(firstName);
             elapsedTime.Stop();
             Console.WriteLine("Find method execution duration is " + elapsedTime.ElapsedTicks + " ticks.");
             return result;
@@ -88,10 +88,10 @@ namespace FileCabinetApp
         /// <param name="lastName">The last name of the person.</param>
         /// <returns>A list of records found.</returns>
         /// <exception cref="ArgumentNullException">String firstName is null.</exception>
-        public IRecordIterator FindByLastName(string lastName)
+        public IEnumerable<FileCabinetRecord> FindByLastName(string lastName)
         {
             Stopwatch elapsedTime = Stopwatch.StartNew();
-            IRecordIterator result = this.service.FindByLastName(lastName);
+            IEnumerable<FileCabinetRecord> result = this.service.FindByLastName(lastName);
             elapsedTime.Stop();
             Console.WriteLine("Find method execution duration is " + elapsedTime.ElapsedTicks + " ticks.");
             return result;

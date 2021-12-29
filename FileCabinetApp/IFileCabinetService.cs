@@ -41,7 +41,7 @@ namespace FileCabinetApp
         /// </summary>
         /// <param name="firstName">The first name of the person.</param>
         /// <returns>Iterator on records.</returns>
-        public IRecordIterator FindByFirstName(string firstName);
+        public IEnumerable<FileCabinetRecord> FindByFirstName(string firstName);
 
         /// <summary>
         /// Finds all records with given lastname.
@@ -49,14 +49,14 @@ namespace FileCabinetApp
         /// <param name="lastName">The last name of the person.</param>
         /// <returns>Iterator on records.</returns>
         /// <exception cref="ArgumentNullException">String firstName is null.</exception>
-        public IRecordIterator FindByLastName(string lastName);
+        public IEnumerable<FileCabinetRecord> FindByLastName(string lastName);
 
         /// <summary>
         /// Finds all records with given date of Birth.
         /// </summary>
         /// <param name="dateTime">The date of birth of the person.</param>
         /// <returns>Iterator on records.</returns>
-        public IRecordIterator FindByDateOfBirth(DateTime dateTime);
+        public IEnumerable<FileCabinetRecord> FindByDateOfBirth(DateTime dateTime);
 
         /// <summary>
         /// Generates snapshot of the service.

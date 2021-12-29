@@ -188,7 +188,7 @@
             Handler of find command.
             </summary>
         </member>
-        <member name="M:FileCabinetApp.CommandHandlers.FindCommandHandler.#ctor(FileCabinetApp.IFileCabinetService,System.Action{FileCabinetApp.Iterators.IRecordIterator})">
+        <member name="M:FileCabinetApp.CommandHandlers.FindCommandHandler.#ctor(FileCabinetApp.IFileCabinetService,System.Action{System.Collections.Generic.IEnumerable{FileCabinetApp.FileCabinetRecord}})">
             <summary>
             Initializes a new instance of the <see cref="T:FileCabinetApp.CommandHandlers.FindCommandHandler"/> class.
             </summary>
@@ -907,8 +907,14 @@
             <summary>
             Initializes a new instance of the <see cref="T:FileCabinetApp.Iterators.FilesystemIterator"/> class.
             </summary>
-            <param name="positions">"List of positions in the file."</param>
+            <param name="positions">"List of positions in the file.</param>
             <param name="reader">Reader provided.</param>
+        </member>
+        <member name="M:FileCabinetApp.Iterators.FilesystemIterator.GetEnumerator">
+            <summary>
+            Gets the Enumerator.
+            </summary>
+            <returns>Enumerator.</returns>
         </member>
         <member name="M:FileCabinetApp.Iterators.FilesystemIterator.GetNext">
             <summary>
@@ -921,6 +927,12 @@
             Indicates if there are more records in the cpllection.
             </summary>
             <returns>Bool indicator.</returns>
+        </member>
+        <member name="M:FileCabinetApp.Iterators.FilesystemIterator.System#Collections#IEnumerable#GetEnumerator">
+            <summary>
+            Gets the Enumerator.
+            </summary>
+            <returns>Enumerator.</returns>
         </member>
         <member name="T:FileCabinetApp.Iterators.IRecordIterator">
             <summary>
@@ -961,6 +973,18 @@
             Indicates if there are more records in the cpllection.
             </summary>
             <returns>Bool indicator.</returns>
+        </member>
+        <member name="M:FileCabinetApp.Iterators.MemoryIterator.GetEnumerator">
+            <summary>
+            Gets the Enumerator.
+            </summary>
+            <returns>Enumerator.</returns>
+        </member>
+        <member name="M:FileCabinetApp.Iterators.MemoryIterator.System#Collections#IEnumerable#GetEnumerator">
+            <summary>
+            Gets the Enumerator.
+            </summary>
+            <returns>Enumerator.</returns>
         </member>
         <member name="T:FileCabinetApp.Program">
             <summary>
