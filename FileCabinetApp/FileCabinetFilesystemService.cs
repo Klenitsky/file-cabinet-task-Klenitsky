@@ -4,6 +4,7 @@ using System.Globalization;
 using System.IO;
 using System.Text;
 using FileCabinetApp.Consts;
+using FileCabinetApp.Iterators;
 using FileCabinetApp.Validators;
 
 namespace FileCabinetApp
@@ -294,7 +295,7 @@ namespace FileCabinetApp
         /// <param name="firstName">The first name of the person.</param>
         /// <returns>A list of records found.</returns>
         /// <exception cref="ArgumentNullException">String firstName is null.</exception>
-        public IReadOnlyCollection<FileCabinetRecord> FindByFirstName(string firstName)
+        public IRecordIterator FindByFirstName(string firstName)
         {
             if (firstName == null)
             {
@@ -310,54 +311,7 @@ namespace FileCabinetApp
             }
 
             firstName = Encoding.UTF8.GetString(firstNameToChangeBuf);
-            List<FileCabinetRecord> result = new List<FileCabinetRecord>();
-            if (this.fileStream.Length % FileConsts.RecordSize != 0)
-            {
-                return result;
-            }
-
-            foreach (long num in this.firstNameDictionary[firstName])
-            {
-                this.fileStream.Seek(num, SeekOrigin.Begin);
-                FileCabinetRecord record;
-                byte[] buffer = new byte[FileConsts.RecordSize];
-                this.fileStream.Read(buffer, 0, buffer.Length);
-                byte[] statusBuf = buffer[FileConsts.StatusBegin..FileConsts.IdBegin];
-                short status = BitConverter.ToInt16(statusBuf);
-                status &= 4;
-                if (status == 0)
-                {
-                    byte[] recordIdBuf = buffer[FileConsts.IdBegin..FileConsts.FirstNameBegin];
-                    byte[] lastNameBuf = buffer[FileConsts.LastNameBegin..FileConsts.YearBegin];
-                    byte[] yearBuf = buffer[FileConsts.YearBegin..FileConsts.MonthBegin];
-                    byte[] monthBuf = buffer[FileConsts.MonthBegin..FileConsts.DayBegin];
-                    byte[] dayBuf = buffer[FileConsts.DayBegin..FileConsts.HeightBegin];
-                    byte[] heightBuf = buffer[FileConsts.HeightBegin..FileConsts.WeightBegin];
-                    byte[] weightBuf = buffer[FileConsts.WeightBegin..FileConsts.DrivingLicenseCategoryBegin];
-                    byte[] drivingLicenseCategoryBuf = buffer[FileConsts.DrivingLicenseCategoryBegin..FileConsts.RecordSize];
-
-                    int recordId = BitConverter.ToInt32(recordIdBuf);
-                    string lastName = Encoding.UTF8.GetString(lastNameBuf);
-                    DateTime dateOfBirth = new DateTime(BitConverter.ToInt32(yearBuf), BitConverter.ToInt32(monthBuf), BitConverter.ToInt32(dayBuf));
-                    short height = BitConverter.ToInt16(heightBuf);
-                    decimal weight = new decimal(BitConverter.ToDouble(weightBuf));
-                    char drivingLicenseCategory = Encoding.UTF8.GetString(drivingLicenseCategoryBuf)[0];
-
-                    record = new FileCabinetRecord
-                    {
-                        Id = recordId,
-                        FirstName = firstName,
-                        LastName = lastName,
-                        DateOfBirth = dateOfBirth,
-                        Height = height,
-                        Weight = weight,
-                        DrivingLicenseCategory = drivingLicenseCategory,
-                    };
-                    result.Add(record);
-                }
-            }
-
-            return result;
+            return new FilesystemIterator(this.firstNameDictionary[firstName], this.fileStream);
         }
 
         /// <summary>
@@ -366,7 +320,7 @@ namespace FileCabinetApp
         /// <param name="lastName">The last name of the person.</param>
         /// <returns>A list of records found.</returns>
         /// <exception cref="ArgumentNullException">String firstName is null.</exception>
-        public IReadOnlyCollection<FileCabinetRecord> FindByLastName(string lastName)
+        public IRecordIterator FindByLastName(string lastName)
         {
             if (lastName == null)
             {
@@ -383,54 +337,7 @@ namespace FileCabinetApp
 
             lastName = Encoding.UTF8.GetString(lastNameToChangeBuf);
 
-            List<FileCabinetRecord> result = new List<FileCabinetRecord>();
-            if (this.fileStream.Length % FileConsts.RecordSize != 0)
-            {
-                return result;
-            }
-
-            foreach (long num in this.lastNameDictionary[lastName])
-            {
-                this.fileStream.Seek(num, SeekOrigin.Begin);
-                FileCabinetRecord record;
-                byte[] buffer = new byte[FileConsts.RecordSize];
-                this.fileStream.Read(buffer, 0, buffer.Length);
-                byte[] statusBuf = buffer[FileConsts.StatusBegin..FileConsts.IdBegin];
-                short status = BitConverter.ToInt16(statusBuf);
-                status &= 4;
-                if (status == 0)
-                {
-                    byte[] recordIdBuf = buffer[FileConsts.IdBegin..FileConsts.FirstNameBegin];
-                    byte[] firstNameBuf = buffer[FileConsts.FirstNameBegin..FileConsts.LastNameBegin];
-                    byte[] yearBuf = buffer[FileConsts.YearBegin..FileConsts.MonthBegin];
-                    byte[] monthBuf = buffer[FileConsts.MonthBegin..FileConsts.DayBegin];
-                    byte[] dayBuf = buffer[FileConsts.DayBegin..FileConsts.HeightBegin];
-                    byte[] heightBuf = buffer[FileConsts.HeightBegin..FileConsts.WeightBegin];
-                    byte[] weightBuf = buffer[FileConsts.WeightBegin..FileConsts.DrivingLicenseCategoryBegin];
-                    byte[] drivingLicenseCategoryBuf = buffer[FileConsts.DrivingLicenseCategoryBegin..FileConsts.RecordSize];
-
-                    int recordId = BitConverter.ToInt32(recordIdBuf);
-                    string firstName = Encoding.UTF8.GetString(firstNameBuf);
-                    DateTime dateOfBirth = new DateTime(BitConverter.ToInt32(yearBuf), BitConverter.ToInt32(monthBuf), BitConverter.ToInt32(dayBuf));
-                    short height = BitConverter.ToInt16(heightBuf);
-                    decimal weight = new decimal(BitConverter.ToDouble(weightBuf));
-                    char drivingLicenseCategory = Encoding.UTF8.GetString(drivingLicenseCategoryBuf)[0];
-
-                    record = new FileCabinetRecord
-                    {
-                        Id = recordId,
-                        FirstName = firstName,
-                        LastName = lastName,
-                        DateOfBirth = dateOfBirth,
-                        Height = height,
-                        Weight = weight,
-                        DrivingLicenseCategory = drivingLicenseCategory,
-                    };
-                    result.Add(record);
-                }
-            }
-
-            return result;
+            return new FilesystemIterator(this.lastNameDictionary[lastName], this.fileStream);
         }
 
         /// <summary>
@@ -438,58 +345,9 @@ namespace FileCabinetApp
         /// </summary>
         /// <param name="dateTime">The date of birth of the person.</param>
         /// <returns>A list of records found.</returns>
-        public IReadOnlyCollection<FileCabinetRecord> FindByDateOfBirth(DateTime dateTime)
+        public IRecordIterator FindByDateOfBirth(DateTime dateTime)
         {
-            List<FileCabinetRecord> result = new List<FileCabinetRecord>();
-            if (this.fileStream.Length % FileConsts.RecordSize != 0)
-            {
-                return result;
-            }
-
-            foreach (long num in this.dateOfBirthDictionary[dateTime.ToString(CultureInfo.CurrentCulture)])
-            {
-                this.fileStream.Seek(num, SeekOrigin.Begin);
-                FileCabinetRecord record;
-                byte[] buffer = new byte[FileConsts.RecordSize];
-                this.fileStream.Read(buffer, 0, buffer.Length);
-                byte[] statusBuf = buffer[FileConsts.StatusBegin..FileConsts.IdBegin];
-                short status = BitConverter.ToInt16(statusBuf);
-                status &= 4;
-                if (status == 0)
-                {
-                    byte[] recordIdBuf = buffer[FileConsts.IdBegin..FileConsts.FirstNameBegin];
-                    byte[] firstNameBuf = buffer[FileConsts.FirstNameBegin..FileConsts.LastNameBegin];
-                    byte[] lastNameBuf = buffer[FileConsts.LastNameBegin..FileConsts.YearBegin];
-                    byte[] yearBuf = buffer[FileConsts.YearBegin..FileConsts.MonthBegin];
-                    byte[] monthBuf = buffer[FileConsts.MonthBegin..FileConsts.DayBegin];
-                    byte[] dayBuf = buffer[FileConsts.DayBegin..FileConsts.HeightBegin];
-                    byte[] heightBuf = buffer[FileConsts.HeightBegin..FileConsts.WeightBegin];
-                    byte[] weightBuf = buffer[FileConsts.WeightBegin..FileConsts.DrivingLicenseCategoryBegin];
-                    byte[] drivingLicenseCategoryBuf = buffer[FileConsts.DrivingLicenseCategoryBegin..FileConsts.RecordSize];
-
-                    int recordId = BitConverter.ToInt32(recordIdBuf);
-                    string firstName = Encoding.UTF8.GetString(firstNameBuf);
-                    string lastName = Encoding.UTF8.GetString(lastNameBuf);
-                    DateTime dateOfBirth = new DateTime(BitConverter.ToInt32(yearBuf), BitConverter.ToInt32(monthBuf), BitConverter.ToInt32(dayBuf));
-                    short height = BitConverter.ToInt16(heightBuf);
-                    decimal weight = new decimal(BitConverter.ToDouble(weightBuf));
-                    char drivingLicenseCategory = Encoding.UTF8.GetString(drivingLicenseCategoryBuf)[0];
-
-                    record = new FileCabinetRecord
-                    {
-                        Id = recordId,
-                        FirstName = firstName,
-                        LastName = lastName,
-                        DateOfBirth = dateOfBirth,
-                        Height = height,
-                        Weight = weight,
-                        DrivingLicenseCategory = drivingLicenseCategory,
-                    };
-                    result.Add(record);
-                }
-            }
-
-            return result;
+          return new FilesystemIterator(this.lastNameDictionary[dateTime.ToString(CultureInfo.CurrentCulture)], this.fileStream);
         }
 
         /// <summary>

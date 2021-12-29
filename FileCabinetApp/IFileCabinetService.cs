@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using FileCabinetApp.Iterators;
 
 namespace FileCabinetApp
 {
@@ -39,23 +40,23 @@ namespace FileCabinetApp
         /// Finds all records with given firstname.
         /// </summary>
         /// <param name="firstName">The first name of the person.</param>
-        /// <returns>A list of records found.</returns>
-        public IReadOnlyCollection<FileCabinetRecord> FindByFirstName(string firstName);
+        /// <returns>Iterator on records.</returns>
+        public IRecordIterator FindByFirstName(string firstName);
 
         /// <summary>
         /// Finds all records with given lastname.
         /// </summary>
         /// <param name="lastName">The last name of the person.</param>
-        /// <returns>A list of records found.</returns>
+        /// <returns>Iterator on records.</returns>
         /// <exception cref="ArgumentNullException">String firstName is null.</exception>
-        public IReadOnlyCollection<FileCabinetRecord> FindByLastName(string lastName);
+        public IRecordIterator FindByLastName(string lastName);
 
         /// <summary>
         /// Finds all records with given date of Birth.
         /// </summary>
         /// <param name="dateTime">The date of birth of the person.</param>
-        /// <returns>A list of records found.</returns>
-        public IReadOnlyCollection<FileCabinetRecord> FindByDateOfBirth(DateTime dateTime);
+        /// <returns>Iterator on records.</returns>
+        public IRecordIterator FindByDateOfBirth(DateTime dateTime);
 
         /// <summary>
         /// Generates snapshot of the service.
