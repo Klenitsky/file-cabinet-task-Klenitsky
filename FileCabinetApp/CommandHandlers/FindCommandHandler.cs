@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
+using FileCabinetApp.Iterators;
 
 namespace FileCabinetApp.CommandHandlers
 {
@@ -44,11 +45,11 @@ namespace FileCabinetApp.CommandHandlers
             }
         }
 
-        private IReadOnlyCollection<FileCabinetRecord> Find(string parameters)
+        private IEnumerable<FileCabinetRecord> Find(string parameters)
         {
             int index = parameters.IndexOf(' ', StringComparison.InvariantCulture);
             StringBuilder property = new StringBuilder(parameters, 0, index, char.MaxValue);
-            IReadOnlyCollection<FileCabinetRecord> result = Array.Empty<FileCabinetRecord>();
+            IEnumerable<FileCabinetRecord> result = new MemoryIterator(new List<FileCabinetRecord>());
 
             if (property.ToString().ToLower(CultureInfo.CurrentCulture) == "firstname".ToLower(CultureInfo.CurrentCulture))
             {
@@ -90,11 +91,6 @@ namespace FileCabinetApp.CommandHandlers
                 }
 
                 result = this.fileCabinetService.FindByDateOfBirth(dateTime);
-            }
-
-            if (result.Count == 0)
-            {
-                Console.WriteLine("No elements with such property");
             }
 
             return result;

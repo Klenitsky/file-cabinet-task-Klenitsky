@@ -5,6 +5,7 @@ using System.Globalization;
 using System.IO;
 using System.Text;
 using FileCabinetApp.CommandHandlers;
+using FileCabinetApp.Iterators;
 using FileCabinetApp.Validators;
 
 namespace FileCabinetApp
@@ -159,7 +160,7 @@ namespace FileCabinetApp
             var createCommandHandler = new CreateCommandHandler(fileCabinetService, isCustom);
             var listCommandHandler = new ListCommandHandler(fileCabinetService, DefaultRecordPrint);
             var editCommandHandler = new EditCommandHandler(fileCabinetService, isCustom);
-            var findCommandHandler = new FindCommandHandler(fileCabinetService, DefaultRecordPrint);
+            var findCommandHandler = new FindCommandHandler(fileCabinetService, DefaultRecordPrintIteator);
             var exportCommandHandler = new ExportCommandHandler(fileCabinetService);
             var importCommandHandler = new ImportCommandHandler(fileCabinetService);
             var removeCommandHandler = new RemoveCommandHandler(fileCabinetService);
@@ -193,6 +194,19 @@ namespace FileCabinetApp
             }
 
             foreach (FileCabinetRecord record in records)
+            {
+                Console.WriteLine(record.ToString());
+            }
+        }
+
+        private static void DefaultRecordPrintIteator(IEnumerable<FileCabinetRecord> iterator)
+        {
+            if (iterator == null)
+            {
+                throw new ArgumentNullException(nameof(iterator));
+            }
+
+            foreach (var record in iterator)
             {
                 Console.WriteLine(record.ToString());
             }

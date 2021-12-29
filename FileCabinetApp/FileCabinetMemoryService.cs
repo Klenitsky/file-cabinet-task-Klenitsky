@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
+using FileCabinetApp.Iterators;
 using FileCabinetApp.Validators;
 
 namespace FileCabinetApp
@@ -174,14 +175,15 @@ namespace FileCabinetApp
         /// <param name="firstName">The first name of the person.</param>
         /// <returns>A list of records found.</returns>
         /// <exception cref="ArgumentNullException">String firstName is null.</exception>
-        public IReadOnlyCollection<FileCabinetRecord> FindByFirstName(string firstName)
+        public IEnumerable<FileCabinetRecord> FindByFirstName(string firstName)
         {
             if (string.IsNullOrEmpty(firstName))
             {
                 throw new ArgumentNullException(nameof(firstName));
             }
 
-            return this.firstNameDictionary[firstName].ToArray();
+            MemoryIterator iterator = new MemoryIterator(this.firstNameDictionary[firstName]);
+            return iterator;
         }
 
         /// <summary>
@@ -190,14 +192,15 @@ namespace FileCabinetApp
         /// <param name="lastName">The last name of the person.</param>
         /// <returns>A list of records found.</returns>
         /// <exception cref="ArgumentNullException">String firstName is null.</exception>
-        public IReadOnlyCollection<FileCabinetRecord> FindByLastName(string lastName)
+        public IEnumerable<FileCabinetRecord> FindByLastName(string lastName)
         {
             if (string.IsNullOrEmpty(lastName))
             {
                 throw new ArgumentNullException(nameof(lastName));
             }
 
-            return this.lastNameDictionary[lastName].ToArray();
+            MemoryIterator iterator = new MemoryIterator(this.lastNameDictionary[lastName]);
+            return iterator;
         }
 
         /// <summary>
@@ -205,9 +208,10 @@ namespace FileCabinetApp
         /// </summary>
         /// <param name="dateTime">The date of birth of the person.</param>
         /// <returns>A list of records found.</returns>
-        public IReadOnlyCollection<FileCabinetRecord> FindByDateOfBirth(DateTime dateTime)
+        public IEnumerable<FileCabinetRecord> FindByDateOfBirth(DateTime dateTime)
         {
-            return this.dateOfBirthDictionary[dateTime.ToString(CultureInfo.CurrentCulture)].ToArray();
+            MemoryIterator iterator = new MemoryIterator(this.dateOfBirthDictionary[dateTime.ToString(CultureInfo.CurrentCulture)]);
+            return iterator;
         }
 
         /// <summary>

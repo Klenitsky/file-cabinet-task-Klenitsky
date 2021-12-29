@@ -844,14 +844,14 @@
             Finds all records with given firstname.
             </summary>
             <param name="firstName">The first name of the person.</param>
-            <returns>A list of records found.</returns>
+            <returns>Iterator on records.</returns>
         </member>
         <member name="M:FileCabinetApp.IFileCabinetService.FindByLastName(System.String)">
             <summary>
             Finds all records with given lastname.
             </summary>
             <param name="lastName">The last name of the person.</param>
-            <returns>A list of records found.</returns>
+            <returns>Iterator on records.</returns>
             <exception cref="T:System.ArgumentNullException">String firstName is null.</exception>
         </member>
         <member name="M:FileCabinetApp.IFileCabinetService.FindByDateOfBirth(System.DateTime)">
@@ -859,7 +859,7 @@
             Finds all records with given date of Birth.
             </summary>
             <param name="dateTime">The date of birth of the person.</param>
-            <returns>A list of records found.</returns>
+            <returns>Iterator on records.</returns>
         </member>
         <member name="M:FileCabinetApp.IFileCabinetService.MakeSnapshot">
             <summary>
@@ -897,6 +897,94 @@
             Gets the number of deleted records.
             </summary>
             <returns>Int id.</returns>
+        </member>
+        <member name="T:FileCabinetApp.Iterators.FilesystemIterator">
+            <summary>
+            Iterator for FileCabinetMemoryService.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.Iterators.FilesystemIterator.#ctor(System.Collections.Generic.List{System.Int64},System.IO.FileStream)">
+            <summary>
+            Initializes a new instance of the <see cref="T:FileCabinetApp.Iterators.FilesystemIterator"/> class.
+            </summary>
+            <param name="positions">"List of positions in the file.</param>
+            <param name="reader">Reader provided.</param>
+        </member>
+        <member name="M:FileCabinetApp.Iterators.FilesystemIterator.GetEnumerator">
+            <summary>
+            Gets the Enumerator.
+            </summary>
+            <returns>Enumerator.</returns>
+        </member>
+        <member name="M:FileCabinetApp.Iterators.FilesystemIterator.GetNext">
+            <summary>
+            Returns next value of the collection.
+            </summary>
+            <returns>Record from collection.</returns>
+        </member>
+        <member name="M:FileCabinetApp.Iterators.FilesystemIterator.HasMore">
+            <summary>
+            Indicates if there are more records in the cpllection.
+            </summary>
+            <returns>Bool indicator.</returns>
+        </member>
+        <member name="M:FileCabinetApp.Iterators.FilesystemIterator.System#Collections#IEnumerable#GetEnumerator">
+            <summary>
+            Gets the Enumerator.
+            </summary>
+            <returns>Enumerator.</returns>
+        </member>
+        <member name="T:FileCabinetApp.Iterators.IRecordIterator">
+            <summary>
+            Iterator interface.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.Iterators.IRecordIterator.GetNext">
+            <summary>
+            Returns next value of the collection.
+            </summary>
+            <returns>Record from collection.</returns>
+        </member>
+        <member name="M:FileCabinetApp.Iterators.IRecordIterator.HasMore">
+            <summary>
+            Indicates if there are more records in the cpllection.
+            </summary>
+            <returns>Bool indicator.</returns>
+        </member>
+        <member name="T:FileCabinetApp.Iterators.MemoryIterator">
+            <summary>
+            Iterator for FileCabinetMemoryService.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.Iterators.MemoryIterator.#ctor(System.Collections.Generic.List{FileCabinetApp.FileCabinetRecord})">
+            <summary>
+            Initializes a new instance of the <see cref="T:FileCabinetApp.Iterators.MemoryIterator"/> class.
+            </summary>
+            <param name="records">List of records provided.</param>
+        </member>
+        <member name="M:FileCabinetApp.Iterators.MemoryIterator.GetNext">
+            <summary>
+            Returns next value of the collection.
+            </summary>
+            <returns>Record from collection.</returns>
+        </member>
+        <member name="M:FileCabinetApp.Iterators.MemoryIterator.HasMore">
+            <summary>
+            Indicates if there are more records in the cpllection.
+            </summary>
+            <returns>Bool indicator.</returns>
+        </member>
+        <member name="M:FileCabinetApp.Iterators.MemoryIterator.GetEnumerator">
+            <summary>
+            Gets the Enumerator.
+            </summary>
+            <returns>Enumerator.</returns>
+        </member>
+        <member name="M:FileCabinetApp.Iterators.MemoryIterator.System#Collections#IEnumerable#GetEnumerator">
+            <summary>
+            Gets the Enumerator.
+            </summary>
+            <returns>Enumerator.</returns>
         </member>
         <member name="T:FileCabinetApp.Program">
             <summary>
