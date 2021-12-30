@@ -190,6 +190,26 @@ namespace FileCabinetApp
         }
 
         /// <summary>
+        /// Inserts a new Record.
+        /// </summary>
+        /// <param name="id">Id of the record.</param>
+        /// <param name="arguments">Properties of the record.</param>
+        /// <returns>New record's Id.</returns>
+        public int InsertRecord(int id, Arguments arguments)
+        {
+            if (arguments == null)
+            {
+                throw new ArgumentNullException(nameof(arguments));
+            }
+
+            Stopwatch elapsedTime = Stopwatch.StartNew();
+            int result = this.service.InsertRecord(id, arguments);
+            elapsedTime.Stop();
+            Console.WriteLine("Insert method execution duration is " + elapsedTime.ElapsedTicks + " ticks.");
+            return result;
+        }
+
+        /// <summary>
         /// Adds records loaded from file.
         /// </summary>
         /// <param name="snapshot">Properties of the record.</param>

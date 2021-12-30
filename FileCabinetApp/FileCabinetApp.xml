@@ -246,6 +246,24 @@
             </summary>
             <param name="request">Request provided.</param>
         </member>
+        <member name="T:FileCabinetApp.CommandHandlers.InsertCommandHandler">
+            <summary>
+            Handler of Create command.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.CommandHandlers.InsertCommandHandler.#ctor(FileCabinetApp.IFileCabinetService,System.Boolean)">
+            <summary>
+            Initializes a new instance of the <see cref="T:FileCabinetApp.CommandHandlers.InsertCommandHandler"/> class.
+            </summary>
+            <param name="service">Service provided.</param>
+            /// <param name="custom">Is validation custom.</param>
+        </member>
+        <member name="M:FileCabinetApp.CommandHandlers.InsertCommandHandler.Handle(FileCabinetApp.CommandHandlers.AppCommandRequest)">
+            <summary>
+            Handles the request.
+            </summary>
+            <param name="request">Request provided.</param>
+        </member>
         <member name="T:FileCabinetApp.CommandHandlers.ListCommandHandler">
             <summary>
             Handler of list command.
@@ -511,6 +529,14 @@
             </summary>
             <returns>Num of purged records.</returns>
         </member>
+        <member name="M:FileCabinetApp.FileCabinetFilesystemService.InsertRecord(System.Int32,FileCabinetApp.Arguments)">
+            <summary>
+            Inserts a new Record.
+            </summary>
+            <param name="id">Id of a record.</param>
+            <param name="arguments">Properties of the record.</param>
+            <returns>New record's Id.</returns>
+        </member>
         <member name="M:FileCabinetApp.FileCabinetFilesystemService.Dispose">
             <summary>
             Disposes service.
@@ -629,6 +655,14 @@
             Gets the number of deleted records.
             </summary>
             <returns>Int id.</returns>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetMemoryService.InsertRecord(System.Int32,FileCabinetApp.Arguments)">
+            <summary>
+            Inserts a new Record.
+            </summary>
+            <param name="id">Id of a record.</param>
+            <param name="arguments">Properties of the record.</param>
+            <returns>New record's Id.</returns>
         </member>
         <member name="T:FileCabinetApp.FileCabinetRecord">
             <summary>
@@ -817,6 +851,14 @@
             <summary>
             Creates a new Record.
             </summary>
+            <param name="arguments">Properties of the record.</param>
+            <returns>New record's Id.</returns>
+        </member>
+        <member name="M:FileCabinetApp.IFileCabinetService.InsertRecord(System.Int32,FileCabinetApp.Arguments)">
+            <summary>
+            Inserts a new Record.
+            </summary>
+            <param name="id">Id of a record.</param>
             <param name="arguments">Properties of the record.</param>
             <returns>New record's Id.</returns>
         </member>
@@ -1099,6 +1141,14 @@
             </summary>
             <param name="snapshot">Properties of the record.</param>
         </member>
+        <member name="M:FileCabinetApp.ServiceLogger.InsertRecord(System.Int32,FileCabinetApp.Arguments)">
+            <summary>
+            Inserts a new Record.
+            </summary>
+            <param name="id">Id of the record.</param>
+            <param name="arguments">Properties of the record.</param>
+            <returns>New record's Id.</returns>
+        </member>
         <member name="M:FileCabinetApp.ServiceLogger.Dispose">
             <summary>
             Disposes the object.
@@ -1204,6 +1254,14 @@
             </summary>
             <param name="id">Id of a record to remove.</param>
             <returns>A bool result of removing.</returns>
+        </member>
+        <member name="M:FileCabinetApp.ServiceMeter.InsertRecord(System.Int32,FileCabinetApp.Arguments)">
+            <summary>
+            Inserts a new Record.
+            </summary>
+            <param name="id">Id of the record.</param>
+            <param name="arguments">Properties of the record.</param>
+            <returns>New record's Id.</returns>
         </member>
         <member name="M:FileCabinetApp.ServiceMeter.Restore(FileCabinetApp.FileCabinetServiceSnapshot)">
             <summary>

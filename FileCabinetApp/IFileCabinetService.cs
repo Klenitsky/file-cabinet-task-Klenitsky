@@ -18,6 +18,14 @@ namespace FileCabinetApp
         public int CreateRecord(Arguments arguments);
 
         /// <summary>
+        /// Inserts a new Record.
+        /// </summary>
+        /// <param name="id">Id of a record.</param>
+        /// <param name="arguments">Properties of the record.</param>
+        /// <returns>New record's Id.</returns>
+        public int InsertRecord(int id, Arguments arguments);
+
+        /// <summary>
         /// Gets a copy of the list.
         /// </summary>
         /// <returns>Array of records.</returns>

@@ -559,6 +559,82 @@ namespace FileCabinetApp
         }
 
         /// <summary>
+        /// Inserts a new Record.
+        /// </summary>
+        /// <param name="id">Id of a record.</param>
+        /// <param name="arguments">Properties of the record.</param>
+        /// <returns>New record's Id.</returns>
+        public int InsertRecord(int id, Arguments arguments)
+        {
+            if (arguments == null)
+            {
+                throw new ArgumentNullException(nameof(arguments));
+            }
+
+            this.validator.ValidateParameters(arguments);
+            short st = 0;
+            byte[] status = BitConverter.GetBytes(st);
+            byte[] recordId = BitConverter.GetBytes(id);
+            byte[] firstName = Encoding.UTF8.GetBytes(arguments.FirstName);
+
+            byte[] firstNameResult = new byte[FileConsts.NameSize];
+            for (int i = 0; i < firstName.Length; i++)
+            {
+                firstNameResult[i] = firstName[i];
+            }
+
+            byte[] lastName = Encoding.UTF8.GetBytes(arguments.LastName);
+            byte[] lastNameResult = new byte[FileConsts.NameSize];
+            for (int i = 0; i < lastName.Length; i++)
+            {
+                lastNameResult[i] = lastName[i];
+            }
+
+            byte[] year = BitConverter.GetBytes(arguments.DateOfBirth.Year);
+            byte[] month = BitConverter.GetBytes(arguments.DateOfBirth.Month);
+            byte[] day = BitConverter.GetBytes(arguments.DateOfBirth.Day);
+
+            byte[] height = BitConverter.GetBytes(arguments.Height);
+            byte[] weight = BitConverter.GetBytes(decimal.ToDouble(arguments.Weight));
+            byte[] drivingLicenseCategory = BitConverter.GetBytes(arguments.DrivingLicenseCategory);
+            this.id++;
+
+            if (!this.firstNameDictionary.ContainsKey(arguments.FirstName))
+            {
+                this.firstNameDictionary.Add(arguments.FirstName, new List<long>());
+            }
+
+            this.firstNameDictionary[arguments.FirstName].Add(this.fileStream.Length);
+
+            if (!this.lastNameDictionary.ContainsKey(arguments.LastName))
+            {
+                this.lastNameDictionary.Add(arguments.LastName, new List<long>());
+            }
+
+            this.lastNameDictionary[arguments.LastName].Add(this.fileStream.Length);
+
+            if (!this.dateOfBirthDictionary.ContainsKey(arguments.DateOfBirth.ToString(CultureInfo.CurrentCulture)))
+            {
+                this.dateOfBirthDictionary.Add(arguments.DateOfBirth.ToString(CultureInfo.CurrentCulture), new List<long>());
+            }
+
+            this.dateOfBirthDictionary[arguments.DateOfBirth.ToString(CultureInfo.CurrentCulture)].Add(this.fileStream.Length);
+
+            this.fileStream.Write(status, 0, status.Length);
+            this.fileStream.Write(recordId, 0, recordId.Length);
+            this.fileStream.Write(firstNameResult, 0, firstNameResult.Length);
+            this.fileStream.Write(lastNameResult, 0, lastNameResult.Length);
+            this.fileStream.Write(year, 0, year.Length);
+            this.fileStream.Write(month, 0, month.Length);
+            this.fileStream.Write(day, 0, day.Length);
+            this.fileStream.Write(height, 0, height.Length);
+            this.fileStream.Write(weight, 0, weight.Length);
+            this.fileStream.Write(drivingLicenseCategory, 0, drivingLicenseCategory.Length);
+            this.fileStream.Flush();
+            return id;
+        }
+
+        /// <summary>
         /// Disposes service.
         /// </summary>
         public void Dispose()

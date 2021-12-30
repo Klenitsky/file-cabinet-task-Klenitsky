@@ -225,6 +225,32 @@ namespace FileCabinetApp
         }
 
         /// <summary>
+        /// Inserts a new Record.
+        /// </summary>
+        /// <param name="id">Id of the record.</param>
+        /// <param name="arguments">Properties of the record.</param>
+        /// <returns>New record's Id.</returns>
+        public int InsertRecord(int id, Arguments arguments)
+        {
+            if (arguments == null)
+            {
+                throw new ArgumentNullException(nameof(arguments));
+            }
+
+            this.writer.Write(DateTime.Now.ToString("MM/dd/yyyy HH:mm", CultureInfo.InvariantCulture) + " Calling Insert() with ");
+            this.writer.WriteLine("Id= '" + id + "'");
+            this.writer.Write("FirstName= '" + arguments.FirstName + "', ");
+            this.writer.Write("Lastname= '" + arguments.LastName + "', ");
+            this.writer.Write("DateOfBirth= '" + arguments.DateOfBirth + "', ");
+            this.writer.Write("Height= '" + arguments.Height + "', ");
+            this.writer.Write("Weight= '" + arguments.Weight + "', ");
+            this.writer.WriteLine("DrivingLicenseCategory= '" + arguments.DrivingLicenseCategory + "'");
+            int result = this.service.InsertRecord(id, arguments);
+            this.writer.WriteLine(DateTime.Now.ToString("MM/dd/yyyy HH:mm", CultureInfo.InvariantCulture) + " Insert() returned '" + result + "'");
+            return result;
+        }
+
+        /// <summary>
         /// Disposes the object.
         /// </summary>
         public void Dispose()
@@ -249,5 +275,7 @@ namespace FileCabinetApp
                 this.disposed = true;
             }
         }
+
+  
     }
 }

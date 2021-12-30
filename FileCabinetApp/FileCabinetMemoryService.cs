@@ -299,5 +299,59 @@ namespace FileCabinetApp
         {
             return 0;
         }
+
+        /// <summary>
+        /// Inserts a new Record.
+        /// </summary>
+        /// <param name="id">Id of a record.</param>
+        /// <param name="arguments">Properties of the record.</param>
+        /// <returns>New record's Id.</returns>
+        public int InsertRecord(int id, Arguments arguments)
+        {
+            if (arguments == null)
+            {
+                throw new ArgumentNullException(nameof(arguments));
+            }
+
+            this.validator.ValidateParameters(arguments);
+
+            var record = new FileCabinetRecord
+            {
+                Id = id,
+                FirstName = arguments.FirstName,
+                LastName = arguments.LastName,
+                DateOfBirth = arguments.DateOfBirth,
+                Height = arguments.Height,
+                Weight = arguments.Weight,
+                DrivingLicenseCategory = arguments.DrivingLicenseCategory,
+            };
+
+            this.id++;
+
+            if (!this.firstNameDictionary.ContainsKey(record.FirstName))
+            {
+                this.firstNameDictionary.Add(record.FirstName, new List<FileCabinetRecord>());
+            }
+
+            this.firstNameDictionary[record.FirstName].Add(record);
+
+            if (!this.lastNameDictionary.ContainsKey(record.LastName))
+            {
+                this.lastNameDictionary.Add(record.LastName, new List<FileCabinetRecord>());
+            }
+
+            this.lastNameDictionary[record.LastName].Add(record);
+
+            if (!this.dateOfBirthDictionary.ContainsKey(record.DateOfBirth.ToString(CultureInfo.CurrentCulture)))
+            {
+                this.dateOfBirthDictionary.Add(record.DateOfBirth.ToString(CultureInfo.CurrentCulture), new List<FileCabinetRecord>());
+            }
+
+            this.dateOfBirthDictionary[record.DateOfBirth.ToString(CultureInfo.CurrentCulture)].Add(record);
+
+            this.list.Add(record);
+
+            return record.Id;
+        }
     }
 }
