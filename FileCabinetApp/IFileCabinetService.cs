@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using FileCabinetApp.CommandHandlers;
 using FileCabinetApp.Iterators;
 
 namespace FileCabinetApp
@@ -84,6 +85,13 @@ namespace FileCabinetApp
         /// <param name="id">Id of a record to remove.</param>
         /// <returns>A bool result of removing.</returns>
         public bool Remove(int id);
+
+        /// <summary>
+        /// Removes a record.
+        /// </summary>
+        /// <param name="arguments">Properties of values to delete.</param>
+        /// <returns>Deleted values.</returns>
+        public IEnumerable<FileCabinetRecord> Delete(SearchingAttributes arguments);
 
         /// <summary>
         /// Gets the Id of the last record.

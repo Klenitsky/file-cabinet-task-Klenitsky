@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
+using FileCabinetApp.CommandHandlers;
 using FileCabinetApp.Iterators;
 using FileCabinetApp.Validators;
 
@@ -352,6 +353,214 @@ namespace FileCabinetApp
             this.list.Add(record);
 
             return record.Id;
+        }
+
+        /// <summary>
+        /// Removes a record.
+        /// </summary>
+        /// <param name="arguments">Properties of values to delete.</param>
+        /// <returns>Deleted values.</returns>
+        public IEnumerable<FileCabinetRecord> Delete(SearchingAttributes arguments)
+        {
+            if (arguments == null)
+            {
+                throw new ArgumentNullException(nameof(arguments));
+            }
+
+            switch (arguments.Attribute)
+            {
+                case SearchingAttributes.AttributesSearch.Id:
+                    return this.DeleteId(arguments);
+                case SearchingAttributes.AttributesSearch.FirstName:
+                    return this.DeleteFirstName(arguments);
+                case SearchingAttributes.AttributesSearch.LastName:
+                    return this.DeleteLastName(arguments);
+                case SearchingAttributes.AttributesSearch.DateOfBirth:
+                    return this.DeleteDateOfBirth(arguments);
+                case SearchingAttributes.AttributesSearch.Height:
+                    return this.DeleteHeight(arguments);
+                case SearchingAttributes.AttributesSearch.Weight:
+                    return this.DeleteWeight(arguments);
+                case SearchingAttributes.AttributesSearch.DrivingLicenseCategory:
+                    return this.DeleteDrivingLicenseCategory(arguments);
+                default:
+                    throw new ArgumentException(string.Empty, nameof(arguments));
+            }
+        }
+
+        private IEnumerable<FileCabinetRecord> DeleteId(SearchingAttributes arguments)
+        {
+            int deleteId;
+            List<FileCabinetRecord> result = new List<FileCabinetRecord>();
+            bool success = int.TryParse(arguments.Value, out deleteId);
+            if (!success)
+            {
+                throw new ArgumentException(string.Empty, nameof(arguments));
+            }
+
+            for (int i = 0; i < this.list.Count; i++)
+            {
+                FileCabinetRecord record = this.list[i];
+                if (record.Id == deleteId)
+                {
+                    result.Add(record);
+                    this.list.Remove(record);
+                    this.firstNameDictionary[record.FirstName].Remove(record);
+                    this.lastNameDictionary[record.LastName].Remove(record);
+                    this.dateOfBirthDictionary[record.DateOfBirth.ToString(CultureInfo.CurrentCulture)].Remove(record);
+                    i--;
+                }
+            }
+
+            return result;
+        }
+
+        private IEnumerable<FileCabinetRecord> DeleteFirstName(SearchingAttributes arguments)
+        {
+            List<FileCabinetRecord> result = new List<FileCabinetRecord>();
+            for (int i = 0; i < this.list.Count; i++)
+            {
+                FileCabinetRecord record = this.list[i];
+                if (record.FirstName == arguments.Value)
+                {
+                    result.Add(record);
+                    this.list.Remove(record);
+                    this.firstNameDictionary[record.FirstName].Remove(record);
+                    this.lastNameDictionary[record.LastName].Remove(record);
+                    this.dateOfBirthDictionary[record.DateOfBirth.ToString(CultureInfo.CurrentCulture)].Remove(record);
+                    i--;
+                }
+            }
+
+            return result;
+        }
+
+        private IEnumerable<FileCabinetRecord> DeleteLastName(SearchingAttributes arguments)
+        {
+            List<FileCabinetRecord> result = new List<FileCabinetRecord>();
+            for (int i = 0; i < this.list.Count; i++)
+            {
+                FileCabinetRecord record = this.list[i];
+                if (record.LastName == arguments.Value)
+                {
+                    result.Add(record);
+                    this.list.Remove(record);
+                    this.firstNameDictionary[record.FirstName].Remove(record);
+                    this.lastNameDictionary[record.LastName].Remove(record);
+                    this.dateOfBirthDictionary[record.DateOfBirth.ToString(CultureInfo.CurrentCulture)].Remove(record);
+                    i--;
+                }
+            }
+
+            return result;
+        }
+
+        private IEnumerable<FileCabinetRecord> DeleteDateOfBirth(SearchingAttributes arguments)
+        {
+            DateTime dateToDelete;
+            List<FileCabinetRecord> result = new List<FileCabinetRecord>();
+            bool success = DateTime.TryParse(arguments.Value, out dateToDelete);
+            if (!success)
+            {
+                throw new ArgumentException(string.Empty, nameof(arguments));
+            }
+
+            for (int i = 0; i < this.list.Count; i++)
+            {
+                FileCabinetRecord record = this.list[i];
+                if (DateTime.Compare(record.DateOfBirth, dateToDelete) == 0)
+                {
+                    result.Add(record);
+                    this.list.Remove(record);
+                    this.firstNameDictionary[record.FirstName].Remove(record);
+                    this.lastNameDictionary[record.LastName].Remove(record);
+                    this.dateOfBirthDictionary[record.DateOfBirth.ToString(CultureInfo.CurrentCulture)].Remove(record);
+                    i--;
+                }
+            }
+
+            return result;
+        }
+
+        private IEnumerable<FileCabinetRecord> DeleteHeight(SearchingAttributes arguments)
+        {
+            short heightToDelete;
+            List<FileCabinetRecord> result = new List<FileCabinetRecord>();
+            bool success = short.TryParse(arguments.Value, out heightToDelete);
+            if (!success)
+            {
+                throw new ArgumentException(string.Empty, nameof(arguments));
+            }
+
+            for (int i = 0; i < this.list.Count; i++)
+            {
+                FileCabinetRecord record = this.list[i];
+                if (record.Height == heightToDelete)
+                {
+                    result.Add(record);
+                    this.list.Remove(record);
+                    this.firstNameDictionary[record.FirstName].Remove(record);
+                    this.lastNameDictionary[record.LastName].Remove(record);
+                    this.dateOfBirthDictionary[record.DateOfBirth.ToString(CultureInfo.CurrentCulture)].Remove(record);
+                    i--;
+                }
+            }
+
+            return result;
+        }
+
+        private IEnumerable<FileCabinetRecord> DeleteDrivingLicenseCategory(SearchingAttributes arguments)
+        {
+            char categoryToDelete;
+            List<FileCabinetRecord> result = new List<FileCabinetRecord>();
+            bool success = char.TryParse(arguments.Value, out categoryToDelete);
+            if (!success)
+            {
+                throw new ArgumentException(string.Empty, nameof(arguments));
+            }
+
+            for (int i = 0; i < this.list.Count; i++)
+            {
+                FileCabinetRecord record = this.list[i];
+                if (record.DrivingLicenseCategory == categoryToDelete)
+                {
+                    result.Add(record);
+                    this.list.Remove(record);
+                    this.firstNameDictionary[record.FirstName].Remove(record);
+                    this.lastNameDictionary[record.LastName].Remove(record);
+                    this.dateOfBirthDictionary[record.DateOfBirth.ToString(CultureInfo.CurrentCulture)].Remove(record);
+                    i--;
+                }
+            }
+
+            return result;
+        }
+
+        private IEnumerable<FileCabinetRecord> DeleteWeight(SearchingAttributes arguments)
+        {
+            decimal weightToDelete;
+            List<FileCabinetRecord> result = new List<FileCabinetRecord>();
+            bool success = decimal.TryParse(arguments.Value, out weightToDelete);
+            if (!success)
+            {
+                throw new ArgumentException(string.Empty, nameof(arguments));
+            }
+
+            for (int i = 0; i < this.list.Count; i++)
+            {
+                FileCabinetRecord record = this.list[i];
+                if (record.Weight == weightToDelete)
+                {
+                    result.Add(record);
+                    this.list.Remove(record);
+                    this.firstNameDictionary[record.FirstName].Remove(record);
+                    this.lastNameDictionary[record.LastName].Remove(record);
+                    this.dateOfBirthDictionary[record.DateOfBirth.ToString(CultureInfo.CurrentCulture)].Remove(record);
+                    i--;
+                }
+            }
+
+            return result;
         }
     }
 }

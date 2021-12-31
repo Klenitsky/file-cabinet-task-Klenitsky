@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
+using FileCabinetApp.CommandHandlers;
 using FileCabinetApp.Iterators;
 
 namespace FileCabinetApp
@@ -219,6 +220,25 @@ namespace FileCabinetApp
             this.service.Restore(snapshot);
             elapsedTime.Stop();
             Console.WriteLine("Restore method execution duration is" + elapsedTime.ElapsedTicks + " ticks.");
+        }
+
+        /// <summary>
+        /// Removes a record.
+        /// </summary>
+        /// <param name="arguments">Properties of values to delete.</param>
+        /// <returns>Deleted values.</returns>
+        public IEnumerable<FileCabinetRecord> Delete(SearchingAttributes arguments)
+        {
+            if (arguments == null)
+            {
+                throw new ArgumentNullException(nameof(arguments));
+            }
+
+            Stopwatch elapsedTime = Stopwatch.StartNew();
+            IEnumerable<FileCabinetRecord> result = this.service.Delete(arguments);
+            elapsedTime.Stop();
+            Console.WriteLine("Delete method execution duration is" + elapsedTime.ElapsedTicks + " ticks.");
+            return result;
         }
     }
 }

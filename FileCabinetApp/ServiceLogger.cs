@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Text;
+using FileCabinetApp.CommandHandlers;
 using FileCabinetApp.Iterators;
 
 namespace FileCabinetApp
@@ -251,6 +252,25 @@ namespace FileCabinetApp
         }
 
         /// <summary>
+        /// Removes a record.
+        /// </summary>
+        /// <param name="arguments">Properties of values to delete.</param>
+        /// <returns>Deleted values.</returns>
+        public IEnumerable<FileCabinetRecord> Delete(SearchingAttributes arguments)
+        {
+            if (arguments == null)
+            {
+                throw new ArgumentNullException(nameof(arguments));
+            }
+
+            this.writer.Write(DateTime.Now.ToString("MM/dd/yyyy HH:mm", CultureInfo.InvariantCulture) + " Calling Delete() with ");
+            this.writer.WriteLine("Attributes= '" + arguments.Value + "', ");
+            IEnumerable<FileCabinetRecord> result = this.service.Delete(arguments);
+            this.writer.WriteLine(DateTime.Now.ToString("MM/dd/yyyy HH:mm", CultureInfo.InvariantCulture) + " Insert() returned '" + result + "'");
+            return result;
+        }
+
+        /// <summary>
         /// Disposes the object.
         /// </summary>
         public void Dispose()
@@ -275,7 +295,5 @@ namespace FileCabinetApp
                 this.disposed = true;
             }
         }
-
-  
     }
 }

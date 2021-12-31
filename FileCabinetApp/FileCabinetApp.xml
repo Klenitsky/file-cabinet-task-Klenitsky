@@ -131,6 +131,23 @@
             </summary>
             <param name="request">Request provided.</param>
         </member>
+        <member name="T:FileCabinetApp.CommandHandlers.DeleteCommandHandler">
+            <summary>
+            Handler of delete command.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.CommandHandlers.DeleteCommandHandler.#ctor(FileCabinetApp.IFileCabinetService)">
+            <summary>
+            Initializes a new instance of the <see cref="T:FileCabinetApp.CommandHandlers.DeleteCommandHandler"/> class.
+            </summary>
+            <param name="service">Service provided.</param>
+        </member>
+        <member name="M:FileCabinetApp.CommandHandlers.DeleteCommandHandler.Handle(FileCabinetApp.CommandHandlers.AppCommandRequest)">
+            <summary>
+            Handles the request.
+            </summary>
+            <param name="request">Request provided.</param>
+        </member>
         <member name="T:FileCabinetApp.CommandHandlers.EditCommandHandler">
             <summary>
             Handler of edit command.
@@ -370,6 +387,70 @@
             </summary>
             <param name="request">Request provided.</param>
         </member>
+        <member name="T:FileCabinetApp.CommandHandlers.SearchingAttributes">
+            <summary>
+            Attributes to search.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.CommandHandlers.SearchingAttributes.#ctor(System.String,System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:FileCabinetApp.CommandHandlers.SearchingAttributes"/> class.
+            </summary>
+            <param name="attribute">attributes.</param>
+            <param name="value">value of attribute.</param>
+        </member>
+        <member name="T:FileCabinetApp.CommandHandlers.SearchingAttributes.AttributesSearch">
+            <summary>
+            Enum of attributes.
+            </summary>
+        </member>
+        <member name="F:FileCabinetApp.CommandHandlers.SearchingAttributes.AttributesSearch.Id">
+            <summary>
+            Id attribute.
+            </summary>
+        </member>
+        <member name="F:FileCabinetApp.CommandHandlers.SearchingAttributes.AttributesSearch.FirstName">
+            <summary>
+            FirstName attribute.
+            </summary>
+        </member>
+        <member name="F:FileCabinetApp.CommandHandlers.SearchingAttributes.AttributesSearch.LastName">
+            <summary>
+            LastName attribute.
+            </summary>
+        </member>
+        <member name="F:FileCabinetApp.CommandHandlers.SearchingAttributes.AttributesSearch.DateOfBirth">
+            <summary>
+            DateOfBirth attribute.
+            </summary>
+        </member>
+        <member name="F:FileCabinetApp.CommandHandlers.SearchingAttributes.AttributesSearch.Height">
+            <summary>
+            Height attribute.
+            </summary>
+        </member>
+        <member name="F:FileCabinetApp.CommandHandlers.SearchingAttributes.AttributesSearch.Weight">
+            <summary>
+            Weight attribute.
+            </summary>
+        </member>
+        <member name="F:FileCabinetApp.CommandHandlers.SearchingAttributes.AttributesSearch.DrivingLicenseCategory">
+            <summary>
+            Driving License attribute.
+            </summary>
+        </member>
+        <member name="P:FileCabinetApp.CommandHandlers.SearchingAttributes.Attribute">
+            <summary>
+            Gets attribute.
+            </summary>
+            <value>attribute name.</value>
+        </member>
+        <member name="P:FileCabinetApp.CommandHandlers.SearchingAttributes.Value">
+            <summary>
+            Gets avalue of an attribute.
+            </summary>
+            <value>attribute name.</value>
+        </member>
         <member name="T:FileCabinetApp.Consts.FileConsts">
             <summary>
             Consts of byte files.
@@ -548,6 +629,13 @@
             </summary>
             <returns>Int id.</returns>
         </member>
+        <member name="M:FileCabinetApp.FileCabinetFilesystemService.Delete(FileCabinetApp.CommandHandlers.SearchingAttributes)">
+            <summary>
+            Delete records.
+            </summary>
+            <param name="arguments">Arguments search.</param>
+            <returns>Deleted fields.</returns>
+        </member>
         <member name="M:FileCabinetApp.FileCabinetFilesystemService.Dispose(System.Boolean)">
             <summary>
             Disposes service.
@@ -663,6 +751,13 @@
             <param name="id">Id of a record.</param>
             <param name="arguments">Properties of the record.</param>
             <returns>New record's Id.</returns>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetMemoryService.Delete(FileCabinetApp.CommandHandlers.SearchingAttributes)">
+            <summary>
+            Removes a record.
+            </summary>
+            <param name="arguments">Properties of values to delete.</param>
+            <returns>Deleted values.</returns>
         </member>
         <member name="T:FileCabinetApp.FileCabinetRecord">
             <summary>
@@ -922,6 +1017,13 @@
             <param name="id">Id of a record to remove.</param>
             <returns>A bool result of removing.</returns>
         </member>
+        <member name="M:FileCabinetApp.IFileCabinetService.Delete(FileCabinetApp.CommandHandlers.SearchingAttributes)">
+            <summary>
+            Removes a record.
+            </summary>
+            <param name="arguments">Properties of values to delete.</param>
+            <returns>Deleted values.</returns>
+        </member>
         <member name="M:FileCabinetApp.IFileCabinetService.GetID">
             <summary>
             Gets the Id of the last record.
@@ -1149,6 +1251,13 @@
             <param name="arguments">Properties of the record.</param>
             <returns>New record's Id.</returns>
         </member>
+        <member name="M:FileCabinetApp.ServiceLogger.Delete(FileCabinetApp.CommandHandlers.SearchingAttributes)">
+            <summary>
+            Removes a record.
+            </summary>
+            <param name="arguments">Properties of values to delete.</param>
+            <returns>Deleted values.</returns>
+        </member>
         <member name="M:FileCabinetApp.ServiceLogger.Dispose">
             <summary>
             Disposes the object.
@@ -1268,6 +1377,13 @@
             Adds records loaded from file.
             </summary>
             <param name="snapshot">Properties of the record.</param>
+        </member>
+        <member name="M:FileCabinetApp.ServiceMeter.Delete(FileCabinetApp.CommandHandlers.SearchingAttributes)">
+            <summary>
+            Removes a record.
+            </summary>
+            <param name="arguments">Properties of values to delete.</param>
+            <returns>Deleted values.</returns>
         </member>
         <member name="T:FileCabinetApp.ValidationRules.Rules">
             <summary>
