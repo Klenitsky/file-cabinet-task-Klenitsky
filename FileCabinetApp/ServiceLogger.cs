@@ -271,6 +271,45 @@ namespace FileCabinetApp
         }
 
         /// <summary>
+        /// Updates a record.
+        /// </summary>
+        /// <param name="attriubutesToUpdate">Properties of values to update records.</param>
+        /// <param name="attriubutesToFind">Properties of values to find records.</param>
+        /// <returns>Updated values.</returns>
+        public IEnumerable<FileCabinetRecord> Update(IEnumerable<SearchingAttributes> attriubutesToUpdate, IEnumerable<SearchingAttributes> attriubutesToFind)
+        {
+            if (attriubutesToUpdate == null)
+            {
+                throw new ArgumentNullException(nameof(attriubutesToUpdate));
+            }
+
+            if (attriubutesToFind == null)
+            {
+                throw new ArgumentNullException(nameof(attriubutesToFind));
+            }
+
+            this.writer.Write(DateTime.Now.ToString("MM/dd/yyyy HH:mm", CultureInfo.InvariantCulture) + " Calling Update() with ");
+            foreach (SearchingAttributes attribute in attriubutesToUpdate)
+            {
+                this.writer.WriteLine(DateTime.Now.ToString("MM/dd/yyyy HH:mm", CultureInfo.InvariantCulture) + "Attributes to update: " + attribute.Attribute + " " + "'" + attribute.Value + "'");
+            }
+
+            foreach (SearchingAttributes attribute in attriubutesToFind)
+            {
+                this.writer.WriteLine(DateTime.Now.ToString("MM/dd/yyyy HH:mm", CultureInfo.InvariantCulture) + "Attributes to find: " + attribute.Attribute + " " + "'" + attribute.Value + "'");
+            }
+
+            IEnumerable<FileCabinetRecord> result = this.service.Update(attriubutesToUpdate, attriubutesToFind);
+            this.writer.WriteLine(DateTime.Now.ToString("MM/dd/yyyy HH:mm", CultureInfo.InvariantCulture) + " Insert() returned:");
+            foreach (var record in result)
+            {
+                this.writer.WriteLine(DateTime.Now.ToString("MM/dd/yyyy HH:mm", CultureInfo.InvariantCulture) + "'" + record.ToString() + "'");
+            }
+
+            return result;
+        }
+
+        /// <summary>
         /// Disposes the object.
         /// </summary>
         public void Dispose()

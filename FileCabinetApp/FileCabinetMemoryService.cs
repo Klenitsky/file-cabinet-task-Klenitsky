@@ -356,6 +356,121 @@ namespace FileCabinetApp
         }
 
         /// <summary>
+        /// Updates a record.
+        /// </summary>
+        /// <param name="attriubutesToUpdate">Properties of values to update records.</param>
+        /// <param name="attriubutesToFind">Properties of values to find records.</param>
+        /// <returns>Updated values.</returns>
+        public IEnumerable<FileCabinetRecord> Update(IEnumerable<SearchingAttributes> attriubutesToUpdate, IEnumerable<SearchingAttributes> attriubutesToFind)
+        {
+            if (attriubutesToFind == null)
+            {
+                throw new ArgumentNullException(nameof(attriubutesToFind));
+            }
+
+            if (attriubutesToUpdate == null)
+            {
+                throw new ArgumentNullException(nameof(attriubutesToUpdate));
+            }
+
+            List<FileCabinetRecord> result = new List<FileCabinetRecord>();
+            foreach (var record in this.list)
+            {
+                bool isValid = true;
+                foreach (var attribute in attriubutesToFind)
+                {
+                    switch (attribute.Attribute)
+                    {
+                        case SearchingAttributes.AttributesSearch.Id:
+                            if (record.Id != int.Parse(attribute.Value, CultureInfo.CurrentCulture))
+                            {
+                                isValid = false;
+                            }
+
+                            break;
+                        case SearchingAttributes.AttributesSearch.FirstName:
+                            if (record.FirstName != attribute.Value)
+                            {
+                                isValid = false;
+                            }
+
+                            break;
+                        case SearchingAttributes.AttributesSearch.LastName:
+                            if (record.LastName != attribute.Value)
+                            {
+                                isValid = false;
+                            }
+
+                            break;
+                        case SearchingAttributes.AttributesSearch.DateOfBirth:
+                            if (DateTime.Compare(record.DateOfBirth, DateTime.Parse(attribute.Value, CultureInfo.CurrentCulture)) != 0)
+                            {
+                                isValid = false;
+                            }
+
+                            break;
+                        case SearchingAttributes.AttributesSearch.Height:
+                            if (record.Height != short.Parse(attribute.Value, CultureInfo.CurrentCulture))
+                            {
+                                isValid = false;
+                            }
+
+                            break;
+                        case SearchingAttributes.AttributesSearch.Weight:
+                            if (record.Weight != short.Parse(attribute.Value, CultureInfo.CurrentCulture))
+                            {
+                                isValid = false;
+                            }
+
+                            break;
+                        case SearchingAttributes.AttributesSearch.DrivingLicenseCategory:
+                            if (record.DrivingLicenseCategory != char.Parse(attribute.Value))
+                            {
+                                isValid = false;
+                            }
+
+                            break;
+                    }
+                }
+
+                if (isValid)
+                {
+                    foreach (var attribute in attriubutesToUpdate)
+                    {
+                        switch (attribute.Attribute)
+                        {
+                            case SearchingAttributes.AttributesSearch.Id:
+                                record.Id = int.Parse(attribute.Value, CultureInfo.CurrentCulture);
+                                break;
+                            case SearchingAttributes.AttributesSearch.FirstName:
+                                record.FirstName = attribute.Value;
+
+                                break;
+                            case SearchingAttributes.AttributesSearch.LastName:
+                                record.LastName = attribute.Value;
+                                break;
+                            case SearchingAttributes.AttributesSearch.DateOfBirth:
+                                record.DateOfBirth = DateTime.Parse(attribute.Value, CultureInfo.CurrentCulture);
+                                break;
+                            case SearchingAttributes.AttributesSearch.Height:
+                                record.Height = short.Parse(attribute.Value, CultureInfo.CurrentCulture);
+                                break;
+                            case SearchingAttributes.AttributesSearch.Weight:
+                                record.Weight = short.Parse(attribute.Value, CultureInfo.CurrentCulture);
+                                break;
+                            case SearchingAttributes.AttributesSearch.DrivingLicenseCategory:
+                                record.DrivingLicenseCategory = char.Parse(attribute.Value);
+                                break;
+                        }
+                    }
+
+                    result.Add(record);
+                }
+            }
+            return result;
+        }
+
+        /// <summary>
         /// Removes a record.
         /// </summary>
         /// <param name="arguments">Properties of values to delete.</param>
@@ -562,5 +677,7 @@ namespace FileCabinetApp
 
             return result;
         }
+
+
     }
 }

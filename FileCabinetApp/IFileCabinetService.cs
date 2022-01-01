@@ -94,6 +94,14 @@ namespace FileCabinetApp
         public IEnumerable<FileCabinetRecord> Delete(SearchingAttributes arguments);
 
         /// <summary>
+        /// Updates a record.
+        /// </summary>
+        /// <param name="attriubutesToUpdate">Properties of values to update records.</param>
+        /// <param name="attriubutesToFind">Properties of values to find records.</param>
+        /// <returns>Updated values.</returns>
+        public IEnumerable<FileCabinetRecord> Update(IEnumerable<SearchingAttributes> attriubutesToUpdate, IEnumerable<SearchingAttributes> attriubutesToFind);
+
+        /// <summary>
         /// Gets the Id of the last record.
         /// </summary>
         /// <returns>Int id.</returns>
@@ -110,5 +118,8 @@ namespace FileCabinetApp
         /// </summary>
         /// <returns>Int id.</returns>
         public int GetDeletedStat();
+
+
+
     }
 }

@@ -240,5 +240,31 @@ namespace FileCabinetApp
             Console.WriteLine("Delete method execution duration is" + elapsedTime.ElapsedTicks + " ticks.");
             return result;
         }
+
+        /// <summary>
+        /// Updates a record.
+        /// </summary>
+        /// <param name="attriubutesToUpdate">Properties of values to update records.</param>
+        /// <param name="attriubutesToFind">Properties of values to find records.</param>
+        /// <returns>Updated values.</returns>
+        public IEnumerable<FileCabinetRecord> Update(IEnumerable<SearchingAttributes> attriubutesToUpdate, IEnumerable<SearchingAttributes> attriubutesToFind)
+        {
+            if (attriubutesToUpdate == null)
+            {
+                throw new ArgumentNullException(nameof(attriubutesToUpdate));
+            }
+
+            if (attriubutesToFind == null)
+            {
+                throw new ArgumentNullException(nameof(attriubutesToFind));
+            }
+
+            Stopwatch elapsedTime = Stopwatch.StartNew();
+            IEnumerable<FileCabinetRecord> result = this.service.Update(attriubutesToUpdate, attriubutesToFind);
+            elapsedTime.Stop();
+            Console.WriteLine("Update method execution duration is" + elapsedTime.ElapsedTicks + " ticks.");
+
+            return result;
+        }
     }
 }

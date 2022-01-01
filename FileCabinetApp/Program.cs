@@ -154,6 +154,7 @@ namespace FileCabinetApp
             var removeCommandHandler = new RemoveCommandHandler(fileCabinetService);
             var purgeCommandHandler = new PurgeCommandHandler(fileCabinetService);
             var deleteCommandHandler = new DeleteCommandHandler(fileCabinetService);
+            var updateCommandHandler = new UpdateCommandHandler(fileCabinetService);
             var commandMissHandler = new MissedCommandHandler();
 
             helpCommandHandler.SetNext(exitCommandHandler);
@@ -168,7 +169,8 @@ namespace FileCabinetApp
             importCommandHandler.SetNext(removeCommandHandler);
             removeCommandHandler.SetNext(purgeCommandHandler);
             purgeCommandHandler.SetNext(deleteCommandHandler);
-            deleteCommandHandler.SetNext(commandMissHandler);
+            deleteCommandHandler.SetNext(updateCommandHandler);
+            updateCommandHandler.SetNext(commandMissHandler);
             return helpCommandHandler;
         }
 

@@ -636,6 +636,262 @@ namespace FileCabinetApp
         }
 
         /// <summary>
+        /// Updates a record.
+        /// </summary>
+        /// <param name="attriubutesToUpdate">Properties of values to update records.</param>
+        /// <param name="attriubutesToFind">Properties of values to find records.</param>
+        /// <returns>Updated values.</returns>
+        public IEnumerable<FileCabinetRecord> Update(IEnumerable<SearchingAttributes> attriubutesToUpdate, IEnumerable<SearchingAttributes> attriubutesToFind)
+        {
+            if (attriubutesToFind == null)
+            {
+                throw new ArgumentNullException(nameof(attriubutesToFind));
+            }
+
+            if (attriubutesToUpdate == null)
+            {
+                throw new ArgumentNullException(nameof(attriubutesToUpdate));
+            }
+
+            List<FileCabinetRecord> result = new List<FileCabinetRecord>();
+            int index = 0;
+            this.fileStream.Seek(index, SeekOrigin.Begin);
+            while (index < this.fileStream.Length)
+            {
+                FileCabinetRecord record = new FileCabinetRecord
+                {
+                    Id = -1,
+                    FirstName = string.Empty,
+                    LastName = string.Empty,
+                    DateOfBirth = new DateTime(1600, 1, 1),
+                    Height = -1,
+                    Weight = -1,
+                    DrivingLicenseCategory = 'Z',
+                };
+
+                byte[] buffer = new byte[FileConsts.RecordSize];
+                this.fileStream.Read(buffer, 0, buffer.Length);
+                byte[] statusBuf = buffer[FileConsts.StatusBegin..FileConsts.IdBegin];
+                short status = BitConverter.ToInt16(statusBuf);
+                status &= 4;
+                if (status == 0)
+                {
+                    byte[] recordIdBuf = buffer[FileConsts.IdBegin..FileConsts.FirstNameBegin];
+                    byte[] firstNameBuf = buffer[FileConsts.FirstNameBegin..FileConsts.LastNameBegin];
+                    byte[] lastNameBuf = buffer[FileConsts.LastNameBegin..FileConsts.YearBegin];
+                    byte[] yearBuf = buffer[FileConsts.YearBegin..FileConsts.MonthBegin];
+                    byte[] monthBuf = buffer[FileConsts.MonthBegin..FileConsts.DayBegin];
+                    byte[] dayBuf = buffer[FileConsts.DayBegin..FileConsts.HeightBegin];
+                    byte[] heightBuf = buffer[FileConsts.HeightBegin..FileConsts.WeightBegin];
+                    byte[] weightBuf = buffer[FileConsts.WeightBegin..FileConsts.DrivingLicenseCategoryBegin];
+                    byte[] drivingLicenseCategoryBuf = buffer[FileConsts.DrivingLicenseCategoryBegin..FileConsts.RecordSize];
+
+                    int recordId = BitConverter.ToInt32(recordIdBuf);
+                    string firstName = Encoding.UTF8.GetString(firstNameBuf);
+                    string lastName = Encoding.UTF8.GetString(lastNameBuf);
+                    DateTime dateOfBirth = new DateTime(BitConverter.ToInt32(yearBuf), BitConverter.ToInt32(monthBuf), BitConverter.ToInt32(dayBuf));
+                    short height = BitConverter.ToInt16(heightBuf);
+                    decimal weight = new decimal(BitConverter.ToDouble(weightBuf));
+                    char drivingLicenseCategory = Encoding.UTF8.GetString(drivingLicenseCategoryBuf)[0];
+
+                    record = new FileCabinetRecord
+                    {
+                        Id = recordId,
+                        FirstName = firstName,
+                        LastName = lastName,
+                        DateOfBirth = dateOfBirth,
+                        Height = height,
+                        Weight = weight,
+                        DrivingLicenseCategory = drivingLicenseCategory,
+                    };
+                }
+
+                bool isValid = true;
+                foreach (var attribute in attriubutesToFind)
+                {
+                    switch (attribute.Attribute)
+                    {
+                        case SearchingAttributes.AttributesSearch.Id:
+                            if (record.Id != int.Parse(attribute.Value, CultureInfo.CurrentCulture))
+                            {
+                                isValid = false;
+                            }
+
+                            break;
+                        case SearchingAttributes.AttributesSearch.FirstName:
+                            byte[] firstName = Encoding.UTF8.GetBytes(attribute.Value);
+
+                            byte[] firstNameResult = new byte[FileConsts.NameSize];
+                            for (int i = 0; i < firstName.Length; i++)
+                            {
+                                firstNameResult[i] = firstName[i];
+                            }
+
+                            string firstNameStr = Encoding.UTF8.GetString(firstNameResult);
+                            if (record.FirstName != firstNameStr)
+                            {
+                                isValid = false;
+                            }
+
+                            break;
+                        case SearchingAttributes.AttributesSearch.LastName:
+                            byte[] lastName = Encoding.UTF8.GetBytes(attribute.Value);
+
+                            byte[] lastNameResult = new byte[FileConsts.NameSize];
+                            for (int i = 0; i < lastName.Length; i++)
+                            {
+                                lastNameResult[i] = lastName[i];
+                            }
+
+                            string lastNameStr = Encoding.UTF8.GetString(lastNameResult);
+                            if (record.LastName != lastNameStr)
+                            {
+                                isValid = false;
+                            }
+
+                            break;
+                        case SearchingAttributes.AttributesSearch.DateOfBirth:
+                            if (DateTime.Compare(record.DateOfBirth, DateTime.Parse(attribute.Value, CultureInfo.CurrentCulture)) != 0)
+                            {
+                                isValid = false;
+                            }
+
+                            break;
+                        case SearchingAttributes.AttributesSearch.Height:
+                            if (record.Height != short.Parse(attribute.Value, CultureInfo.CurrentCulture))
+                            {
+                                isValid = false;
+                            }
+
+                            break;
+                        case SearchingAttributes.AttributesSearch.Weight:
+                            if (record.Weight != short.Parse(attribute.Value, CultureInfo.CurrentCulture))
+                            {
+                                isValid = false;
+                            }
+
+                            break;
+                        case SearchingAttributes.AttributesSearch.DrivingLicenseCategory:
+                            if (record.DrivingLicenseCategory != char.Parse(attribute.Value))
+                            {
+                                isValid = false;
+                            }
+
+                            break;
+                    }
+                }
+
+                if (isValid)
+                {
+                    this.fileStream.Seek(index, SeekOrigin.Begin);
+                    foreach (var attribute in attriubutesToUpdate)
+                    {
+                        switch (attribute.Attribute)
+                        {
+                            case SearchingAttributes.AttributesSearch.Id:
+                                record.Id = int.Parse(attribute.Value, CultureInfo.CurrentCulture);
+                                break;
+                            case SearchingAttributes.AttributesSearch.FirstName:
+                                record.FirstName = attribute.Value;
+
+                                break;
+                            case SearchingAttributes.AttributesSearch.LastName:
+                                record.LastName = attribute.Value;
+                                break;
+                            case SearchingAttributes.AttributesSearch.DateOfBirth:
+                                record.DateOfBirth = DateTime.Parse(attribute.Value, CultureInfo.CurrentCulture);
+                                break;
+                            case SearchingAttributes.AttributesSearch.Height:
+                                record.Height = short.Parse(attribute.Value, CultureInfo.CurrentCulture);
+                                break;
+                            case SearchingAttributes.AttributesSearch.Weight:
+                                record.Weight = short.Parse(attribute.Value, CultureInfo.CurrentCulture);
+                                break;
+                            case SearchingAttributes.AttributesSearch.DrivingLicenseCategory:
+                                record.DrivingLicenseCategory = char.Parse(attribute.Value);
+                                break;
+                        }
+                    }
+
+                    byte[] firstNameBuf = buffer[FileConsts.FirstNameBegin..FileConsts.LastNameBegin];
+                    byte[] lastNameBuf = buffer[FileConsts.LastNameBegin..FileConsts.YearBegin];
+                    byte[] yearBuf = buffer[FileConsts.YearBegin..FileConsts.MonthBegin];
+                    byte[] monthBuf = buffer[FileConsts.MonthBegin..FileConsts.DayBegin];
+                    byte[] dayBuf = buffer[FileConsts.DayBegin..FileConsts.HeightBegin];
+                    string firstNameDelete = Encoding.UTF8.GetString(firstNameBuf);
+                    string lastNameDelete = Encoding.UTF8.GetString(lastNameBuf);
+                    string dateOfBirthDelete = new DateTime(BitConverter.ToInt32(yearBuf), BitConverter.ToInt32(monthBuf), BitConverter.ToInt32(dayBuf)).ToString(CultureInfo.CurrentCulture);
+                    this.firstNameDictionary[firstNameDelete].Remove(index);
+                    this.lastNameDictionary[lastNameDelete].Remove(index);
+                    this.dateOfBirthDictionary[dateOfBirthDelete].Remove(index);
+                    short st = 0;
+                    byte[] statusBf = BitConverter.GetBytes(st);
+                    byte[] recordIdBuf = BitConverter.GetBytes(record.Id);
+                    byte[] firstName = Encoding.UTF8.GetBytes(record.FirstName);
+
+                    byte[] firstNameResult = new byte[FileConsts.NameSize];
+                    for (int i = 0; i < firstName.Length; i++)
+                    {
+                        firstNameResult[i] = firstName[i];
+                    }
+
+                    byte[] lastName = Encoding.UTF8.GetBytes(record.LastName);
+                    byte[] lastNameResult = new byte[FileConsts.NameSize];
+                    for (int i = 0; i < lastName.Length; i++)
+                    {
+                        lastNameResult[i] = lastName[i];
+                    }
+
+                    byte[] year = BitConverter.GetBytes(record.DateOfBirth.Year);
+                    byte[] month = BitConverter.GetBytes(record.DateOfBirth.Month);
+                    byte[] day = BitConverter.GetBytes(record.DateOfBirth.Day);
+
+                    byte[] height = BitConverter.GetBytes(record.Height);
+                    byte[] weight = BitConverter.GetBytes(decimal.ToDouble(record.Weight));
+                    byte[] drivingLicenseCategory = BitConverter.GetBytes(record.DrivingLicenseCategory);
+                    if (!this.firstNameDictionary.ContainsKey(record.FirstName))
+                    {
+                        this.firstNameDictionary.Add(record.FirstName, new List<long>());
+                    }
+
+                    this.firstNameDictionary[record.FirstName].Add(index);
+
+                    if (!this.lastNameDictionary.ContainsKey(record.LastName))
+                    {
+                        this.lastNameDictionary.Add(record.LastName, new List<long>());
+                    }
+
+                    this.lastNameDictionary[record.LastName].Add(index);
+
+                    if (!this.dateOfBirthDictionary.ContainsKey(record.DateOfBirth.ToString(CultureInfo.CurrentCulture)))
+                    {
+                        this.dateOfBirthDictionary.Add(record.DateOfBirth.ToString(CultureInfo.CurrentCulture), new List<long>());
+                    }
+
+                    this.dateOfBirthDictionary[record.DateOfBirth.ToString(CultureInfo.CurrentCulture)].Add(index);
+
+                    this.fileStream.Write(statusBf, 0, statusBf.Length);
+                    this.fileStream.Write(recordIdBuf, 0, recordIdBuf.Length);
+                    this.fileStream.Write(firstNameResult, 0, firstNameResult.Length);
+                    this.fileStream.Write(lastNameResult, 0, lastNameResult.Length);
+                    this.fileStream.Write(year, 0, year.Length);
+                    this.fileStream.Write(month, 0, month.Length);
+                    this.fileStream.Write(day, 0, day.Length);
+                    this.fileStream.Write(height, 0, height.Length);
+                    this.fileStream.Write(weight, 0, weight.Length);
+                    this.fileStream.Write(drivingLicenseCategory, 0, drivingLicenseCategory.Length);
+                    this.fileStream.Flush();
+
+                    result.Add(record);
+                }
+
+                index += FileConsts.RecordSize;
+            }
+
+            return result;
+        }
+
+        /// <summary>
         /// Disposes service.
         /// </summary>
         public void Dispose()
@@ -1169,5 +1425,7 @@ namespace FileCabinetApp
 
             return result;
         }
+
+       
     }
 }
