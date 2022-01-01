@@ -39,13 +39,6 @@ namespace FileCabinetApp
         public int GetStat();
 
         /// <summary>
-        /// Edits an existing record.
-        /// </summary>
-        /// <param name="id">The ID of a record.</param>
-        /// <param name="arguments">Properties of the record.</param>
-        public void EditRecord(int id, Arguments arguments);
-
-        /// <summary>
         /// Finds all records with given firstname.
         /// </summary>
         /// <param name="firstName">The first name of the person.</param>
@@ -82,13 +75,6 @@ namespace FileCabinetApp
         /// <summary>
         /// Removes a record.
         /// </summary>
-        /// <param name="id">Id of a record to remove.</param>
-        /// <returns>A bool result of removing.</returns>
-        public bool Remove(int id);
-
-        /// <summary>
-        /// Removes a record.
-        /// </summary>
         /// <param name="arguments">Properties of values to delete.</param>
         /// <returns>Deleted values.</returns>
         public IEnumerable<FileCabinetRecord> Delete(SearchingAttributes arguments);
@@ -118,8 +104,5 @@ namespace FileCabinetApp
         /// </summary>
         /// <returns>Int id.</returns>
         public int GetDeletedStat();
-
-
-
     }
 }

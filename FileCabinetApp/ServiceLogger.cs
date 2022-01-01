@@ -55,31 +55,6 @@ namespace FileCabinetApp
         }
 
         /// <summary>
-        /// Edits an existing record.
-        /// </summary>
-        /// <param name="id">The ID of a record.</param>
-        /// <param name="arguments">Properties of the record.</param>
-        /// <exception cref="ArgumentNullException">One of the parameters is null.</exception>
-        /// <exception cref="ArgumentException">One of the parameters is not valid.</exception>
-        public void EditRecord(int id, Arguments arguments)
-        {
-            if (arguments == null)
-            {
-                throw new ArgumentNullException(nameof(arguments));
-            }
-
-            this.writer.Write(DateTime.Now.ToString("MM/dd/yyyy HH:mm", CultureInfo.InvariantCulture) + " Calling Edit() with ");
-            this.writer.Write("Id= '" + id + "', ");
-            this.writer.Write("FirstName= '" + arguments.FirstName + "', ");
-            this.writer.Write("Lastname= '" + arguments.LastName + "', ");
-            this.writer.Write("DateOfBirth= '" + arguments.DateOfBirth + "', ");
-            this.writer.Write("Height= '" + arguments.Height + "', ");
-            this.writer.Write("Weight= '" + arguments.Weight + "', ");
-            this.writer.WriteLine("DrivingLicenseCategory= '" + arguments.DrivingLicenseCategory + "'");
-            this.service.EditRecord(id, arguments);
-        }
-
-        /// <summary>
         /// Finds all records with given date of Birth.
         /// </summary>
         /// <param name="dateTime">The date of birth of the person.</param>
@@ -192,20 +167,6 @@ namespace FileCabinetApp
             this.writer.WriteLine(DateTime.Now.ToString("MM/dd/yyyy HH:mm", CultureInfo.InvariantCulture) + " Calling Purge()");
             int result = this.service.Purge();
             this.writer.WriteLine(DateTime.Now.ToString("MM/dd/yyyy HH:mm", CultureInfo.InvariantCulture) + " Purge() returned '" + result + "'");
-            return result;
-        }
-
-        /// <summary>
-        /// Removes a record.
-        /// </summary>
-        /// <param name="id">Id of a record to remove.</param>
-        /// <returns>A bool result of removing.</returns>
-        public bool Remove(int id)
-        {
-            this.writer.Write(DateTime.Now.ToString("MM/dd/yyyy HH:mm", CultureInfo.InvariantCulture) + " Calling Remove() with ");
-            this.writer.WriteLine("Id= '" + id + "'");
-            bool result = this.service.Remove(id);
-            this.writer.WriteLine(DateTime.Now.ToString("MM/dd/yyyy HH:mm", CultureInfo.InvariantCulture) + " Remove() returned '" + result + "'");
             return result;
         }
 

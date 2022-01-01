@@ -110,67 +110,6 @@ namespace FileCabinetApp
         }
 
         /// <summary>
-        /// Edits an existing record.
-        /// </summary>
-        /// <param name="id">The ID of a record.</param>
-        /// <param name="arguments">Properties of the record.</param>
-        /// <exception cref="ArgumentNullException">One of the parameters is null.</exception>
-        /// <exception cref="ArgumentException">One of the parameters is not valid.</exception>
-        public void EditRecord(int id, Arguments arguments)
-        {
-            if (arguments == null)
-            {
-                throw new ArgumentNullException(nameof(arguments));
-            }
-
-            bool isValid = false;
-            foreach (FileCabinetRecord record in this.list)
-            {
-                if (record.Id == id)
-                {
-                    isValid = true;
-                    this.validator.ValidateParameters(arguments);
-
-                    this.firstNameDictionary[record.FirstName].Remove(record);
-                    this.lastNameDictionary[record.LastName].Remove(record);
-                    this.dateOfBirthDictionary[record.DateOfBirth.ToString(CultureInfo.CurrentCulture)].Remove(record);
-                    record.FirstName = arguments.FirstName;
-                    record.LastName = arguments.LastName;
-                    record.DateOfBirth = arguments.DateOfBirth;
-                    record.Height = arguments.Height;
-                    record.Weight = arguments.Weight;
-                    record.DrivingLicenseCategory = arguments.DrivingLicenseCategory;
-
-                    if (!this.firstNameDictionary.ContainsKey(record.FirstName))
-                    {
-                        this.firstNameDictionary.Add(record.FirstName, new List<FileCabinetRecord>());
-                    }
-
-                    this.firstNameDictionary[record.FirstName].Add(record);
-
-                    if (!this.lastNameDictionary.ContainsKey(record.LastName))
-                    {
-                        this.lastNameDictionary.Add(record.LastName, new List<FileCabinetRecord>());
-                    }
-
-                    this.lastNameDictionary[record.LastName].Add(record);
-
-                    if (!this.dateOfBirthDictionary.ContainsKey(record.DateOfBirth.ToString(CultureInfo.CurrentCulture)))
-                    {
-                        this.dateOfBirthDictionary.Add(record.DateOfBirth.ToString(CultureInfo.CurrentCulture), new List<FileCabinetRecord>());
-                    }
-
-                    this.dateOfBirthDictionary[record.DateOfBirth.ToString(CultureInfo.CurrentCulture)].Add(record);
-                }
-            }
-
-            if (!isValid)
-            {
-                throw new ArgumentException("There is no such Id.", nameof(id));
-            }
-        }
-
-        /// <summary>
         /// Finds all records with given firstname.
         /// </summary>
         /// <param name="firstName">The first name of the person.</param>
@@ -247,31 +186,6 @@ namespace FileCabinetApp
                     this.list[this.list.Count - 1].Id = record.Id;
                 }
             }
-        }
-
-        /// <summary>
-        /// Removes a record.
-        /// </summary>
-        /// <param name="id">Id of a record to remove.</param>
-        /// <returns>A bool result of removing.</returns>
-        public bool Remove(int id)
-        {
-            bool hasFound = false;
-            for (int i = 0; i < this.list.Count; i++)
-            {
-                FileCabinetRecord record = this.list[i];
-                if (record.Id == id)
-                {
-                    this.list.Remove(record);
-                    this.firstNameDictionary[record.FirstName].Remove(record);
-                    this.lastNameDictionary[record.LastName].Remove(record);
-                    this.dateOfBirthDictionary[record.DateOfBirth.ToString(CultureInfo.CurrentCulture)].Remove(record);
-                    hasFound = true;
-                    i--;
-                }
-            }
-
-            return hasFound;
         }
 
         /// <summary>
@@ -467,6 +381,7 @@ namespace FileCabinetApp
                     result.Add(record);
                 }
             }
+
             return result;
         }
 
@@ -678,6 +593,65 @@ namespace FileCabinetApp
             return result;
         }
 
+        /// <summary>
+        /// Edits an existing record.
+        /// </summary>
+        /// <param name="id">The ID of a record.</param>
+        /// <param name="arguments">Properties of the record.</param>
+        /// <exception cref="ArgumentNullException">One of the parameters is null.</exception>
+        /// <exception cref="ArgumentException">One of the parameters is not valid.</exception>
+        private void EditRecord(int id, Arguments arguments)
+        {
+            if (arguments == null)
+            {
+                throw new ArgumentNullException(nameof(arguments));
+            }
 
+            bool isValid = false;
+            foreach (FileCabinetRecord record in this.list)
+            {
+                if (record.Id == id)
+                {
+                    isValid = true;
+                    this.validator.ValidateParameters(arguments);
+
+                    this.firstNameDictionary[record.FirstName].Remove(record);
+                    this.lastNameDictionary[record.LastName].Remove(record);
+                    this.dateOfBirthDictionary[record.DateOfBirth.ToString(CultureInfo.CurrentCulture)].Remove(record);
+                    record.FirstName = arguments.FirstName;
+                    record.LastName = arguments.LastName;
+                    record.DateOfBirth = arguments.DateOfBirth;
+                    record.Height = arguments.Height;
+                    record.Weight = arguments.Weight;
+                    record.DrivingLicenseCategory = arguments.DrivingLicenseCategory;
+
+                    if (!this.firstNameDictionary.ContainsKey(record.FirstName))
+                    {
+                        this.firstNameDictionary.Add(record.FirstName, new List<FileCabinetRecord>());
+                    }
+
+                    this.firstNameDictionary[record.FirstName].Add(record);
+
+                    if (!this.lastNameDictionary.ContainsKey(record.LastName))
+                    {
+                        this.lastNameDictionary.Add(record.LastName, new List<FileCabinetRecord>());
+                    }
+
+                    this.lastNameDictionary[record.LastName].Add(record);
+
+                    if (!this.dateOfBirthDictionary.ContainsKey(record.DateOfBirth.ToString(CultureInfo.CurrentCulture)))
+                    {
+                        this.dateOfBirthDictionary.Add(record.DateOfBirth.ToString(CultureInfo.CurrentCulture), new List<FileCabinetRecord>());
+                    }
+
+                    this.dateOfBirthDictionary[record.DateOfBirth.ToString(CultureInfo.CurrentCulture)].Add(record);
+                }
+            }
+
+            if (!isValid)
+            {
+                throw new ArgumentException("There is no such Id.", nameof(id));
+            }
+        }
     }
 }

@@ -6,8 +6,15 @@ using System.Text.RegularExpressions;
 
 namespace FileCabinetApp.CommandHandlers
 {
+    /// <summary>
+    /// Handler of update command.
+    /// </summary>
     public class UpdateCommandHandler : ServiceCommandHandlerBase
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="UpdateCommandHandler"/> class.
+        /// </summary>
+        /// <param name="service"> Service provided.</param>
         public UpdateCommandHandler(IFileCabinetService service)
         {
             this.fileCabinetService = service;

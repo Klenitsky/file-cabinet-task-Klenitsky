@@ -40,21 +40,6 @@ namespace FileCabinetApp
         }
 
         /// <summary>
-        /// Edits an existing record.
-        /// </summary>
-        /// <param name="id">The ID of a record.</param>
-        /// <param name="arguments">Properties of the record.</param>
-        /// <exception cref="ArgumentNullException">One of the parameters is null.</exception>
-        /// <exception cref="ArgumentException">One of the parameters is not valid.</exception>
-        public void EditRecord(int id, Arguments arguments)
-        {
-            Stopwatch elapsedTime = Stopwatch.StartNew();
-            this.service.EditRecord(id, arguments);
-            elapsedTime.Stop();
-            Console.WriteLine("Edit method execution duration is " + elapsedTime.ElapsedTicks + " ticks.");
-        }
-
-        /// <summary>
         /// Finds all records with given date of Birth.
         /// </summary>
         /// <param name="dateTime">The date of birth of the person.</param>
@@ -173,20 +158,6 @@ namespace FileCabinetApp
             int result = this.service.Purge();
             elapsedTime.Stop();
             Console.WriteLine("Purge method execution duration is " + elapsedTime.ElapsedTicks + " ticks.");
-            return result;
-        }
-
-        /// <summary>
-        /// Removes a record.
-        /// </summary>
-        /// <param name="id">Id of a record to remove.</param>
-        /// <returns>A bool result of removing.</returns>
-        public bool Remove(int id)
-        {
-            Stopwatch elapsedTime = Stopwatch.StartNew();
-            bool result = this.service.Remove(id);
-            elapsedTime.Stop();
-            Console.WriteLine("Remove method execution duration is " + elapsedTime.ElapsedTicks + " ticks.");
             return result;
         }
 

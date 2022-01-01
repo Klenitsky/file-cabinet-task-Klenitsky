@@ -147,11 +147,9 @@ namespace FileCabinetApp
             var createCommandHandler = new CreateCommandHandler(fileCabinetService, isCustom);
             var listCommandHandler = new ListCommandHandler(fileCabinetService, DefaultRecordPrint);
             var insertCommandHandler = new InsertCommandHandler(fileCabinetService, isCustom);
-            var editCommandHandler = new EditCommandHandler(fileCabinetService, isCustom);
             var findCommandHandler = new FindCommandHandler(fileCabinetService, DefaultRecordPrintIteator);
             var exportCommandHandler = new ExportCommandHandler(fileCabinetService);
             var importCommandHandler = new ImportCommandHandler(fileCabinetService);
-            var removeCommandHandler = new RemoveCommandHandler(fileCabinetService);
             var purgeCommandHandler = new PurgeCommandHandler(fileCabinetService);
             var deleteCommandHandler = new DeleteCommandHandler(fileCabinetService);
             var updateCommandHandler = new UpdateCommandHandler(fileCabinetService);
@@ -162,12 +160,10 @@ namespace FileCabinetApp
             statCommandHandler.SetNext(createCommandHandler);
             createCommandHandler.SetNext(listCommandHandler);
             listCommandHandler.SetNext(insertCommandHandler);
-            insertCommandHandler.SetNext(editCommandHandler);
-            editCommandHandler.SetNext(findCommandHandler);
+            insertCommandHandler.SetNext(findCommandHandler);
             findCommandHandler.SetNext(exportCommandHandler);
             exportCommandHandler.SetNext(importCommandHandler);
-            importCommandHandler.SetNext(removeCommandHandler);
-            removeCommandHandler.SetNext(purgeCommandHandler);
+            importCommandHandler.SetNext(purgeCommandHandler);
             purgeCommandHandler.SetNext(deleteCommandHandler);
             deleteCommandHandler.SetNext(updateCommandHandler);
             updateCommandHandler.SetNext(commandMissHandler);
