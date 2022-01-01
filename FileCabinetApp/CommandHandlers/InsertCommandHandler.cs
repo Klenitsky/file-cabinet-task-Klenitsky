@@ -1,26 +1,28 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text;
+using System.Text.RegularExpressions;
 using FileCabinetApp.ValidationRules;
 
 namespace FileCabinetApp.CommandHandlers
 {
     /// <summary>
-    /// Handler of edit command.
+    /// Handler of Create command.
     /// </summary>
-    public class EditCommandHandler : ServiceCommandHandlerBase
+    public class InsertCommandHandler : ServiceCommandHandlerBase
     {
         private readonly ValidationRules.ValidationTypes validationRules = ValidationRulesReader.ReadRules("validation-rules.json");
         private readonly bool isCustom;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="EditCommandHandler"/> class.
+        /// Initializes a new instance of the <see cref="InsertCommandHandler"/> class.
         /// </summary>
-        /// <param name="fileCabinetService">Service provided.</param>
-        /// <param name="custom">validation custom flag.</param>
-        public EditCommandHandler(IFileCabinetService fileCabinetService, bool custom)
+        /// <param name="service">Service provided.</param>
+        /// /// <param name="custom">Is validation custom.</param>
+        public InsertCommandHandler(IFileCabinetService service, bool custom)
         {
-            this.fileCabinetService = fileCabinetService;
+            this.fileCabinetService = service;
             this.isCustom = custom;
         }
 
@@ -35,9 +37,9 @@ namespace FileCabinetApp.CommandHandlers
                 throw new ArgumentNullException(nameof(request));
             }
 
-            if (request.Command == "edit")
+            if (request.Command == "insert")
             {
-                this.Edit(request.Parameters);
+                this.Insert(request.Parameters);
             }
             else
             {
@@ -45,19 +47,14 @@ namespace FileCabinetApp.CommandHandlers
             }
         }
 
-        private static T ReadInput<T>(Func<string, Tuple<bool, string, T>> converter, Func<T, Tuple<bool, string>> validator)
+        private static T ReadInput<T>(Func<string, Tuple<bool, string, T>> converter, Func<T, Tuple<bool, string>> validator, string input)
         {
-            do
-            {
                 T value;
-
-                var input = Console.ReadLine();
                 var conversionResult = converter(input);
 
                 if (!conversionResult.Item1)
                 {
                     Console.WriteLine($"Conversion failed: {conversionResult.Item2}. Please, correct your input.");
-                    continue;
                 }
 
                 value = conversionResult.Item3;
@@ -65,45 +62,26 @@ namespace FileCabinetApp.CommandHandlers
                 var validationResult = validator(value);
                 if (!validationResult.Item1)
                 {
-                    Console.WriteLine($"Validation failed: {validationResult.Item2}. Please, correct your input.");
-                    continue;
+                throw new ArgumentException("Invalid argument", nameof(input));
                 }
 
                 return value;
-            }
-            while (true);
         }
 
-        private void Edit(string parameters)
+        private void Insert(string parameters)
         {
-            int id;
-            bool success = int.TryParse(parameters, out id);
-            if (!success)
-            {
-                Console.WriteLine("Invalid Id");
-                return;
-            }
-
-            try
-            {
-                this.fileCabinetService.EditRecord(id, new Arguments("ex", "ex", DateTime.Today, 0, 0, 'A'));
-            }
-            catch (ArgumentException)
-            {
-                Console.WriteLine($"#" + id + " record is not found");
-            }
-
+            int id = 0;
             string firstName = string.Empty, lastName = string.Empty;
             DateTime dateTime = default(DateTime);
             short height = 0;
             decimal weight = 0;
             char drivingLicenseCategory = ' ';
 
-            this.EnterParameters(out firstName, out lastName, out dateTime, out height, out weight, out drivingLicenseCategory);
+            this.EnterParameters(parameters, out id, out firstName, out lastName, out dateTime, out height, out weight, out drivingLicenseCategory);
 
             try
             {
-                this.fileCabinetService.EditRecord(id, new Arguments(firstName, lastName, dateTime, height, weight, drivingLicenseCategory));
+                this.fileCabinetService.InsertRecord(id, new Arguments(firstName, lastName, dateTime, height, weight, drivingLicenseCategory));
             }
             catch (ArgumentException)
             {
@@ -111,28 +89,70 @@ namespace FileCabinetApp.CommandHandlers
                 return;
             }
 
-            Console.WriteLine($"Record #" + id + "is updated");
+            Console.WriteLine($"\nRecord #" + this.fileCabinetService.GetID().ToString(CultureInfo.InvariantCulture) + " created ");
         }
 
-        private void EnterParameters(out string firstName, out string lastName, out DateTime dateOfBirth, out short height, out decimal weight, out char drivingLicenseCategory)
+        private void EnterParameters(string parameters, out int id, out string firstName, out string lastName, out DateTime dateOfBirth, out short height, out decimal weight, out char drivingLicenseCategory)
         {
-            Console.Write("First name: ");
-            firstName = ReadInput(this.StringConverter, this.FirstNameValidator);
+            string strId = string.Empty;
+            string firstNameStr = string.Empty;
+            string lastNameStr = string.Empty;
+            string dateOfBirthStr = string.Empty;
+            string heightStr = string.Empty;
+            string weightStr = string.Empty;
+            string drivingLicenseCategoryStr = string.Empty;
 
-            Console.Write("Last Name: ");
-            lastName = ReadInput(this.StringConverter, this.LastNameValidator);
+            parameters = parameters.Replace(" ", string.Empty, StringComparison.InvariantCulture);
+            parameters = parameters.Replace("(", " ", StringComparison.InvariantCulture);
+            parameters = parameters.Replace(")", " ", StringComparison.InvariantCulture);
+            parameters = parameters.Replace(",", " ", StringComparison.InvariantCulture);
+            parameters = parameters.Replace("'", string.Empty, StringComparison.InvariantCulture);
+            Regex.Replace(parameters, @"\s+", " ");
+            string[] str = parameters.Split(' ');
+            str = str[1 .. (str.Length - 1)];
+            for (int i = 0; i < 7; i++)
+            {
+                switch (str[i])
+                {
+                    case "firstname":
+                        firstNameStr = str[i + 8];
+                        break;
+                    case "lastname":
+                        lastNameStr = str[i + 8];
+                        break;
+                    case "dateofbirth":
+                        dateOfBirthStr = str[i + 8];
+                        break;
+                    case "height":
+                        heightStr = str[i + 8];
+                        break;
+                    case "weight":
+                        weightStr = str[i + 8];
+                        break;
+                    case "drivinglicensecategory":
+                        drivingLicenseCategoryStr = str[i + 8];
+                        break;
+                    case "id":
+                        strId = str[i + 8];
+                        break;
+                    default:
+                        throw new ArgumentException("Invalid argument", nameof(parameters));
+                }
+            }
 
-            Console.Write("Date of birth: ");
-            dateOfBirth = ReadInput(this.DateTimeConverter, this.DateOfBirthValidator);
+            firstName = ReadInput(this.StringConverter, this.FirstNameValidator, firstNameStr);
 
-            Console.Write("Height: ");
-            height = ReadInput(this.ShortConverter, this.HeightValidator);
+            lastName = ReadInput(this.StringConverter, this.LastNameValidator, lastNameStr);
 
-            Console.Write("Weight: ");
-            weight = ReadInput(this.DecimalConverter, this.WeightValidator);
+            dateOfBirth = ReadInput(this.DateTimeConverter, this.DateOfBirthValidator, dateOfBirthStr);
 
-            Console.Write("Driving license category: ");
-            drivingLicenseCategory = ReadInput(this.CharConverter, this.LicenseCategoryValidator);
+            height = ReadInput(this.ShortConverter, this.HeightValidator, heightStr);
+
+            weight = ReadInput(this.DecimalConverter, this.WeightValidator, weightStr);
+
+            drivingLicenseCategory = ReadInput(this.CharConverter, this.LicenseCategoryValidator, drivingLicenseCategoryStr);
+
+            id = ReadInput(this.IntConverter, this.IdValidator, strId);
         }
 
         private Tuple<bool, string, string> StringConverter(string input)
@@ -152,6 +172,13 @@ namespace FileCabinetApp.CommandHandlers
             short height;
             bool success = short.TryParse(input, out height);
             return new Tuple<bool, string, short>(success, string.Empty, height);
+        }
+
+        private Tuple<bool, string, int> IntConverter(string input)
+        {
+            int id;
+            bool success = int.TryParse(input, out id);
+            return new Tuple<bool, string, int>(success, string.Empty, id);
         }
 
         private Tuple<bool, string, decimal> DecimalConverter(string input)
@@ -224,7 +251,6 @@ namespace FileCabinetApp.CommandHandlers
 
                 DateTime maxDate;
                 success = DateTime.TryParse(this.validationRules.Custom.DateOfBirth.Max, out maxDate);
-
                 if (!success)
                 {
                     return null;
@@ -297,6 +323,17 @@ namespace FileCabinetApp.CommandHandlers
                 {
                     result = false;
                 }
+            }
+
+            return new Tuple<bool, string>(result, string.Empty);
+        }
+
+        private Tuple<bool, string> IdValidator(int id)
+        {
+            bool result = true;
+            if (id < 0)
+            {
+                result = false;
             }
 
             return new Tuple<bool, string>(result, string.Empty);

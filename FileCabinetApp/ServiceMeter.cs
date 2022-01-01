@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
+using FileCabinetApp.CommandHandlers;
 using FileCabinetApp.Iterators;
 
 namespace FileCabinetApp
@@ -36,21 +37,6 @@ namespace FileCabinetApp
             elapsedTime.Stop();
             Console.WriteLine("Create method execution duration is " + elapsedTime.ElapsedTicks + " ticks.");
             return id;
-        }
-
-        /// <summary>
-        /// Edits an existing record.
-        /// </summary>
-        /// <param name="id">The ID of a record.</param>
-        /// <param name="arguments">Properties of the record.</param>
-        /// <exception cref="ArgumentNullException">One of the parameters is null.</exception>
-        /// <exception cref="ArgumentException">One of the parameters is not valid.</exception>
-        public void EditRecord(int id, Arguments arguments)
-        {
-            Stopwatch elapsedTime = Stopwatch.StartNew();
-            this.service.EditRecord(id, arguments);
-            elapsedTime.Stop();
-            Console.WriteLine("Edit method execution duration is " + elapsedTime.ElapsedTicks + " ticks.");
         }
 
         /// <summary>
@@ -176,16 +162,22 @@ namespace FileCabinetApp
         }
 
         /// <summary>
-        /// Removes a record.
+        /// Inserts a new Record.
         /// </summary>
-        /// <param name="id">Id of a record to remove.</param>
-        /// <returns>A bool result of removing.</returns>
-        public bool Remove(int id)
+        /// <param name="id">Id of the record.</param>
+        /// <param name="arguments">Properties of the record.</param>
+        /// <returns>New record's Id.</returns>
+        public int InsertRecord(int id, Arguments arguments)
         {
+            if (arguments == null)
+            {
+                throw new ArgumentNullException(nameof(arguments));
+            }
+
             Stopwatch elapsedTime = Stopwatch.StartNew();
-            bool result = this.service.Remove(id);
+            int result = this.service.InsertRecord(id, arguments);
             elapsedTime.Stop();
-            Console.WriteLine("Remove method execution duration is " + elapsedTime.ElapsedTicks + " ticks.");
+            Console.WriteLine("Insert method execution duration is " + elapsedTime.ElapsedTicks + " ticks.");
             return result;
         }
 
@@ -199,6 +191,51 @@ namespace FileCabinetApp
             this.service.Restore(snapshot);
             elapsedTime.Stop();
             Console.WriteLine("Restore method execution duration is" + elapsedTime.ElapsedTicks + " ticks.");
+        }
+
+        /// <summary>
+        /// Removes a record.
+        /// </summary>
+        /// <param name="arguments">Properties of values to delete.</param>
+        /// <returns>Deleted values.</returns>
+        public IEnumerable<FileCabinetRecord> Delete(SearchingAttributes arguments)
+        {
+            if (arguments == null)
+            {
+                throw new ArgumentNullException(nameof(arguments));
+            }
+
+            Stopwatch elapsedTime = Stopwatch.StartNew();
+            IEnumerable<FileCabinetRecord> result = this.service.Delete(arguments);
+            elapsedTime.Stop();
+            Console.WriteLine("Delete method execution duration is" + elapsedTime.ElapsedTicks + " ticks.");
+            return result;
+        }
+
+        /// <summary>
+        /// Updates a record.
+        /// </summary>
+        /// <param name="attriubutesToUpdate">Properties of values to update records.</param>
+        /// <param name="attriubutesToFind">Properties of values to find records.</param>
+        /// <returns>Updated values.</returns>
+        public IEnumerable<FileCabinetRecord> Update(IEnumerable<SearchingAttributes> attriubutesToUpdate, IEnumerable<SearchingAttributes> attriubutesToFind)
+        {
+            if (attriubutesToUpdate == null)
+            {
+                throw new ArgumentNullException(nameof(attriubutesToUpdate));
+            }
+
+            if (attriubutesToFind == null)
+            {
+                throw new ArgumentNullException(nameof(attriubutesToFind));
+            }
+
+            Stopwatch elapsedTime = Stopwatch.StartNew();
+            IEnumerable<FileCabinetRecord> result = this.service.Update(attriubutesToUpdate, attriubutesToFind);
+            elapsedTime.Stop();
+            Console.WriteLine("Update method execution duration is" + elapsedTime.ElapsedTicks + " ticks.");
+
+            return result;
         }
     }
 }

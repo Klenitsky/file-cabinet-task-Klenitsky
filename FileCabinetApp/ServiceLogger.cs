@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Text;
+using FileCabinetApp.CommandHandlers;
 using FileCabinetApp.Iterators;
 
 namespace FileCabinetApp
@@ -51,31 +52,6 @@ namespace FileCabinetApp
             int id = this.service.CreateRecord(arguments);
             this.writer.WriteLine(DateTime.Now.ToString("MM/dd/yyyy HH:mm", CultureInfo.InvariantCulture) + " Create() returned '" + id + "'");
             return id;
-        }
-
-        /// <summary>
-        /// Edits an existing record.
-        /// </summary>
-        /// <param name="id">The ID of a record.</param>
-        /// <param name="arguments">Properties of the record.</param>
-        /// <exception cref="ArgumentNullException">One of the parameters is null.</exception>
-        /// <exception cref="ArgumentException">One of the parameters is not valid.</exception>
-        public void EditRecord(int id, Arguments arguments)
-        {
-            if (arguments == null)
-            {
-                throw new ArgumentNullException(nameof(arguments));
-            }
-
-            this.writer.Write(DateTime.Now.ToString("MM/dd/yyyy HH:mm", CultureInfo.InvariantCulture) + " Calling Edit() with ");
-            this.writer.Write("Id= '" + id + "', ");
-            this.writer.Write("FirstName= '" + arguments.FirstName + "', ");
-            this.writer.Write("Lastname= '" + arguments.LastName + "', ");
-            this.writer.Write("DateOfBirth= '" + arguments.DateOfBirth + "', ");
-            this.writer.Write("Height= '" + arguments.Height + "', ");
-            this.writer.Write("Weight= '" + arguments.Weight + "', ");
-            this.writer.WriteLine("DrivingLicenseCategory= '" + arguments.DrivingLicenseCategory + "'");
-            this.service.EditRecord(id, arguments);
         }
 
         /// <summary>
@@ -195,20 +171,6 @@ namespace FileCabinetApp
         }
 
         /// <summary>
-        /// Removes a record.
-        /// </summary>
-        /// <param name="id">Id of a record to remove.</param>
-        /// <returns>A bool result of removing.</returns>
-        public bool Remove(int id)
-        {
-            this.writer.Write(DateTime.Now.ToString("MM/dd/yyyy HH:mm", CultureInfo.InvariantCulture) + " Calling Remove() with ");
-            this.writer.WriteLine("Id= '" + id + "'");
-            bool result = this.service.Remove(id);
-            this.writer.WriteLine(DateTime.Now.ToString("MM/dd/yyyy HH:mm", CultureInfo.InvariantCulture) + " Remove() returned '" + result + "'");
-            return result;
-        }
-
-        /// <summary>
         /// Adds records loaded from file.
         /// </summary>
         /// <param name="snapshot">Properties of the record.</param>
@@ -222,6 +184,90 @@ namespace FileCabinetApp
             this.writer.Write(DateTime.Now.ToString("MM/dd/yyyy HH:mm", CultureInfo.InvariantCulture) + " Calling Restore() with ");
             this.writer.WriteLine("Snapshot= '" + snapshot.ToString() + "'");
             this.service.Restore(snapshot);
+        }
+
+        /// <summary>
+        /// Inserts a new Record.
+        /// </summary>
+        /// <param name="id">Id of the record.</param>
+        /// <param name="arguments">Properties of the record.</param>
+        /// <returns>New record's Id.</returns>
+        public int InsertRecord(int id, Arguments arguments)
+        {
+            if (arguments == null)
+            {
+                throw new ArgumentNullException(nameof(arguments));
+            }
+
+            this.writer.Write(DateTime.Now.ToString("MM/dd/yyyy HH:mm", CultureInfo.InvariantCulture) + " Calling Insert() with ");
+            this.writer.WriteLine("Id= '" + id + "'");
+            this.writer.Write("FirstName= '" + arguments.FirstName + "', ");
+            this.writer.Write("Lastname= '" + arguments.LastName + "', ");
+            this.writer.Write("DateOfBirth= '" + arguments.DateOfBirth + "', ");
+            this.writer.Write("Height= '" + arguments.Height + "', ");
+            this.writer.Write("Weight= '" + arguments.Weight + "', ");
+            this.writer.WriteLine("DrivingLicenseCategory= '" + arguments.DrivingLicenseCategory + "'");
+            int result = this.service.InsertRecord(id, arguments);
+            this.writer.WriteLine(DateTime.Now.ToString("MM/dd/yyyy HH:mm", CultureInfo.InvariantCulture) + " Insert() returned '" + result + "'");
+            return result;
+        }
+
+        /// <summary>
+        /// Removes a record.
+        /// </summary>
+        /// <param name="arguments">Properties of values to delete.</param>
+        /// <returns>Deleted values.</returns>
+        public IEnumerable<FileCabinetRecord> Delete(SearchingAttributes arguments)
+        {
+            if (arguments == null)
+            {
+                throw new ArgumentNullException(nameof(arguments));
+            }
+
+            this.writer.Write(DateTime.Now.ToString("MM/dd/yyyy HH:mm", CultureInfo.InvariantCulture) + " Calling Delete() with ");
+            this.writer.WriteLine("Attributes= '" + arguments.Value + "', ");
+            IEnumerable<FileCabinetRecord> result = this.service.Delete(arguments);
+            this.writer.WriteLine(DateTime.Now.ToString("MM/dd/yyyy HH:mm", CultureInfo.InvariantCulture) + " Insert() returned '" + result + "'");
+            return result;
+        }
+
+        /// <summary>
+        /// Updates a record.
+        /// </summary>
+        /// <param name="attriubutesToUpdate">Properties of values to update records.</param>
+        /// <param name="attriubutesToFind">Properties of values to find records.</param>
+        /// <returns>Updated values.</returns>
+        public IEnumerable<FileCabinetRecord> Update(IEnumerable<SearchingAttributes> attriubutesToUpdate, IEnumerable<SearchingAttributes> attriubutesToFind)
+        {
+            if (attriubutesToUpdate == null)
+            {
+                throw new ArgumentNullException(nameof(attriubutesToUpdate));
+            }
+
+            if (attriubutesToFind == null)
+            {
+                throw new ArgumentNullException(nameof(attriubutesToFind));
+            }
+
+            this.writer.Write(DateTime.Now.ToString("MM/dd/yyyy HH:mm", CultureInfo.InvariantCulture) + " Calling Update() with ");
+            foreach (SearchingAttributes attribute in attriubutesToUpdate)
+            {
+                this.writer.WriteLine(DateTime.Now.ToString("MM/dd/yyyy HH:mm", CultureInfo.InvariantCulture) + "Attributes to update: " + attribute.Attribute + " " + "'" + attribute.Value + "'");
+            }
+
+            foreach (SearchingAttributes attribute in attriubutesToFind)
+            {
+                this.writer.WriteLine(DateTime.Now.ToString("MM/dd/yyyy HH:mm", CultureInfo.InvariantCulture) + "Attributes to find: " + attribute.Attribute + " " + "'" + attribute.Value + "'");
+            }
+
+            IEnumerable<FileCabinetRecord> result = this.service.Update(attriubutesToUpdate, attriubutesToFind);
+            this.writer.WriteLine(DateTime.Now.ToString("MM/dd/yyyy HH:mm", CultureInfo.InvariantCulture) + " Insert() returned:");
+            foreach (var record in result)
+            {
+                this.writer.WriteLine(DateTime.Now.ToString("MM/dd/yyyy HH:mm", CultureInfo.InvariantCulture) + "'" + record.ToString() + "'");
+            }
+
+            return result;
         }
 
         /// <summary>

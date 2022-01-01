@@ -134,22 +134,9 @@ namespace FileCabinetApp
                 }
 
                 var commandHandler = CreateCommandHandlers();
-                try
-                {
-                    commandHandler.Handle(new CommandHandlers.AppCommandRequest { Command = command, Parameters = parameters, });
-                }
-                catch (ArgumentException)
-                {
-                    PrintMissedCommandInfo(command);
-                }
+                commandHandler.Handle(new CommandHandlers.AppCommandRequest { Command = command, Parameters = parameters, });
             }
             while (isRunning);
-        }
-
-        private static void PrintMissedCommandInfo(string command)
-        {
-            Console.WriteLine($"There is no '{command}' command.");
-            Console.WriteLine();
         }
 
         private static FileCabinetApp.CommandHandlers.ICommandHandler CreateCommandHandlers()
@@ -159,25 +146,27 @@ namespace FileCabinetApp
             var statCommandHandler = new StatCommandHandler(fileCabinetService);
             var createCommandHandler = new CreateCommandHandler(fileCabinetService, isCustom);
             var listCommandHandler = new ListCommandHandler(fileCabinetService, DefaultRecordPrint);
-            var editCommandHandler = new EditCommandHandler(fileCabinetService, isCustom);
+            var insertCommandHandler = new InsertCommandHandler(fileCabinetService, isCustom);
             var findCommandHandler = new FindCommandHandler(fileCabinetService, DefaultRecordPrintIteator);
             var exportCommandHandler = new ExportCommandHandler(fileCabinetService);
             var importCommandHandler = new ImportCommandHandler(fileCabinetService);
-            var removeCommandHandler = new RemoveCommandHandler(fileCabinetService);
             var purgeCommandHandler = new PurgeCommandHandler(fileCabinetService);
+            var deleteCommandHandler = new DeleteCommandHandler(fileCabinetService);
+            var updateCommandHandler = new UpdateCommandHandler(fileCabinetService);
             var commandMissHandler = new MissedCommandHandler();
 
             helpCommandHandler.SetNext(exitCommandHandler);
             exitCommandHandler.SetNext(statCommandHandler);
             statCommandHandler.SetNext(createCommandHandler);
             createCommandHandler.SetNext(listCommandHandler);
-            listCommandHandler.SetNext(editCommandHandler);
-            editCommandHandler.SetNext(findCommandHandler);
+            listCommandHandler.SetNext(insertCommandHandler);
+            insertCommandHandler.SetNext(findCommandHandler);
             findCommandHandler.SetNext(exportCommandHandler);
             exportCommandHandler.SetNext(importCommandHandler);
-            importCommandHandler.SetNext(removeCommandHandler);
-            removeCommandHandler.SetNext(purgeCommandHandler);
-            purgeCommandHandler.SetNext(commandMissHandler);
+            importCommandHandler.SetNext(purgeCommandHandler);
+            purgeCommandHandler.SetNext(deleteCommandHandler);
+            deleteCommandHandler.SetNext(updateCommandHandler);
+            updateCommandHandler.SetNext(commandMissHandler);
             return helpCommandHandler;
         }
 

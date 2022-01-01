@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using FileCabinetApp.CommandHandlers;
 using FileCabinetApp.Iterators;
 
 namespace FileCabinetApp
@@ -18,6 +19,14 @@ namespace FileCabinetApp
         public int CreateRecord(Arguments arguments);
 
         /// <summary>
+        /// Inserts a new Record.
+        /// </summary>
+        /// <param name="id">Id of a record.</param>
+        /// <param name="arguments">Properties of the record.</param>
+        /// <returns>New record's Id.</returns>
+        public int InsertRecord(int id, Arguments arguments);
+
+        /// <summary>
         /// Gets a copy of the list.
         /// </summary>
         /// <returns>Array of records.</returns>
@@ -28,13 +37,6 @@ namespace FileCabinetApp
         /// </summary>
         /// <returns>Number of records.</returns>
         public int GetStat();
-
-        /// <summary>
-        /// Edits an existing record.
-        /// </summary>
-        /// <param name="id">The ID of a record.</param>
-        /// <param name="arguments">Properties of the record.</param>
-        public void EditRecord(int id, Arguments arguments);
 
         /// <summary>
         /// Finds all records with given firstname.
@@ -73,9 +75,17 @@ namespace FileCabinetApp
         /// <summary>
         /// Removes a record.
         /// </summary>
-        /// <param name="id">Id of a record to remove.</param>
-        /// <returns>A bool result of removing.</returns>
-        public bool Remove(int id);
+        /// <param name="arguments">Properties of values to delete.</param>
+        /// <returns>Deleted values.</returns>
+        public IEnumerable<FileCabinetRecord> Delete(SearchingAttributes arguments);
+
+        /// <summary>
+        /// Updates a record.
+        /// </summary>
+        /// <param name="attriubutesToUpdate">Properties of values to update records.</param>
+        /// <param name="attriubutesToFind">Properties of values to find records.</param>
+        /// <returns>Updated values.</returns>
+        public IEnumerable<FileCabinetRecord> Update(IEnumerable<SearchingAttributes> attriubutesToUpdate, IEnumerable<SearchingAttributes> attriubutesToFind);
 
         /// <summary>
         /// Gets the Id of the last record.

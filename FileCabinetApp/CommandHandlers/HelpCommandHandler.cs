@@ -19,11 +19,12 @@ namespace FileCabinetApp.CommandHandlers
             new string[] { "stat", "prints the statistics", "The 'stat' command prints the statistics." },
             new string[] { "create", "creates a new record", "The 'create' command creates a new record." },
             new string[] { "list", "returns a list of records", "The 'list' command returns a list of recordscre." },
-            new string[] { "edit", "edits the record with entered id.", "The 'edit' command edits the record with entered id" },
+            new string[] { "update", "edits records", "The 'edit' command edits  records with entered properties" },
             new string[] { "find", "finds the record according to the parameters.", "The 'edit' command finds the record according to the parameters." },
             new string[] { "export", "exports the data into file", "The 'export' command exports the data." },
             new string[] { "import", "imports the data from file", "The 'import' command imports the data." },
-            new string[] { "remove", "removes the record with selected id", "The 'remove' command removes records." },
+            new string[] { "insert", "Inserts a new record.", "The 'insert' command inserts the data." },
+            new string[] { "delete", "removes records", "The 'remove' command removes records." },
             new string[] { "purge", "purges deleted records", "The 'purge' command purges deleted records." },
         };
 
