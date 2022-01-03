@@ -309,6 +309,23 @@
             </summary>
             <param name="request">Request provided.</param>
         </member>
+        <member name="T:FileCabinetApp.CommandHandlers.SelectCommandHandler">
+            <summary>
+            Handler of select command.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.CommandHandlers.SelectCommandHandler.#ctor(FileCabinetApp.IFileCabinetService)">
+            <summary>
+            Initializes a new instance of the <see cref="T:FileCabinetApp.CommandHandlers.SelectCommandHandler"/> class.
+            </summary>
+            <param name="service"> Service provided.</param>
+        </member>
+        <member name="M:FileCabinetApp.CommandHandlers.SelectCommandHandler.Handle(FileCabinetApp.CommandHandlers.AppCommandRequest)">
+            <summary>
+            Handles the request.
+            </summary>
+            <param name="request">Request provided.</param>
+        </member>
         <member name="T:FileCabinetApp.CommandHandlers.ServiceCommandHandlerBase">
             <summary>
             Handler of commands that need service.
@@ -610,6 +627,14 @@
             <param name="arguments">Arguments search.</param>
             <returns>Deleted fields.</returns>
         </member>
+        <member name="M:FileCabinetApp.FileCabinetFilesystemService.Select(System.Collections.Generic.IEnumerable{FileCabinetApp.CommandHandlers.SearchingAttributes},System.String)">
+            <summary>
+            Selects records.
+            </summary>
+            <param name="attriubutesToFind">Properties of values to find records.</param>
+            <param name="complexAttribute">Or or and.</param>
+            <returns>Selected values.</returns>
+        </member>
         <member name="M:FileCabinetApp.FileCabinetFilesystemService.Dispose(System.Boolean)">
             <summary>
             Disposes service.
@@ -733,6 +758,14 @@
             </summary>
             <param name="arguments">Properties of values to delete.</param>
             <returns>Deleted values.</returns>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetMemoryService.Select(System.Collections.Generic.IEnumerable{FileCabinetApp.CommandHandlers.SearchingAttributes},System.String)">
+            <summary>
+            Selects records.
+            </summary>
+            <param name="attriubutesToFind">Properties of values to find records.</param>
+            <param name="complexAttribute">Or or and.</param>
+            <returns>Selected values.</returns>
         </member>
         <member name="M:FileCabinetApp.FileCabinetMemoryService.EditRecord(System.Int32,FileCabinetApp.Arguments)">
             <summary>
@@ -1020,6 +1053,14 @@
             </summary>
             <returns>Int id.</returns>
         </member>
+        <member name="M:FileCabinetApp.IFileCabinetService.Select(System.Collections.Generic.IEnumerable{FileCabinetApp.CommandHandlers.SearchingAttributes},System.String)">
+            <summary>
+            Updates a record.
+            </summary>
+            <param name="attriubutesToFind">Properties of values to find records.</param>
+            <param name="complexAttribute">Or or and.</param>
+            <returns>Updated values.</returns>
+        </member>
         <member name="T:FileCabinetApp.Iterators.FilesystemIterator">
             <summary>
             Iterator for FileCabinetMemoryService.
@@ -1228,6 +1269,14 @@
             <param name="attriubutesToFind">Properties of values to find records.</param>
             <returns>Updated values.</returns>
         </member>
+        <member name="M:FileCabinetApp.ServiceLogger.Select(System.Collections.Generic.IEnumerable{FileCabinetApp.CommandHandlers.SearchingAttributes},System.String)">
+            <summary>
+            Updates a record.
+            </summary>
+            <param name="attriubutesToFind">Properties of values to find records.</param>
+            <param name="complexAttribute">Or or and.</param>
+            <returns>Updated values.</returns>
+        </member>
         <member name="M:FileCabinetApp.ServiceLogger.Dispose">
             <summary>
             Disposes the object.
@@ -1345,6 +1394,14 @@
             </summary>
             <param name="attriubutesToUpdate">Properties of values to update records.</param>
             <param name="attriubutesToFind">Properties of values to find records.</param>
+            <returns>Updated values.</returns>
+        </member>
+        <member name="M:FileCabinetApp.ServiceMeter.Select(System.Collections.Generic.IEnumerable{FileCabinetApp.CommandHandlers.SearchingAttributes},System.String)">
+            <summary>
+            Updates a record.
+            </summary>
+            <param name="attriubutesToFind">Properties of values to find records.</param>
+            <param name="complexAttribute">Or or and.</param>
             <returns>Updated values.</returns>
         </member>
         <member name="T:FileCabinetApp.ValidationRules.Rules">
