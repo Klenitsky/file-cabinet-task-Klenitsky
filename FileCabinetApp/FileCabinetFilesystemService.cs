@@ -18,7 +18,7 @@ namespace FileCabinetApp
         private readonly Dictionary<string, List<long>> firstNameDictionary = new Dictionary<string, List<long>>();
         private readonly Dictionary<string, List<long>> lastNameDictionary = new Dictionary<string, List<long>>();
         private readonly Dictionary<string, List<long>> dateOfBirthDictionary = new Dictionary<string, List<long>>();
-
+        private readonly Dictionary<List<SearchingAttributes>, List<long>> memoization = new Dictionary<List<SearchingAttributes>, List<long>>();
         private readonly IRecordValidator validator;
         private FileStream fileStream;
         private int id = 1;
@@ -48,6 +48,8 @@ namespace FileCabinetApp
             {
                 throw new ArgumentNullException(nameof(arguments));
             }
+
+            this.memoization.Clear();
 
             this.validator.ValidateParameters(arguments);
             short st = 0;
@@ -331,6 +333,7 @@ namespace FileCabinetApp
                 throw new ArgumentNullException(nameof(snapshot));
             }
 
+            this.memoization.Clear();
             foreach (FileCabinetRecord record in snapshot.Records)
             {
                 if (record.Id < this.id)
@@ -427,6 +430,7 @@ namespace FileCabinetApp
                 throw new ArgumentNullException(nameof(arguments));
             }
 
+            this.memoization.Clear();
             this.validator.ValidateParameters(arguments);
             short st = 0;
             byte[] status = BitConverter.GetBytes(st);
@@ -508,6 +512,7 @@ namespace FileCabinetApp
                 throw new ArgumentNullException(nameof(attriubutesToUpdate));
             }
 
+            this.memoization.Clear();
             List<FileCabinetRecord> result = new List<FileCabinetRecord>();
             int index = 0;
             this.fileStream.Seek(index, SeekOrigin.Begin);
@@ -776,6 +781,7 @@ namespace FileCabinetApp
                 throw new ArgumentNullException(nameof(arguments));
             }
 
+            this.memoization.Clear();
             switch (arguments.Attribute)
             {
                 case SearchingAttributes.AttributesSearch.Id:
@@ -803,7 +809,7 @@ namespace FileCabinetApp
         /// <param name="attriubutesToFind">Properties of values to find records.</param>
         /// <param name="complexAttribute">Or or and.</param>
         /// <returns>Selected values.</returns>
-        public IEnumerable<FileCabinetRecord> Select(IEnumerable<SearchingAttributes> attriubutesToFind, string complexAttribute)
+        public IEnumerable<FileCabinetRecord> SelectRecords(IEnumerable<SearchingAttributes> attriubutesToFind, string complexAttribute)
         {
             if (attriubutesToFind == null)
             {
@@ -811,6 +817,80 @@ namespace FileCabinetApp
             }
 
             List<FileCabinetRecord> result = new List<FileCabinetRecord>();
+            foreach (var key in this.memoization.Keys)
+            {
+                if (key.Count == ((List<SearchingAttributes>)attriubutesToFind).Count)
+                {
+                    bool isIdentical = true;
+                    for (int i = 0; i < key.Count; i++)
+                    {
+                        if (key[i].Attribute != ((List<SearchingAttributes>)attriubutesToFind)[i].Attribute || key[i].Value != ((List<SearchingAttributes>)attriubutesToFind)[i].Value)
+                        {
+                            isIdentical = false;
+                        }
+                    }
+
+                    if (isIdentical)
+                    {
+                        foreach (long i in this.memoization[key])
+                        {
+                            this.fileStream.Seek(i, SeekOrigin.Begin);
+                            FileCabinetRecord record = new FileCabinetRecord
+                            {
+                                Id = -1,
+                                FirstName = string.Empty,
+                                LastName = string.Empty,
+                                DateOfBirth = new DateTime(1800, 1, 1),
+                                Height = -1,
+                                Weight = -1,
+                                DrivingLicenseCategory = 'Z',
+                            };
+
+                            byte[] buffer = new byte[FileConsts.RecordSize];
+                            this.fileStream.Read(buffer, 0, buffer.Length);
+                            byte[] statusBuf = buffer[FileConsts.StatusBegin..FileConsts.IdBegin];
+                            short status = BitConverter.ToInt16(statusBuf);
+                            status &= 4;
+                            if (status == 0)
+                            {
+                                byte[] recordIdBuf = buffer[FileConsts.IdBegin..FileConsts.FirstNameBegin];
+                                byte[] firstNameBuf = buffer[FileConsts.FirstNameBegin..FileConsts.LastNameBegin];
+                                byte[] lastNameBuf = buffer[FileConsts.LastNameBegin..FileConsts.YearBegin];
+                                byte[] yearBuf = buffer[FileConsts.YearBegin..FileConsts.MonthBegin];
+                                byte[] monthBuf = buffer[FileConsts.MonthBegin..FileConsts.DayBegin];
+                                byte[] dayBuf = buffer[FileConsts.DayBegin..FileConsts.HeightBegin];
+                                byte[] heightBuf = buffer[FileConsts.HeightBegin..FileConsts.WeightBegin];
+                                byte[] weightBuf = buffer[FileConsts.WeightBegin..FileConsts.DrivingLicenseCategoryBegin];
+                                byte[] drivingLicenseCategoryBuf = buffer[FileConsts.DrivingLicenseCategoryBegin..FileConsts.RecordSize];
+
+                                int recordId = BitConverter.ToInt32(recordIdBuf);
+                                string firstName = Encoding.UTF8.GetString(firstNameBuf);
+                                string lastName = Encoding.UTF8.GetString(lastNameBuf);
+                                DateTime dateOfBirth = new DateTime(BitConverter.ToInt32(yearBuf), BitConverter.ToInt32(monthBuf), BitConverter.ToInt32(dayBuf));
+                                short height = BitConverter.ToInt16(heightBuf);
+                                decimal weight = new decimal(BitConverter.ToDouble(weightBuf));
+                                char drivingLicenseCategory = Encoding.UTF8.GetString(drivingLicenseCategoryBuf)[0];
+
+                                record = new FileCabinetRecord
+                                {
+                                    Id = recordId,
+                                    FirstName = firstName,
+                                    LastName = lastName,
+                                    DateOfBirth = dateOfBirth,
+                                    Height = height,
+                                    Weight = weight,
+                                    DrivingLicenseCategory = drivingLicenseCategory,
+                                };
+                                result.Add(record);
+                            }
+                        }
+
+                        return result;
+                    }
+                }
+            }
+
+            List<long> resultLong = new List<long>();
             int index = 0;
             this.fileStream.Seek(index, SeekOrigin.Begin);
             while (index < this.fileStream.Length)
@@ -1022,12 +1102,14 @@ namespace FileCabinetApp
                     if (isValid)
                     {
                         result.Add(record);
+                        resultLong.Add(index);
                     }
                 }
 
                 index += FileConsts.RecordSize;
             }
 
+            this.memoization.Add((List<SearchingAttributes>)attriubutesToFind, resultLong);
             return result;
         }
 
@@ -1529,6 +1611,7 @@ namespace FileCabinetApp
                 throw new ArgumentNullException(nameof(arguments));
             }
 
+            this.memoization.Clear();
             int index = 0;
             this.fileStream.Seek(index, SeekOrigin.Begin);
             while (index < this.fileStream.Length)

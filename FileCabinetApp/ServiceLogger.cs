@@ -276,7 +276,7 @@ namespace FileCabinetApp
         /// <param name="attriubutesToFind">Properties of values to find records.</param>
         /// <param name="complexAttribute">Or or and.</param>
         /// <returns>Updated values.</returns>
-        public IEnumerable<FileCabinetRecord> Select(IEnumerable<SearchingAttributes> attriubutesToFind, string complexAttribute)
+        public IEnumerable<FileCabinetRecord> SelectRecords(IEnumerable<SearchingAttributes> attriubutesToFind, string complexAttribute)
         {
             if (attriubutesToFind == null)
             {
@@ -290,7 +290,7 @@ namespace FileCabinetApp
             }
 
             this.writer.WriteLine(DateTime.Now.ToString("MM/dd/yyyy HH:mm", CultureInfo.InvariantCulture) + "keyword: " + "'" + complexAttribute + "'");
-            var result = this.service.Select(attriubutesToFind, complexAttribute);
+            var result = this.service.SelectRecords(attriubutesToFind, complexAttribute);
             this.writer.WriteLine(DateTime.Now.ToString("MM/dd/yyyy HH:mm", CultureInfo.InvariantCulture) + " Select() returned:");
             foreach (var record in result)
             {

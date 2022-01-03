@@ -113,7 +113,7 @@ namespace FileCabinetApp.CommandHandlers
                                 str = new StringBuilder();
                                 str.Append(record.Height + " ");
                                 StringBuilder resultStr = new StringBuilder();
-                                while (resultStr.Length != argument.Length + 2-str.Length)
+                                while (resultStr.Length != argument.Length + 2 - str.Length)
                                 {
                                     resultStr.Append(' ');
                                 }
@@ -179,7 +179,7 @@ namespace FileCabinetApp.CommandHandlers
             }
 
             int i = 0;
-            while (str[i] != "where" && i < str.Count)
+            while (i < str.Count && str[i] != "where")
             {
                 attributesToShow.Add(str[i]);
                 i += 1;
@@ -197,7 +197,7 @@ namespace FileCabinetApp.CommandHandlers
                 i += 3;
             }
 
-            result = (List<FileCabinetRecord>)this.fileCabinetService.Select(attributesToFind, complexAttribute);
+            result = (List<FileCabinetRecord>)this.fileCabinetService.SelectRecords(attributesToFind, complexAttribute);
             return result;
         }
     }

@@ -18,6 +18,7 @@ namespace FileCabinetApp
         private readonly Dictionary<string, List<FileCabinetRecord>> lastNameDictionary = new Dictionary<string, List<FileCabinetRecord>>();
         private readonly Dictionary<string, List<FileCabinetRecord>> dateOfBirthDictionary = new Dictionary<string, List<FileCabinetRecord>>();
         private readonly IRecordValidator validator;
+        private readonly Dictionary<List<SearchingAttributes>, List<FileCabinetRecord>> memoization = new Dictionary<List<SearchingAttributes>, List<FileCabinetRecord>>();
         private int id = 1;
 
         /// <summary>
@@ -44,6 +45,7 @@ namespace FileCabinetApp
                 throw new ArgumentNullException(nameof(arguments));
             }
 
+            this.memoization.Clear();
             this.validator.ValidateParameters(arguments);
             if (this.list.Count > 0)
             {
@@ -169,6 +171,7 @@ namespace FileCabinetApp
         /// <param name="snapshot">Properties of the record.</param>
         public void Restore(FileCabinetServiceSnapshot snapshot)
         {
+            this.memoization.Clear();
             if (snapshot == null)
             {
                 throw new ArgumentNullException(nameof(snapshot));
@@ -287,6 +290,7 @@ namespace FileCabinetApp
                 throw new ArgumentNullException(nameof(attriubutesToUpdate));
             }
 
+            this.memoization.Clear();
             List<FileCabinetRecord> result = new List<FileCabinetRecord>();
             foreach (var record in this.list)
             {
@@ -397,6 +401,7 @@ namespace FileCabinetApp
                 throw new ArgumentNullException(nameof(arguments));
             }
 
+            this.memoization.Clear();
             switch (arguments.Attribute)
             {
                 case SearchingAttributes.AttributesSearch.Id:
@@ -424,11 +429,31 @@ namespace FileCabinetApp
         /// <param name="attriubutesToFind">Properties of values to find records.</param>
         /// <param name="complexAttribute">Or or and.</param>
         /// <returns>Selected values.</returns>
-        public IEnumerable<FileCabinetRecord> Select(IEnumerable<SearchingAttributes> attriubutesToFind, string complexAttribute)
+        public IEnumerable<FileCabinetRecord> SelectRecords(IEnumerable<SearchingAttributes> attriubutesToFind, string complexAttribute)
         {
             if (attriubutesToFind == null)
             {
                 throw new ArgumentNullException(nameof(attriubutesToFind));
+            }
+
+            foreach (var key in this.memoization.Keys)
+            {
+                if (key.Count == ((List<SearchingAttributes>)attriubutesToFind).Count)
+                {
+                    bool isIdentical = true;
+                    for (int i = 0; i < key.Count; i++)
+                    {
+                        if (key[i].Attribute != ((List<SearchingAttributes>)attriubutesToFind)[i].Attribute || key[i].Value != ((List<SearchingAttributes>)attriubutesToFind)[i].Value)
+                        {
+                            isIdentical = false;
+                        }
+                    }
+
+                    if (isIdentical)
+                    {
+                        return this.memoization[key];
+                    }
+                }
             }
 
             List<FileCabinetRecord> result = new List<FileCabinetRecord>();
@@ -561,6 +586,7 @@ namespace FileCabinetApp
                 }
             }
 
+            this.memoization.Add((List<SearchingAttributes>)attriubutesToFind, result);
             return result;
         }
 
