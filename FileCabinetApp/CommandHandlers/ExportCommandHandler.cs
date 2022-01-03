@@ -57,6 +57,13 @@ namespace FileCabinetApp.CommandHandlers
                             writer.Close();
                             Console.WriteLine("All records are exported to file " + filename + ".");
                         }
+                        else
+                        {
+                            if (Console.ReadLine().ToUpperInvariant() == "n".ToUpperInvariant())
+                            {
+                                throw new ArgumentException("Invalid answer");
+                            }
+                        }
                     }
                     else
                     {

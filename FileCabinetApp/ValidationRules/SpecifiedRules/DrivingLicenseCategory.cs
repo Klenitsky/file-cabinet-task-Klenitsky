@@ -18,6 +18,6 @@ namespace FileCabinetApp.ValidationRules.SpecifiedRules
         /// Driving license category possible values.
         /// </value>
         [JsonProperty("values")]
-        public Collection<string> Values { get; set; } = default(Collection<string>);
+        public ReadOnlyCollection<string> Values { get; set; } = default(ReadOnlyCollection<string>);
     }
 }

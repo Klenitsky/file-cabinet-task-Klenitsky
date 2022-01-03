@@ -33,76 +33,94 @@ namespace FileCabinetApp
             Console.WriteLine($"File Cabinet Application, developed by {Program.DeveloperName}");
             if (args != null && args.Length > 0)
             {
-                if (args[0] == "-v" && args[1].ToLower(CultureInfo.CurrentCulture) == "custom")
+                for (int i = 0; i < args.Length;)
                 {
-                    fileCabinetService = new FileCabinetMemoryService(new ValidatorBuilder().CreateCustom());
-                    isCustom = true;
-                }
-
-                if (args[0].Contains("--validation-rules=", StringComparison.InvariantCulture) && args[0][19..].ToLower(CultureInfo.CurrentCulture) == "custom")
-                {
-                    fileCabinetService = new FileCabinetMemoryService(new ValidatorBuilder().CreateCustom());
-                    isCustom = true;
-                }
-
-                if (args[0] == "--storage" || args[0] == "-s")
-                {
-                    if (args[1].ToLower(CultureInfo.CurrentCulture) == "memory")
+                    if (args[i] == "-v" && args[i + 1].ToLower(CultureInfo.CurrentCulture) == "custom")
                     {
-                        if (isCustom)
-                        {
-                            fileCabinetService = new FileCabinetMemoryService(new ValidatorBuilder().CreateCustom());
-                            Console.WriteLine($"Using memory.");
-                        }
-                        else
-                        {
-                            fileCabinetService = new FileCabinetMemoryService(new ValidatorBuilder().CreateDefault());
-                            Console.WriteLine($"Using memory.");
-                        }
+                        fileCabinetService = new FileCabinetMemoryService(new ValidatorBuilder().CreateCustom());
+                        isCustom = true;
+                        i += 2;
+                        continue;
                     }
-                    else
+
+                    if (args[i].Contains("--validation-rules=", StringComparison.InvariantCulture) && args[0][19..].ToLower(CultureInfo.CurrentCulture) == "custom")
                     {
-                        if (args[1].ToLower(CultureInfo.CurrentCulture) == "file")
+                        fileCabinetService = new FileCabinetMemoryService(new ValidatorBuilder().CreateCustom());
+                        isCustom = true;
+                        i++;
+                        continue;
+                    }
+
+                    if (args[i] == "--storage" || args[i] == "-s")
+                    {
+                        if (args[i + 1].ToLower(CultureInfo.CurrentCulture) == "memory")
                         {
                             if (isCustom)
                             {
-                                fileCabinetService = new FileCabinetFilesystemService(fileStream, new ValidatorBuilder().CreateCustom());
-                                Console.WriteLine($"Using filesystem.");
+                                fileCabinetService = new FileCabinetMemoryService(new ValidatorBuilder().CreateCustom());
+                                Console.WriteLine($"Using memory.");
                             }
                             else
                             {
-                                fileCabinetService = new FileCabinetFilesystemService(fileStream, new ValidatorBuilder().CreateDefault());
-                                Console.WriteLine($"Using filesystem.");
+                                fileCabinetService = new FileCabinetMemoryService(new ValidatorBuilder().CreateDefault());
+                                Console.WriteLine($"Using memory.");
                             }
+
+                            i += 2;
                         }
-                    }
-                }
+                        else
+                        {
+                            if (args[i + 1].ToLower(CultureInfo.CurrentCulture) == "file")
+                            {
+                                if (isCustom)
+                                {
+                                    fileCabinetService = new FileCabinetFilesystemService(fileStream, new ValidatorBuilder().CreateCustom());
+                                    Console.WriteLine($"Using filesystem.");
+                                }
+                                else
+                                {
+                                    fileCabinetService = new FileCabinetFilesystemService(fileStream, new ValidatorBuilder().CreateDefault());
+                                    Console.WriteLine($"Using filesystem.");
+                                }
+                            }
 
-                if (args[0] == "--use-stopwatch")
-                {
-                    if (isCustom)
-                    {
-                        fileCabinetService = new ServiceMeter(new FileCabinetMemoryService(new ValidatorBuilder().CreateCustom()));
-                        Console.WriteLine($"Using stopwatch");
-                    }
-                    else
-                    {
-                        fileCabinetService = new ServiceMeter(new FileCabinetMemoryService(new ValidatorBuilder().CreateDefault()));
-                        Console.WriteLine($"Using stopwatch");
-                    }
-                }
+                            i += 2;
+                        }
 
-                if (args[0] == "--use-logger")
-                {
-                    if (isCustom)
-                    {
-                        fileCabinetService = new ServiceLogger(new ServiceMeter(new FileCabinetMemoryService(new ValidatorBuilder().CreateCustom())), "applicationLog.log");
-                        Console.WriteLine($"Using logger");
+                        continue;
                     }
-                    else
+
+                    if (args[i] == "--use-stopwatch")
                     {
-                        fileCabinetService = new ServiceLogger(new ServiceMeter(new FileCabinetMemoryService(new ValidatorBuilder().CreateDefault())), "applicationLog.log");
-                        Console.WriteLine($"Using logger");
+                        if (isCustom)
+                        {
+                            fileCabinetService = new ServiceMeter(new FileCabinetMemoryService(new ValidatorBuilder().CreateCustom()));
+                            Console.WriteLine($"Using stopwatch");
+                        }
+                        else
+                        {
+                            fileCabinetService = new ServiceMeter(new FileCabinetMemoryService(new ValidatorBuilder().CreateDefault()));
+                            Console.WriteLine($"Using stopwatch");
+                        }
+
+                        i++;
+                        continue;
+                    }
+
+                    if (args[i] == "--use-logger")
+                    {
+                        if (isCustom)
+                        {
+                            fileCabinetService = new ServiceLogger(new ServiceMeter(new FileCabinetMemoryService(new ValidatorBuilder().CreateCustom())), "applicationLog.log");
+                            Console.WriteLine($"Using logger");
+                        }
+                        else
+                        {
+                            fileCabinetService = new ServiceLogger(new ServiceMeter(new FileCabinetMemoryService(new ValidatorBuilder().CreateDefault())), "applicationLog.log");
+                            Console.WriteLine($"Using logger");
+                        }
+
+                        i++;
                     }
                 }
             }

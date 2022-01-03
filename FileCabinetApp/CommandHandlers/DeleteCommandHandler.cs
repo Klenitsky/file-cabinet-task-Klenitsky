@@ -48,6 +48,11 @@ namespace FileCabinetApp.CommandHandlers
             parameters = parameters.Replace("'", string.Empty, StringComparison.InvariantCulture);
             Regex.Replace(parameters, @"\s+", " ");
             string[] str = parameters.Split(' ');
+            if (str[0] != "where")
+            {
+                throw new ArgumentException("Invalid parameters of the function", nameof(parameters));
+            }
+
             return new SearchingAttributes(str[1], str[2]);
         }
 

@@ -10,13 +10,13 @@ namespace FileCabinetApp.Validators
     /// </summary>
     public class DrivingLicenseCategoryValidator : IRecordValidator
     {
-        private Collection<char> categories = new Collection<char>();
+        private readonly List<char> categories = new List<char>();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DrivingLicenseCategoryValidator"/> class.
         /// </summary>
         /// <param name="categories">List of license categories.</param>
-        public DrivingLicenseCategoryValidator(Collection<string> categories)
+        public DrivingLicenseCategoryValidator(ReadOnlyCollection<string> categories)
         {
             if (categories == null)
             {
