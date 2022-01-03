@@ -18,6 +18,7 @@ namespace FileCabinetApp
         private readonly Dictionary<string, List<FileCabinetRecord>> lastNameDictionary = new Dictionary<string, List<FileCabinetRecord>>();
         private readonly Dictionary<string, List<FileCabinetRecord>> dateOfBirthDictionary = new Dictionary<string, List<FileCabinetRecord>>();
         private readonly IRecordValidator validator;
+        private readonly Dictionary<List<SearchingAttributes>, List<FileCabinetRecord>> memoization = new Dictionary<List<SearchingAttributes>, List<FileCabinetRecord>>();
         private int id = 1;
 
         /// <summary>
@@ -44,6 +45,7 @@ namespace FileCabinetApp
                 throw new ArgumentNullException(nameof(arguments));
             }
 
+            this.memoization.Clear();
             this.validator.ValidateParameters(arguments);
             if (this.list.Count > 0)
             {
@@ -169,6 +171,7 @@ namespace FileCabinetApp
         /// <param name="snapshot">Properties of the record.</param>
         public void Restore(FileCabinetServiceSnapshot snapshot)
         {
+            this.memoization.Clear();
             if (snapshot == null)
             {
                 throw new ArgumentNullException(nameof(snapshot));
@@ -287,6 +290,7 @@ namespace FileCabinetApp
                 throw new ArgumentNullException(nameof(attriubutesToUpdate));
             }
 
+            this.memoization.Clear();
             List<FileCabinetRecord> result = new List<FileCabinetRecord>();
             foreach (var record in this.list)
             {
@@ -397,6 +401,7 @@ namespace FileCabinetApp
                 throw new ArgumentNullException(nameof(arguments));
             }
 
+            this.memoization.Clear();
             switch (arguments.Attribute)
             {
                 case SearchingAttributes.AttributesSearch.Id:
@@ -416,6 +421,173 @@ namespace FileCabinetApp
                 default:
                     throw new ArgumentException(string.Empty, nameof(arguments));
             }
+        }
+
+        /// <summary>
+        /// Selects records.
+        /// </summary>
+        /// <param name="attriubutesToFind">Properties of values to find records.</param>
+        /// <param name="complexAttribute">Or or and.</param>
+        /// <returns>Selected values.</returns>
+        public IEnumerable<FileCabinetRecord> SelectRecords(IEnumerable<SearchingAttributes> attriubutesToFind, string complexAttribute)
+        {
+            if (attriubutesToFind == null)
+            {
+                throw new ArgumentNullException(nameof(attriubutesToFind));
+            }
+
+            foreach (var key in this.memoization.Keys)
+            {
+                if (key.Count == ((List<SearchingAttributes>)attriubutesToFind).Count)
+                {
+                    bool isIdentical = true;
+                    for (int i = 0; i < key.Count; i++)
+                    {
+                        if (key[i].Attribute != ((List<SearchingAttributes>)attriubutesToFind)[i].Attribute || key[i].Value != ((List<SearchingAttributes>)attriubutesToFind)[i].Value)
+                        {
+                            isIdentical = false;
+                        }
+                    }
+
+                    if (isIdentical)
+                    {
+                        return this.memoization[key];
+                    }
+                }
+            }
+
+            List<FileCabinetRecord> result = new List<FileCabinetRecord>();
+            foreach (var record in this.list)
+            {
+                bool isValid = true;
+                if (complexAttribute == "and" || string.IsNullOrEmpty(complexAttribute))
+                {
+                    isValid = true;
+                    foreach (var attribute in attriubutesToFind)
+                    {
+                        switch (attribute.Attribute)
+                        {
+                            case SearchingAttributes.AttributesSearch.Id:
+                                if (record.Id != int.Parse(attribute.Value, CultureInfo.CurrentCulture))
+                                {
+                                    isValid = false;
+                                }
+
+                                break;
+                            case SearchingAttributes.AttributesSearch.FirstName:
+                                if (record.FirstName != attribute.Value)
+                                {
+                                    isValid = false;
+                                }
+
+                                break;
+                            case SearchingAttributes.AttributesSearch.LastName:
+                                if (record.LastName != attribute.Value)
+                                {
+                                    isValid = false;
+                                }
+
+                                break;
+                            case SearchingAttributes.AttributesSearch.DateOfBirth:
+                                if (DateTime.Compare(record.DateOfBirth, DateTime.Parse(attribute.Value, CultureInfo.CurrentCulture)) != 0)
+                                {
+                                    isValid = false;
+                                }
+
+                                break;
+                            case SearchingAttributes.AttributesSearch.Height:
+                                if (record.Height != short.Parse(attribute.Value, CultureInfo.CurrentCulture))
+                                {
+                                    isValid = false;
+                                }
+
+                                break;
+                            case SearchingAttributes.AttributesSearch.Weight:
+                                if (record.Weight != short.Parse(attribute.Value, CultureInfo.CurrentCulture))
+                                {
+                                    isValid = false;
+                                }
+
+                                break;
+                            case SearchingAttributes.AttributesSearch.DrivingLicenseCategory:
+                                if (record.DrivingLicenseCategory != char.Parse(attribute.Value))
+                                {
+                                    isValid = false;
+                                }
+
+                                break;
+                        }
+                    }
+                }
+
+                if (complexAttribute == "or")
+                {
+                    isValid = false;
+                    foreach (var attribute in attriubutesToFind)
+                    {
+                        switch (attribute.Attribute)
+                        {
+                            case SearchingAttributes.AttributesSearch.Id:
+                                if (record.Id == int.Parse(attribute.Value, CultureInfo.CurrentCulture))
+                                {
+                                    isValid = true;
+                                }
+
+                                break;
+                            case SearchingAttributes.AttributesSearch.FirstName:
+                                if (record.FirstName == attribute.Value)
+                                {
+                                    isValid = true;
+                                }
+
+                                break;
+                            case SearchingAttributes.AttributesSearch.LastName:
+                                if (record.LastName == attribute.Value)
+                                {
+                                    isValid = true;
+                                }
+
+                                break;
+                            case SearchingAttributes.AttributesSearch.DateOfBirth:
+                                if (DateTime.Compare(record.DateOfBirth, DateTime.Parse(attribute.Value, CultureInfo.CurrentCulture)) == 0)
+                                {
+                                    isValid = true;
+                                }
+
+                                break;
+                            case SearchingAttributes.AttributesSearch.Height:
+                                if (record.Height == short.Parse(attribute.Value, CultureInfo.CurrentCulture))
+                                {
+                                    isValid = true;
+                                }
+
+                                break;
+                            case SearchingAttributes.AttributesSearch.Weight:
+                                if (record.Weight == short.Parse(attribute.Value, CultureInfo.CurrentCulture))
+                                {
+                                    isValid = true;
+                                }
+
+                                break;
+                            case SearchingAttributes.AttributesSearch.DrivingLicenseCategory:
+                                if (record.DrivingLicenseCategory == char.Parse(attribute.Value))
+                                {
+                                    isValid = true;
+                                }
+
+                                break;
+                        }
+                    }
+                }
+
+                if (isValid)
+                {
+                    result.Add(record);
+                }
+            }
+
+            this.memoization.Add((List<SearchingAttributes>)attriubutesToFind, result);
+            return result;
         }
 
         private IEnumerable<FileCabinetRecord> DeleteId(SearchingAttributes arguments)

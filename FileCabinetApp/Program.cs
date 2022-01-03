@@ -145,60 +145,32 @@ namespace FileCabinetApp
             var exitCommandHandler = new ExitCommandHandler(ExitOperation);
             var statCommandHandler = new StatCommandHandler(fileCabinetService);
             var createCommandHandler = new CreateCommandHandler(fileCabinetService, isCustom);
-            var listCommandHandler = new ListCommandHandler(fileCabinetService, DefaultRecordPrint);
             var insertCommandHandler = new InsertCommandHandler(fileCabinetService, isCustom);
-            var findCommandHandler = new FindCommandHandler(fileCabinetService, DefaultRecordPrintIteator);
             var exportCommandHandler = new ExportCommandHandler(fileCabinetService);
             var importCommandHandler = new ImportCommandHandler(fileCabinetService);
             var purgeCommandHandler = new PurgeCommandHandler(fileCabinetService);
             var deleteCommandHandler = new DeleteCommandHandler(fileCabinetService);
             var updateCommandHandler = new UpdateCommandHandler(fileCabinetService);
+            var selectCommandHandler = new SelectCommandHandler(fileCabinetService);
             var commandMissHandler = new MissedCommandHandler();
 
             helpCommandHandler.SetNext(exitCommandHandler);
             exitCommandHandler.SetNext(statCommandHandler);
             statCommandHandler.SetNext(createCommandHandler);
-            createCommandHandler.SetNext(listCommandHandler);
-            listCommandHandler.SetNext(insertCommandHandler);
-            insertCommandHandler.SetNext(findCommandHandler);
-            findCommandHandler.SetNext(exportCommandHandler);
+            createCommandHandler.SetNext(insertCommandHandler);
+            insertCommandHandler.SetNext(exportCommandHandler);
             exportCommandHandler.SetNext(importCommandHandler);
             importCommandHandler.SetNext(purgeCommandHandler);
             purgeCommandHandler.SetNext(deleteCommandHandler);
             deleteCommandHandler.SetNext(updateCommandHandler);
-            updateCommandHandler.SetNext(commandMissHandler);
+            updateCommandHandler.SetNext(selectCommandHandler);
+            selectCommandHandler.SetNext(commandMissHandler);
             return helpCommandHandler;
         }
 
         private static void ExitOperation(bool status)
         {
             isRunning = status;
-        }
-
-        private static void DefaultRecordPrint(IEnumerable<FileCabinetRecord> records)
-        {
-            if (records == null)
-            {
-                throw new ArgumentNullException(nameof(records));
-            }
-
-            foreach (FileCabinetRecord record in records)
-            {
-                Console.WriteLine(record.ToString());
-            }
-        }
-
-        private static void DefaultRecordPrintIteator(IEnumerable<FileCabinetRecord> iterator)
-        {
-            if (iterator == null)
-            {
-                throw new ArgumentNullException(nameof(iterator));
-            }
-
-            foreach (var record in iterator)
-            {
-                Console.WriteLine(record.ToString());
-            }
         }
     }
 }

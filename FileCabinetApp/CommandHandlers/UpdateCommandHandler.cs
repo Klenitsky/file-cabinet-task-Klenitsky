@@ -51,7 +51,6 @@ namespace FileCabinetApp.CommandHandlers
 
         private List<FileCabinetRecord> Update(string parameters)
         {
-            List<FileCabinetRecord> result = new List<FileCabinetRecord>();
             List<SearchingAttributes> attributesToChange = new List<SearchingAttributes>();
             List<SearchingAttributes> attributesToFind = new List<SearchingAttributes>();
             parameters = parameters.Replace("=", " ", StringComparison.InvariantCulture);
@@ -82,8 +81,7 @@ namespace FileCabinetApp.CommandHandlers
                 i += 3;
             }
 
-            this.fileCabinetService.Update(attributesToChange, attributesToFind);
-            return result;
+            return (List<FileCabinetRecord>)this.fileCabinetService.Update(attributesToChange, attributesToFind);
         }
     }
 }

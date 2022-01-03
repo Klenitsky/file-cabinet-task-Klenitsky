@@ -271,6 +271,36 @@ namespace FileCabinetApp
         }
 
         /// <summary>
+        /// Updates a record.
+        /// </summary>
+        /// <param name="attriubutesToFind">Properties of values to find records.</param>
+        /// <param name="complexAttribute">Or or and.</param>
+        /// <returns>Updated values.</returns>
+        public IEnumerable<FileCabinetRecord> SelectRecords(IEnumerable<SearchingAttributes> attriubutesToFind, string complexAttribute)
+        {
+            if (attriubutesToFind == null)
+            {
+                throw new ArgumentNullException(nameof(attriubutesToFind));
+            }
+
+            this.writer.Write(DateTime.Now.ToString("MM/dd/yyyy HH:mm", CultureInfo.InvariantCulture) + " Calling Select() with ");
+            foreach (SearchingAttributes attribute in attriubutesToFind)
+            {
+                this.writer.WriteLine(DateTime.Now.ToString("MM/dd/yyyy HH:mm", CultureInfo.InvariantCulture) + "Attributes to find: " + attribute.Attribute + " " + "'" + attribute.Value + "'");
+            }
+
+            this.writer.WriteLine(DateTime.Now.ToString("MM/dd/yyyy HH:mm", CultureInfo.InvariantCulture) + "keyword: " + "'" + complexAttribute + "'");
+            var result = this.service.SelectRecords(attriubutesToFind, complexAttribute);
+            this.writer.WriteLine(DateTime.Now.ToString("MM/dd/yyyy HH:mm", CultureInfo.InvariantCulture) + " Select() returned:");
+            foreach (var record in result)
+            {
+                this.writer.WriteLine(DateTime.Now.ToString("MM/dd/yyyy HH:mm", CultureInfo.InvariantCulture) + "'" + record.ToString() + "'");
+            }
+
+            return result;
+        }
+
+        /// <summary>
         /// Disposes the object.
         /// </summary>
         public void Dispose()
