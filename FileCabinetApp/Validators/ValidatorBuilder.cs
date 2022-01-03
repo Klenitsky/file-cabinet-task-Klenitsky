@@ -168,7 +168,7 @@ namespace FileCabinetApp.Validators
         /// </summary>
         /// <param name="categories">availiable categories.</param>
         /// <returns>this validator builder.</returns>
-        public ValidatorBuilder ValidateDrivingLicenseCategory(Collection<string> categories)
+        public ValidatorBuilder ValidateDrivingLicenseCategory(ReadOnlyCollection<string> categories)
         {
             this.validators.Add(new DrivingLicenseCategoryValidator(categories));
             return this;

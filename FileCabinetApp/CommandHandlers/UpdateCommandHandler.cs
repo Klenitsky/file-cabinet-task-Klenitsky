@@ -40,7 +40,6 @@ namespace FileCabinetApp.CommandHandlers
                     resultId.Append('#' + record.Id.ToString(CultureInfo.InvariantCulture) + ',');
                 }
 
-               // resultId.Remove(resultId.Length - 1, 1);
                 Console.WriteLine($"\nRecords " + resultId.ToString() + "are deleted.");
             }
             else
@@ -68,7 +67,7 @@ namespace FileCabinetApp.CommandHandlers
             }
 
             int i = 1;
-            while (str[i] != "where" && i < str.Count)
+            while (i < str.Count && str[i] != "where")
             {
                 attributesToChange.Add(new SearchingAttributes(str[i], str[i + 1]));
                 i += 2;

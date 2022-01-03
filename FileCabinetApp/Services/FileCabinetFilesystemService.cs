@@ -316,7 +316,7 @@ namespace FileCabinetApp
                     result.Add(record);
                 }
 
-                index += 270;
+                index += FileConsts.RecordSize;
             }
 
             return new FileCabinetServiceSnapshot(result);
