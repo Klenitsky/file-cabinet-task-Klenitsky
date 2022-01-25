@@ -40,50 +40,6 @@ namespace FileCabinetApp
         }
 
         /// <summary>
-        /// Finds all records with given date of Birth.
-        /// </summary>
-        /// <param name="dateTime">The date of birth of the person.</param>
-        /// <returns>A list of records found.</returns>
-        public IEnumerable<FileCabinetRecord> FindByDateOfBirth(DateTime dateTime)
-        {
-            Stopwatch elapsedTime = Stopwatch.StartNew();
-            IEnumerable<FileCabinetRecord> result = this.service.FindByDateOfBirth(dateTime);
-            elapsedTime.Stop();
-            Console.WriteLine("Find method execution duration is " + elapsedTime.ElapsedTicks + " ticks.");
-            return result;
-        }
-
-        /// <summary>
-        /// Finds all records with given firstname.
-        /// </summary>
-        /// <param name="firstName">The first name of the person.</param>
-        /// <returns>A list of records found.</returns>
-        /// <exception cref="ArgumentNullException">String firstName is null.</exception>
-        public IEnumerable<FileCabinetRecord> FindByFirstName(string firstName)
-        {
-            Stopwatch elapsedTime = Stopwatch.StartNew();
-            IEnumerable<FileCabinetRecord> result = this.service.FindByFirstName(firstName);
-            elapsedTime.Stop();
-            Console.WriteLine("Find method execution duration is " + elapsedTime.ElapsedTicks + " ticks.");
-            return result;
-        }
-
-        /// <summary>
-        /// Finds all records with given lastname.
-        /// </summary>
-        /// <param name="lastName">The last name of the person.</param>
-        /// <returns>A list of records found.</returns>
-        /// <exception cref="ArgumentNullException">String firstName is null.</exception>
-        public IEnumerable<FileCabinetRecord> FindByLastName(string lastName)
-        {
-            Stopwatch elapsedTime = Stopwatch.StartNew();
-            IEnumerable<FileCabinetRecord> result = this.service.FindByLastName(lastName);
-            elapsedTime.Stop();
-            Console.WriteLine("Find method execution duration is " + elapsedTime.ElapsedTicks + " ticks.");
-            return result;
-        }
-
-        /// <summary>
         /// Gets the number of deleted records.
         /// </summary>
         /// <returns>Int id.</returns>

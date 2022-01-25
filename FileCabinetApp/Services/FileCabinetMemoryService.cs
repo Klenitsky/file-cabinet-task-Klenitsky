@@ -14,9 +14,6 @@ namespace FileCabinetApp
     public class FileCabinetMemoryService : IFileCabinetService
     {
         private readonly List<FileCabinetRecord> list = new List<FileCabinetRecord>();
-        private readonly Dictionary<string, List<FileCabinetRecord>> firstNameDictionary = new Dictionary<string, List<FileCabinetRecord>>();
-        private readonly Dictionary<string, List<FileCabinetRecord>> lastNameDictionary = new Dictionary<string, List<FileCabinetRecord>>();
-        private readonly Dictionary<string, List<FileCabinetRecord>> dateOfBirthDictionary = new Dictionary<string, List<FileCabinetRecord>>();
         private readonly IRecordValidator validator;
         private readonly Dictionary<List<SearchingAttributes>, List<FileCabinetRecord>> memoization = new Dictionary<List<SearchingAttributes>, List<FileCabinetRecord>>();
         private int id = 1;
@@ -64,28 +61,6 @@ namespace FileCabinetApp
             };
 
             this.id++;
-
-            if (!this.firstNameDictionary.ContainsKey(record.FirstName))
-            {
-                this.firstNameDictionary.Add(record.FirstName, new List<FileCabinetRecord>());
-            }
-
-            this.firstNameDictionary[record.FirstName].Add(record);
-
-            if (!this.lastNameDictionary.ContainsKey(record.LastName))
-            {
-                this.lastNameDictionary.Add(record.LastName, new List<FileCabinetRecord>());
-            }
-
-            this.lastNameDictionary[record.LastName].Add(record);
-
-            if (!this.dateOfBirthDictionary.ContainsKey(record.DateOfBirth.ToString(CultureInfo.CurrentCulture)))
-            {
-                this.dateOfBirthDictionary.Add(record.DateOfBirth.ToString(CultureInfo.CurrentCulture), new List<FileCabinetRecord>());
-            }
-
-            this.dateOfBirthDictionary[record.DateOfBirth.ToString(CultureInfo.CurrentCulture)].Add(record);
-
             this.list.Add(record);
 
             return record.Id;
@@ -109,51 +84,6 @@ namespace FileCabinetApp
         public int GetStat()
         {
             return this.list.Count;
-        }
-
-        /// <summary>
-        /// Finds all records with given firstname.
-        /// </summary>
-        /// <param name="firstName">The first name of the person.</param>
-        /// <returns>A list of records found.</returns>
-        /// <exception cref="ArgumentNullException">String firstName is null.</exception>
-        public IEnumerable<FileCabinetRecord> FindByFirstName(string firstName)
-        {
-            if (string.IsNullOrEmpty(firstName))
-            {
-                throw new ArgumentNullException(nameof(firstName));
-            }
-
-            MemoryIterator iterator = new MemoryIterator(this.firstNameDictionary[firstName]);
-            return iterator;
-        }
-
-        /// <summary>
-        /// Finds all records with given lastname.
-        /// </summary>
-        /// <param name="lastName">The last name of the person.</param>
-        /// <returns>A list of records found.</returns>
-        /// <exception cref="ArgumentNullException">String firstName is null.</exception>
-        public IEnumerable<FileCabinetRecord> FindByLastName(string lastName)
-        {
-            if (string.IsNullOrEmpty(lastName))
-            {
-                throw new ArgumentNullException(nameof(lastName));
-            }
-
-            MemoryIterator iterator = new MemoryIterator(this.lastNameDictionary[lastName]);
-            return iterator;
-        }
-
-        /// <summary>
-        /// Finds all records with given date of Birth.
-        /// </summary>
-        /// <param name="dateTime">The date of birth of the person.</param>
-        /// <returns>A list of records found.</returns>
-        public IEnumerable<FileCabinetRecord> FindByDateOfBirth(DateTime dateTime)
-        {
-            MemoryIterator iterator = new MemoryIterator(this.dateOfBirthDictionary[dateTime.ToString(CultureInfo.CurrentCulture)]);
-            return iterator;
         }
 
         /// <summary>
@@ -245,28 +175,6 @@ namespace FileCabinetApp
             };
 
             this.id++;
-
-            if (!this.firstNameDictionary.ContainsKey(record.FirstName))
-            {
-                this.firstNameDictionary.Add(record.FirstName, new List<FileCabinetRecord>());
-            }
-
-            this.firstNameDictionary[record.FirstName].Add(record);
-
-            if (!this.lastNameDictionary.ContainsKey(record.LastName))
-            {
-                this.lastNameDictionary.Add(record.LastName, new List<FileCabinetRecord>());
-            }
-
-            this.lastNameDictionary[record.LastName].Add(record);
-
-            if (!this.dateOfBirthDictionary.ContainsKey(record.DateOfBirth.ToString(CultureInfo.CurrentCulture)))
-            {
-                this.dateOfBirthDictionary.Add(record.DateOfBirth.ToString(CultureInfo.CurrentCulture), new List<FileCabinetRecord>());
-            }
-
-            this.dateOfBirthDictionary[record.DateOfBirth.ToString(CultureInfo.CurrentCulture)].Add(record);
-
             this.list.Add(record);
 
             return record.Id;
@@ -607,9 +515,6 @@ namespace FileCabinetApp
                 {
                     result.Add(record);
                     this.list.Remove(record);
-                    this.firstNameDictionary[record.FirstName].Remove(record);
-                    this.lastNameDictionary[record.LastName].Remove(record);
-                    this.dateOfBirthDictionary[record.DateOfBirth.ToString(CultureInfo.CurrentCulture)].Remove(record);
                     i--;
                 }
             }
@@ -627,9 +532,6 @@ namespace FileCabinetApp
                 {
                     result.Add(record);
                     this.list.Remove(record);
-                    this.firstNameDictionary[record.FirstName].Remove(record);
-                    this.lastNameDictionary[record.LastName].Remove(record);
-                    this.dateOfBirthDictionary[record.DateOfBirth.ToString(CultureInfo.CurrentCulture)].Remove(record);
                     i--;
                 }
             }
@@ -647,9 +549,6 @@ namespace FileCabinetApp
                 {
                     result.Add(record);
                     this.list.Remove(record);
-                    this.firstNameDictionary[record.FirstName].Remove(record);
-                    this.lastNameDictionary[record.LastName].Remove(record);
-                    this.dateOfBirthDictionary[record.DateOfBirth.ToString(CultureInfo.CurrentCulture)].Remove(record);
                     i--;
                 }
             }
@@ -674,9 +573,6 @@ namespace FileCabinetApp
                 {
                     result.Add(record);
                     this.list.Remove(record);
-                    this.firstNameDictionary[record.FirstName].Remove(record);
-                    this.lastNameDictionary[record.LastName].Remove(record);
-                    this.dateOfBirthDictionary[record.DateOfBirth.ToString(CultureInfo.CurrentCulture)].Remove(record);
                     i--;
                 }
             }
@@ -701,9 +597,6 @@ namespace FileCabinetApp
                 {
                     result.Add(record);
                     this.list.Remove(record);
-                    this.firstNameDictionary[record.FirstName].Remove(record);
-                    this.lastNameDictionary[record.LastName].Remove(record);
-                    this.dateOfBirthDictionary[record.DateOfBirth.ToString(CultureInfo.CurrentCulture)].Remove(record);
                     i--;
                 }
             }
@@ -728,9 +621,6 @@ namespace FileCabinetApp
                 {
                     result.Add(record);
                     this.list.Remove(record);
-                    this.firstNameDictionary[record.FirstName].Remove(record);
-                    this.lastNameDictionary[record.LastName].Remove(record);
-                    this.dateOfBirthDictionary[record.DateOfBirth.ToString(CultureInfo.CurrentCulture)].Remove(record);
                     i--;
                 }
             }
@@ -755,9 +645,6 @@ namespace FileCabinetApp
                 {
                     result.Add(record);
                     this.list.Remove(record);
-                    this.firstNameDictionary[record.FirstName].Remove(record);
-                    this.lastNameDictionary[record.LastName].Remove(record);
-                    this.dateOfBirthDictionary[record.DateOfBirth.ToString(CultureInfo.CurrentCulture)].Remove(record);
                     i--;
                 }
             }
@@ -786,37 +673,12 @@ namespace FileCabinetApp
                 {
                     isValid = true;
                     this.validator.ValidateParameters(arguments);
-
-                    this.firstNameDictionary[record.FirstName].Remove(record);
-                    this.lastNameDictionary[record.LastName].Remove(record);
-                    this.dateOfBirthDictionary[record.DateOfBirth.ToString(CultureInfo.CurrentCulture)].Remove(record);
                     record.FirstName = arguments.FirstName;
                     record.LastName = arguments.LastName;
                     record.DateOfBirth = arguments.DateOfBirth;
                     record.Height = arguments.Height;
                     record.Weight = arguments.Weight;
                     record.DrivingLicenseCategory = arguments.DrivingLicenseCategory;
-
-                    if (!this.firstNameDictionary.ContainsKey(record.FirstName))
-                    {
-                        this.firstNameDictionary.Add(record.FirstName, new List<FileCabinetRecord>());
-                    }
-
-                    this.firstNameDictionary[record.FirstName].Add(record);
-
-                    if (!this.lastNameDictionary.ContainsKey(record.LastName))
-                    {
-                        this.lastNameDictionary.Add(record.LastName, new List<FileCabinetRecord>());
-                    }
-
-                    this.lastNameDictionary[record.LastName].Add(record);
-
-                    if (!this.dateOfBirthDictionary.ContainsKey(record.DateOfBirth.ToString(CultureInfo.CurrentCulture)))
-                    {
-                        this.dateOfBirthDictionary.Add(record.DateOfBirth.ToString(CultureInfo.CurrentCulture), new List<FileCabinetRecord>());
-                    }
-
-                    this.dateOfBirthDictionary[record.DateOfBirth.ToString(CultureInfo.CurrentCulture)].Add(record);
                 }
             }
 
