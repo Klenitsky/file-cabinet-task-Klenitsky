@@ -633,29 +633,6 @@
             <exception cref="T:System.ArgumentNullException"> Parameters are null.</exception>
             <exception cref="T:System.ArgumentException">One of the parameters is not valid.</exception>
         </member>
-        <member name="M:FileCabinetApp.ServiceLogger.FindByDateOfBirth(System.DateTime)">
-            <summary>
-            Finds all records with given date of Birth.
-            </summary>
-            <param name="dateTime">The date of birth of the person.</param>
-            <returns>A list of records found.</returns>
-        </member>
-        <member name="M:FileCabinetApp.ServiceLogger.FindByFirstName(System.String)">
-            <summary>
-            Finds all records with given firstname.
-            </summary>
-            <param name="firstName">The first name of the person.</param>
-            <returns>A list of records found.</returns>
-            <exception cref="T:System.ArgumentNullException">String firstName is null.</exception>
-        </member>
-        <member name="M:FileCabinetApp.ServiceLogger.FindByLastName(System.String)">
-            <summary>
-            Finds all records with given lastname.
-            </summary>
-            <param name="lastName">The last name of the person.</param>
-            <returns>A list of records found.</returns>
-            <exception cref="T:System.ArgumentNullException">String firstName is null.</exception>
-        </member>
         <member name="M:FileCabinetApp.ServiceLogger.GetDeletedStat">
             <summary>
             Gets the number of deleted records.
@@ -760,29 +737,6 @@
             <exception cref="T:System.ArgumentNullException"> Parameters are null.</exception>
             <exception cref="T:System.ArgumentException">One of the parameters is not valid.</exception>
         </member>
-        <member name="M:FileCabinetApp.ServiceMeter.FindByDateOfBirth(System.DateTime)">
-            <summary>
-            Finds all records with given date of Birth.
-            </summary>
-            <param name="dateTime">The date of birth of the person.</param>
-            <returns>A list of records found.</returns>
-        </member>
-        <member name="M:FileCabinetApp.ServiceMeter.FindByFirstName(System.String)">
-            <summary>
-            Finds all records with given firstname.
-            </summary>
-            <param name="firstName">The first name of the person.</param>
-            <returns>A list of records found.</returns>
-            <exception cref="T:System.ArgumentNullException">String firstName is null.</exception>
-        </member>
-        <member name="M:FileCabinetApp.ServiceMeter.FindByLastName(System.String)">
-            <summary>
-            Finds all records with given lastname.
-            </summary>
-            <param name="lastName">The last name of the person.</param>
-            <returns>A list of records found.</returns>
-            <exception cref="T:System.ArgumentNullException">String firstName is null.</exception>
-        </member>
         <member name="M:FileCabinetApp.ServiceMeter.GetDeletedStat">
             <summary>
             Gets the number of deleted records.
@@ -886,29 +840,6 @@
             Gets a number of records.
             </summary>
             <returns>Number of records.</returns>
-        </member>
-        <member name="M:FileCabinetApp.FileCabinetFilesystemService.FindByFirstName(System.String)">
-            <summary>
-            Finds all records with given firstname.
-            </summary>
-            <param name="firstName">The first name of the person.</param>
-            <returns>A list of records found.</returns>
-            <exception cref="T:System.ArgumentNullException">String firstName is null.</exception>
-        </member>
-        <member name="M:FileCabinetApp.FileCabinetFilesystemService.FindByLastName(System.String)">
-            <summary>
-            Finds all records with given lastname.
-            </summary>
-            <param name="lastName">The last name of the person.</param>
-            <returns>A list of records found.</returns>
-            <exception cref="T:System.ArgumentNullException">String firstName is null.</exception>
-        </member>
-        <member name="M:FileCabinetApp.FileCabinetFilesystemService.FindByDateOfBirth(System.DateTime)">
-            <summary>
-            Finds all records with given date of Birth.
-            </summary>
-            <param name="dateTime">The date of birth of the person.</param>
-            <returns>A list of records found.</returns>
         </member>
         <member name="M:FileCabinetApp.FileCabinetFilesystemService.MakeSnapshot">
             <summary>
@@ -1023,29 +954,6 @@
             Gets a number of records.
             </summary>
             <returns>Number of records.</returns>
-        </member>
-        <member name="M:FileCabinetApp.FileCabinetMemoryService.FindByFirstName(System.String)">
-            <summary>
-            Finds all records with given firstname.
-            </summary>
-            <param name="firstName">The first name of the person.</param>
-            <returns>A list of records found.</returns>
-            <exception cref="T:System.ArgumentNullException">String firstName is null.</exception>
-        </member>
-        <member name="M:FileCabinetApp.FileCabinetMemoryService.FindByLastName(System.String)">
-            <summary>
-            Finds all records with given lastname.
-            </summary>
-            <param name="lastName">The last name of the person.</param>
-            <returns>A list of records found.</returns>
-            <exception cref="T:System.ArgumentNullException">String firstName is null.</exception>
-        </member>
-        <member name="M:FileCabinetApp.FileCabinetMemoryService.FindByDateOfBirth(System.DateTime)">
-            <summary>
-            Finds all records with given date of Birth.
-            </summary>
-            <param name="dateTime">The date of birth of the person.</param>
-            <returns>A list of records found.</returns>
         </member>
         <member name="M:FileCabinetApp.FileCabinetMemoryService.MakeSnapshot">
             <summary>
@@ -1258,28 +1166,6 @@
             Gets a number of records.
             </summary>
             <returns>Number of records.</returns>
-        </member>
-        <member name="M:FileCabinetApp.IFileCabinetService.FindByFirstName(System.String)">
-            <summary>
-            Finds all records with given firstname.
-            </summary>
-            <param name="firstName">The first name of the person.</param>
-            <returns>Iterator on records.</returns>
-        </member>
-        <member name="M:FileCabinetApp.IFileCabinetService.FindByLastName(System.String)">
-            <summary>
-            Finds all records with given lastname.
-            </summary>
-            <param name="lastName">The last name of the person.</param>
-            <returns>Iterator on records.</returns>
-            <exception cref="T:System.ArgumentNullException">String firstName is null.</exception>
-        </member>
-        <member name="M:FileCabinetApp.IFileCabinetService.FindByDateOfBirth(System.DateTime)">
-            <summary>
-            Finds all records with given date of Birth.
-            </summary>
-            <param name="dateTime">The date of birth of the person.</param>
-            <returns>Iterator on records.</returns>
         </member>
         <member name="M:FileCabinetApp.IFileCabinetService.MakeSnapshot">
             <summary>

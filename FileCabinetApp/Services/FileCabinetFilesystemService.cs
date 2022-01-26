@@ -15,9 +15,6 @@ namespace FileCabinetApp
     /// </summary>
     public class FileCabinetFilesystemService : IFileCabinetService, IDisposable
     {
-        private readonly Dictionary<string, List<long>> firstNameDictionary = new Dictionary<string, List<long>>();
-        private readonly Dictionary<string, List<long>> lastNameDictionary = new Dictionary<string, List<long>>();
-        private readonly Dictionary<string, List<long>> dateOfBirthDictionary = new Dictionary<string, List<long>>();
         private readonly Dictionary<List<SearchingAttributes>, List<long>> memoization = new Dictionary<List<SearchingAttributes>, List<long>>();
         private readonly IRecordValidator validator;
         private FileStream fileStream;
@@ -78,27 +75,6 @@ namespace FileCabinetApp
             byte[] weight = BitConverter.GetBytes(decimal.ToDouble(arguments.Weight));
             byte[] drivingLicenseCategory = BitConverter.GetBytes(arguments.DrivingLicenseCategory);
             this.id++;
-
-            if (!this.firstNameDictionary.ContainsKey(arguments.FirstName))
-            {
-                this.firstNameDictionary.Add(arguments.FirstName, new List<long>());
-            }
-
-            this.firstNameDictionary[arguments.FirstName].Add(this.fileStream.Length);
-
-            if (!this.lastNameDictionary.ContainsKey(arguments.LastName))
-            {
-                this.lastNameDictionary.Add(arguments.LastName, new List<long>());
-            }
-
-            this.lastNameDictionary[arguments.LastName].Add(this.fileStream.Length);
-
-            if (!this.dateOfBirthDictionary.ContainsKey(arguments.DateOfBirth.ToString(CultureInfo.CurrentCulture)))
-            {
-                this.dateOfBirthDictionary.Add(arguments.DateOfBirth.ToString(CultureInfo.CurrentCulture), new List<long>());
-            }
-
-            this.dateOfBirthDictionary[arguments.DateOfBirth.ToString(CultureInfo.CurrentCulture)].Add(this.fileStream.Length);
 
             this.fileStream.Write(status, 0, status.Length);
             this.fileStream.Write(recordId, 0, recordId.Length);
@@ -182,67 +158,6 @@ namespace FileCabinetApp
         public int GetStat()
         {
             return (int)(this.fileStream.Length / FileConsts.RecordSize) - this.deleted;
-        }
-
-        /// <summary>
-        /// Finds all records with given firstname.
-        /// </summary>
-        /// <param name="firstName">The first name of the person.</param>
-        /// <returns>A list of records found.</returns>
-        /// <exception cref="ArgumentNullException">String firstName is null.</exception>
-        public IEnumerable<FileCabinetRecord> FindByFirstName(string firstName)
-        {
-            if (firstName == null)
-            {
-                throw new ArgumentNullException(nameof(firstName));
-            }
-
-            byte[] firstNameToChangeBuf = new byte[FileConsts.NameSize];
-            byte[] firstNameBufSmall = Encoding.UTF8.GetBytes(firstName);
-
-            for (int i = 0; i < firstNameBufSmall.Length; i++)
-            {
-                firstNameToChangeBuf[i] = firstNameBufSmall[i];
-            }
-
-            firstName = Encoding.UTF8.GetString(firstNameToChangeBuf);
-            return new FilesystemIterator(this.firstNameDictionary[firstName], this.fileStream);
-        }
-
-        /// <summary>
-        /// Finds all records with given lastname.
-        /// </summary>
-        /// <param name="lastName">The last name of the person.</param>
-        /// <returns>A list of records found.</returns>
-        /// <exception cref="ArgumentNullException">String firstName is null.</exception>
-        public IEnumerable<FileCabinetRecord> FindByLastName(string lastName)
-        {
-            if (lastName == null)
-            {
-                throw new ArgumentNullException(nameof(lastName));
-            }
-
-            byte[] lastNameToChangeBuf = new byte[FileConsts.NameSize];
-            byte[] lastNameBufSmall = Encoding.UTF8.GetBytes(lastName);
-
-            for (int i = 0; i < lastNameBufSmall.Length; i++)
-            {
-                lastNameToChangeBuf[i] = lastNameBufSmall[i];
-            }
-
-            lastName = Encoding.UTF8.GetString(lastNameToChangeBuf);
-
-            return new FilesystemIterator(this.lastNameDictionary[lastName], this.fileStream);
-        }
-
-        /// <summary>
-        /// Finds all records with given date of Birth.
-        /// </summary>
-        /// <param name="dateTime">The date of birth of the person.</param>
-        /// <returns>A list of records found.</returns>
-        public IEnumerable<FileCabinetRecord> FindByDateOfBirth(DateTime dateTime)
-        {
-          return new FilesystemIterator(this.lastNameDictionary[dateTime.ToString(CultureInfo.CurrentCulture)], this.fileStream);
         }
 
         /// <summary>
@@ -458,28 +373,6 @@ namespace FileCabinetApp
             byte[] weight = BitConverter.GetBytes(decimal.ToDouble(arguments.Weight));
             byte[] drivingLicenseCategory = BitConverter.GetBytes(arguments.DrivingLicenseCategory);
             this.id++;
-
-            if (!this.firstNameDictionary.ContainsKey(arguments.FirstName))
-            {
-                this.firstNameDictionary.Add(arguments.FirstName, new List<long>());
-            }
-
-            this.firstNameDictionary[arguments.FirstName].Add(this.fileStream.Length);
-
-            if (!this.lastNameDictionary.ContainsKey(arguments.LastName))
-            {
-                this.lastNameDictionary.Add(arguments.LastName, new List<long>());
-            }
-
-            this.lastNameDictionary[arguments.LastName].Add(this.fileStream.Length);
-
-            if (!this.dateOfBirthDictionary.ContainsKey(arguments.DateOfBirth.ToString(CultureInfo.CurrentCulture)))
-            {
-                this.dateOfBirthDictionary.Add(arguments.DateOfBirth.ToString(CultureInfo.CurrentCulture), new List<long>());
-            }
-
-            this.dateOfBirthDictionary[arguments.DateOfBirth.ToString(CultureInfo.CurrentCulture)].Add(this.fileStream.Length);
-
             this.fileStream.Write(status, 0, status.Length);
             this.fileStream.Write(recordId, 0, recordId.Length);
             this.fileStream.Write(firstNameResult, 0, firstNameResult.Length);
@@ -681,9 +574,6 @@ namespace FileCabinetApp
                     string firstNameDelete = Encoding.UTF8.GetString(firstNameBuf);
                     string lastNameDelete = Encoding.UTF8.GetString(lastNameBuf);
                     string dateOfBirthDelete = new DateTime(BitConverter.ToInt32(yearBuf), BitConverter.ToInt32(monthBuf), BitConverter.ToInt32(dayBuf)).ToString(CultureInfo.CurrentCulture);
-                    this.firstNameDictionary[firstNameDelete].Remove(index);
-                    this.lastNameDictionary[lastNameDelete].Remove(index);
-                    this.dateOfBirthDictionary[dateOfBirthDelete].Remove(index);
                     short st = 0;
                     byte[] statusBf = BitConverter.GetBytes(st);
                     byte[] recordIdBuf = BitConverter.GetBytes(record.Id);
@@ -709,27 +599,6 @@ namespace FileCabinetApp
                     byte[] height = BitConverter.GetBytes(record.Height);
                     byte[] weight = BitConverter.GetBytes(decimal.ToDouble(record.Weight));
                     byte[] drivingLicenseCategory = BitConverter.GetBytes(record.DrivingLicenseCategory);
-                    if (!this.firstNameDictionary.ContainsKey(record.FirstName))
-                    {
-                        this.firstNameDictionary.Add(record.FirstName, new List<long>());
-                    }
-
-                    this.firstNameDictionary[record.FirstName].Add(index);
-
-                    if (!this.lastNameDictionary.ContainsKey(record.LastName))
-                    {
-                        this.lastNameDictionary.Add(record.LastName, new List<long>());
-                    }
-
-                    this.lastNameDictionary[record.LastName].Add(index);
-
-                    if (!this.dateOfBirthDictionary.ContainsKey(record.DateOfBirth.ToString(CultureInfo.CurrentCulture)))
-                    {
-                        this.dateOfBirthDictionary.Add(record.DateOfBirth.ToString(CultureInfo.CurrentCulture), new List<long>());
-                    }
-
-                    this.dateOfBirthDictionary[record.DateOfBirth.ToString(CultureInfo.CurrentCulture)].Add(index);
-
                     this.fileStream.Write(statusBf, 0, statusBf.Length);
                     this.fileStream.Write(recordIdBuf, 0, recordIdBuf.Length);
                     this.fileStream.Write(firstNameResult, 0, firstNameResult.Length);
@@ -1143,26 +1012,6 @@ namespace FileCabinetApp
                     string firstName = Encoding.UTF8.GetString(firstNameBuf);
                     string lastName = Encoding.UTF8.GetString(lastNameBuf);
                     DateTime dateOfBirth = new DateTime(BitConverter.ToInt32(yearBuf), BitConverter.ToInt32(monthBuf), BitConverter.ToInt32(dayBuf));
-                    if (!this.firstNameDictionary.ContainsKey(firstName))
-                    {
-                        this.firstNameDictionary.Add(firstName, new List<long>());
-                    }
-
-                    this.firstNameDictionary[firstName].Add(index);
-
-                    if (!this.lastNameDictionary.ContainsKey(lastName))
-                    {
-                        this.lastNameDictionary.Add(lastName, new List<long>());
-                    }
-
-                    this.lastNameDictionary[lastName].Add(index);
-
-                    if (!this.dateOfBirthDictionary.ContainsKey(dateOfBirth.ToString(CultureInfo.CurrentCulture)))
-                    {
-                        this.dateOfBirthDictionary.Add(dateOfBirth.ToString(CultureInfo.CurrentCulture), new List<long>());
-                    }
-
-                    this.dateOfBirthDictionary[dateOfBirth.ToString(CultureInfo.CurrentCulture)].Add(index);
                 }
 
                 index += FileConsts.RecordSize;
@@ -1639,9 +1488,6 @@ namespace FileCabinetApp
                         string firstNameDelete = Encoding.UTF8.GetString(firstNameBuf);
                         string lastNameDelete = Encoding.UTF8.GetString(lastNameBuf);
                         string dateOfBirthDelete = new DateTime(BitConverter.ToInt32(yearBuf), BitConverter.ToInt32(monthBuf), BitConverter.ToInt32(dayBuf)).ToString(CultureInfo.InvariantCulture);
-                        this.firstNameDictionary[firstNameDelete].Remove(index);
-                        this.lastNameDictionary[lastNameDelete].Remove(index);
-                        this.dateOfBirthDictionary[dateOfBirthDelete].Remove(index);
                         short st = 0;
                         byte[] statusBf = BitConverter.GetBytes(st);
                         byte[] firstName = Encoding.UTF8.GetBytes(arguments.FirstName);
@@ -1666,27 +1512,6 @@ namespace FileCabinetApp
                         byte[] height = BitConverter.GetBytes(arguments.Height);
                         byte[] weight = BitConverter.GetBytes(decimal.ToDouble(arguments.Weight));
                         byte[] drivingLicenseCategory = BitConverter.GetBytes(arguments.DrivingLicenseCategory);
-                        if (!this.firstNameDictionary.ContainsKey(arguments.FirstName))
-                        {
-                            this.firstNameDictionary.Add(arguments.FirstName, new List<long>());
-                        }
-
-                        this.firstNameDictionary[arguments.FirstName].Add(index);
-
-                        if (!this.lastNameDictionary.ContainsKey(arguments.LastName))
-                        {
-                            this.lastNameDictionary.Add(arguments.LastName, new List<long>());
-                        }
-
-                        this.lastNameDictionary[arguments.LastName].Add(index);
-
-                        if (!this.dateOfBirthDictionary.ContainsKey(arguments.DateOfBirth.ToString(CultureInfo.CurrentCulture)))
-                        {
-                            this.dateOfBirthDictionary.Add(arguments.DateOfBirth.ToString(CultureInfo.CurrentCulture), new List<long>());
-                        }
-
-                        this.dateOfBirthDictionary[arguments.DateOfBirth.ToString(CultureInfo.CurrentCulture)].Add(index);
-
                         this.fileStream.Write(statusBf, 0, statusBf.Length);
                         this.fileStream.Write(recordIdBuf, 0, recordIdBuf.Length);
                         this.fileStream.Write(firstNameResult, 0, firstNameResult.Length);

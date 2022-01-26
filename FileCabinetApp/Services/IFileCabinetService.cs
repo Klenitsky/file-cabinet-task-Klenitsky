@@ -39,28 +39,6 @@ namespace FileCabinetApp
         public int GetStat();
 
         /// <summary>
-        /// Finds all records with given firstname.
-        /// </summary>
-        /// <param name="firstName">The first name of the person.</param>
-        /// <returns>Iterator on records.</returns>
-        public IEnumerable<FileCabinetRecord> FindByFirstName(string firstName);
-
-        /// <summary>
-        /// Finds all records with given lastname.
-        /// </summary>
-        /// <param name="lastName">The last name of the person.</param>
-        /// <returns>Iterator on records.</returns>
-        /// <exception cref="ArgumentNullException">String firstName is null.</exception>
-        public IEnumerable<FileCabinetRecord> FindByLastName(string lastName);
-
-        /// <summary>
-        /// Finds all records with given date of Birth.
-        /// </summary>
-        /// <param name="dateTime">The date of birth of the person.</param>
-        /// <returns>Iterator on records.</returns>
-        public IEnumerable<FileCabinetRecord> FindByDateOfBirth(DateTime dateTime);
-
-        /// <summary>
         /// Generates snapshot of the service.
         /// </summary>
         /// <returns>A snapshot of this service.</returns>

@@ -42,7 +42,7 @@ namespace FileCabinetApp.CommandHandlers
         {
             Console.WriteLine($"There is no '{command}' command.");
             Console.WriteLine($"There most similar commands are:");
-            for (int i = 0; i < 12; i++)
+            for (int i = 0; i < 11; i++)
             {
                 if (helpMessages[i][0].StartsWith(command, StringComparison.InvariantCulture))
                 {

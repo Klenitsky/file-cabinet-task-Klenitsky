@@ -55,50 +55,6 @@ namespace FileCabinetApp
         }
 
         /// <summary>
-        /// Finds all records with given date of Birth.
-        /// </summary>
-        /// <param name="dateTime">The date of birth of the person.</param>
-        /// <returns>A list of records found.</returns>
-        public IEnumerable<FileCabinetRecord> FindByDateOfBirth(DateTime dateTime)
-        {
-            this.writer.Write(DateTime.Now.ToString("MM/dd/yyyy HH:mm", CultureInfo.InvariantCulture) + " Calling FindByDateOfBirth() with ");
-            this.writer.WriteLine("DateOfBirth= '" + dateTime + "'");
-            IEnumerable<FileCabinetRecord> result = this.service.FindByDateOfBirth(dateTime);
-            this.writer.WriteLine(DateTime.Now.ToString("MM/dd/yyyy HH:mm", CultureInfo.InvariantCulture) + " FindByDateOfBirth() returned '" + result.ToString() + "'");
-            return result;
-        }
-
-        /// <summary>
-        /// Finds all records with given firstname.
-        /// </summary>
-        /// <param name="firstName">The first name of the person.</param>
-        /// <returns>A list of records found.</returns>
-        /// <exception cref="ArgumentNullException">String firstName is null.</exception>
-        public IEnumerable<FileCabinetRecord> FindByFirstName(string firstName)
-        {
-            this.writer.Write(DateTime.Now.ToString("MM/dd/yyyy HH:mm", CultureInfo.InvariantCulture) + " Calling FindByFirstName() with ");
-            this.writer.WriteLine("FirstName= '" + firstName + "'");
-            IEnumerable<FileCabinetRecord> result = this.service.FindByFirstName(firstName);
-            this.writer.WriteLine(DateTime.Now.ToString("MM/dd/yyyy HH:mm", CultureInfo.InvariantCulture) + " FindByFirstName() returned '" + result.ToString() + "'");
-            return result;
-        }
-
-        /// <summary>
-        /// Finds all records with given lastname.
-        /// </summary>
-        /// <param name="lastName">The last name of the person.</param>
-        /// <returns>A list of records found.</returns>
-        /// <exception cref="ArgumentNullException">String firstName is null.</exception>
-        public IEnumerable<FileCabinetRecord> FindByLastName(string lastName)
-        {
-            this.writer.Write(DateTime.Now.ToString("MM/dd/yyyy HH:mm", CultureInfo.InvariantCulture) + " Calling FindByLastName() with ");
-            this.writer.WriteLine("FirstName= '" + lastName + "'");
-            IEnumerable<FileCabinetRecord> result = this.service.FindByLastName(lastName);
-            this.writer.WriteLine(DateTime.Now.ToString("MM/dd/yyyy HH:mm", CultureInfo.InvariantCulture) + " FindByLastName() returned '" + result.ToString() + "'");
-            return result;
-        }
-
-        /// <summary>
         /// Gets the number of deleted records.
         /// </summary>
         /// <returns>Int id.</returns>
