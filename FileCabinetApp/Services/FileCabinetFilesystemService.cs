@@ -31,7 +31,6 @@ namespace FileCabinetApp
             this.fileStream = fileStream;
             this.validator = validator;
             this.id = (int)(this.fileStream.Length / FileConsts.RecordSize) + 1;
-            this.RemakeDictionaries();
         }
 
         /// <summary>
@@ -47,34 +46,35 @@ namespace FileCabinetApp
             }
 
             this.memoization.Clear();
-
+            BinaryWriter writer = new BinaryWriter(this.fileStream);
+            writer.Seek((int)this.fileStream.Length, SeekOrigin.Begin);
             this.validator.ValidateParameters(arguments);
             short st = 0;
-            byte[] status = BitConverter.GetBytes(st);
-            byte[] recordId = BitConverter.GetBytes(this.id);
-            byte[] firstName = Encoding.UTF8.GetBytes(arguments.FirstName);
+            writer.Write(st);
+            writer.Write(this.id);
 
-            byte[] firstNameResult = new byte[FileConsts.NameSize];
-            for (int i = 0; i < firstName.Length; i++)
+            while (arguments.FirstName.Length != 120)
             {
-                firstNameResult[i] = firstName[i];
+                arguments.FirstName = string.Concat(arguments.FirstName, "\0");
             }
 
-            byte[] lastName = Encoding.UTF8.GetBytes(arguments.LastName);
-            byte[] lastNameResult = new byte[FileConsts.NameSize];
-            for (int i = 0; i < lastName.Length; i++)
+            writer.Write(arguments.FirstName);
+
+            while (arguments.LastName.Length < 120)
             {
-                lastNameResult[i] = lastName[i];
+                arguments.LastName = string.Concat(arguments.LastName, "\0");
             }
 
-            byte[] year = BitConverter.GetBytes(arguments.DateOfBirth.Year);
-            byte[] month = BitConverter.GetBytes(arguments.DateOfBirth.Month);
-            byte[] day = BitConverter.GetBytes(arguments.DateOfBirth.Day);
-
-            byte[] height = BitConverter.GetBytes(arguments.Height);
-            byte[] weight = BitConverter.GetBytes(decimal.ToDouble(arguments.Weight));
-            byte[] drivingLicenseCategory = BitConverter.GetBytes(arguments.DrivingLicenseCategory);
+            writer.Write(arguments.LastName);
+            writer.Write(arguments.DateOfBirth.Year);
+            writer.Write(arguments.DateOfBirth.Month);
+            writer.Write(arguments.DateOfBirth.Day);
+            writer.Write(arguments.Height);
+            writer.Write(arguments.Weight);
+            writer.Write(arguments.DrivingLicenseCategory);
+            writer.Flush();
             this.id++;
+<<<<<<< HEAD
 
             this.fileStream.Write(status, 0, status.Length);
             this.fileStream.Write(recordId, 0, recordId.Length);
@@ -86,6 +86,8 @@ namespace FileCabinetApp
             this.fileStream.Write(height, 0, height.Length);
             this.fileStream.Write(weight, 0, weight.Length);
             this.fileStream.Write(drivingLicenseCategory, 0, drivingLicenseCategory.Length);
+=======
+>>>>>>> step16-refactoring-improvement
             this.fileStream.Flush();
             return this.id;
         }
@@ -104,33 +106,21 @@ namespace FileCabinetApp
 
             int index = 0;
             this.fileStream.Seek(index, SeekOrigin.Begin);
+            var reader = new BinaryReader(fileStream);
             while (index < this.fileStream.Length)
             {
                 FileCabinetRecord record;
-                byte[] buffer = new byte[FileConsts.RecordSize];
-                this.fileStream.Read(buffer, 0, buffer.Length);
-                byte[] statusBuf = buffer[FileConsts.StatusBegin..FileConsts.IdBegin];
-                short status = BitConverter.ToInt16(statusBuf);
+                short status = reader.ReadInt16();
                 status &= 4;
                 if (status == 0)
                 {
-                byte[] recordIdBuf = buffer[FileConsts.IdBegin..FileConsts.FirstNameBegin];
-                byte[] firstNameBuf = buffer[FileConsts.FirstNameBegin..FileConsts.LastNameBegin];
-                byte[] lastNameBuf = buffer[FileConsts.LastNameBegin..FileConsts.YearBegin];
-                byte[] yearBuf = buffer[FileConsts.YearBegin..FileConsts.MonthBegin];
-                byte[] monthBuf = buffer[FileConsts.MonthBegin..FileConsts.DayBegin];
-                byte[] dayBuf = buffer[FileConsts.DayBegin..FileConsts.HeightBegin];
-                byte[] heightBuf = buffer[FileConsts.HeightBegin..FileConsts.WeightBegin];
-                byte[] weightBuf = buffer[FileConsts.WeightBegin..FileConsts.DrivingLicenseCategoryBegin];
-                byte[] drivingLicenseCategoryBuf = buffer[FileConsts.DrivingLicenseCategoryBegin..FileConsts.RecordSize];
-
-                int recordId = BitConverter.ToInt32(recordIdBuf);
-                string firstName = Encoding.UTF8.GetString(firstNameBuf);
-                string lastName = Encoding.UTF8.GetString(lastNameBuf);
-                DateTime dateOfBirth = new DateTime(BitConverter.ToInt32(yearBuf), BitConverter.ToInt32(monthBuf), BitConverter.ToInt32(dayBuf));
-                short height = BitConverter.ToInt16(heightBuf);
-                decimal weight = new decimal(BitConverter.ToDouble(weightBuf));
-                char drivingLicenseCategory = Encoding.UTF8.GetString(drivingLicenseCategoryBuf)[0];
+                int recordId = reader.ReadInt32();
+                string firstName = reader.ReadString();
+                string lastName = reader.ReadString();
+                DateTime dateOfBirth = new DateTime(reader.ReadInt32(), reader.ReadInt32(), reader.ReadInt32());
+                short height = reader.ReadInt16();
+                decimal weight = reader.ReadDecimal();
+                char drivingLicenseCategory = reader.ReadChar();
 
                 record = new FileCabinetRecord
                 {
@@ -174,29 +164,17 @@ namespace FileCabinetApp
 
             int index = 0;
             this.fileStream.Seek(index, SeekOrigin.Begin);
+            var reader = new BinaryReader(fileStream);
             while (index < this.fileStream.Length)
             {
                 FileCabinetRecord record;
-                byte[] buffer = new byte[FileConsts.RecordSize];
-                this.fileStream.Read(buffer, 0, buffer.Length);
-                byte[] statusBuf = buffer[FileConsts.StatusBegin..FileConsts.IdBegin];
-                short status = BitConverter.ToInt16(statusBuf);
+                short status = reader.ReadInt16();
                 status &= 4;
                 if (status == 0)
                 {
-                    byte[] recordIdBuf = buffer[FileConsts.IdBegin..FileConsts.FirstNameBegin];
-                    byte[] firstNameBuf = buffer[FileConsts.FirstNameBegin..FileConsts.LastNameBegin];
-                    byte[] lastNameBuf = buffer[FileConsts.LastNameBegin..FileConsts.YearBegin];
-                    byte[] yearBuf = buffer[FileConsts.YearBegin..FileConsts.MonthBegin];
-                    byte[] monthBuf = buffer[FileConsts.MonthBegin..FileConsts.DayBegin];
-                    byte[] dayBuf = buffer[FileConsts.DayBegin..FileConsts.HeightBegin];
-                    byte[] heightBuf = buffer[FileConsts.HeightBegin..FileConsts.WeightBegin];
-                    byte[] weightBuf = buffer[FileConsts.WeightBegin..FileConsts.DrivingLicenseCategoryBegin];
-                    byte[] drivingLicenseCategoryBuf = buffer[FileConsts.DrivingLicenseCategoryBegin..FileConsts.RecordSize];
-
-                    int recordId = BitConverter.ToInt32(recordIdBuf);
-                    string firstName = Encoding.UTF8.GetString(firstNameBuf);
-                    string lastName = Encoding.UTF8.GetString(lastNameBuf);
+                    int recordId = reader.ReadInt32();
+                    string firstName = reader.ReadString();
+                    string lastName = reader.ReadString();
                     for (int i = 0; i < firstName.Length; i++)
                     {
                         if (firstName[i] == '\0')
@@ -213,10 +191,10 @@ namespace FileCabinetApp
                         }
                     }
 
-                    DateTime dateOfBirth = new DateTime(BitConverter.ToInt32(yearBuf), BitConverter.ToInt32(monthBuf), BitConverter.ToInt32(dayBuf));
-                    short height = BitConverter.ToInt16(heightBuf);
-                    decimal weight = new decimal(BitConverter.ToDouble(weightBuf));
-                    char drivingLicenseCategory = Encoding.UTF8.GetString(drivingLicenseCategoryBuf)[0];
+                    DateTime dateOfBirth = new DateTime(reader.ReadInt32(), reader.ReadInt32(), reader.ReadInt32());
+                    short height = reader.ReadInt16();
+                    decimal weight = reader.ReadDecimal();
+                    char drivingLicenseCategory = reader.ReadChar();
 
                     record = new FileCabinetRecord
                     {
@@ -285,45 +263,34 @@ namespace FileCabinetApp
             this.fileStream.Close();
             File.Delete(name);
             this.fileStream = new FileStream(name, FileMode.CreateNew);
+            this.memoization.Clear();
+            BinaryWriter writer = new BinaryWriter(this.fileStream);
             foreach (FileCabinetRecord record in lst)
             {
                 short st = 0;
-                byte[] status = BitConverter.GetBytes(st);
-                byte[] recordId = BitConverter.GetBytes(record.Id);
-                byte[] firstName = Encoding.UTF8.GetBytes(record.FirstName);
+                writer.Write(st);
+                writer.Write(record.Id);
 
-                byte[] firstNameResult = new byte[FileConsts.NameSize];
-                for (int i = 0; i < firstName.Length; i++)
+                while (record.FirstName.Length != 120)
                 {
-                    firstNameResult[i] = firstName[i];
+                    record.FirstName = string.Concat(record.FirstName, "\0");
                 }
 
-                byte[] lastName = Encoding.UTF8.GetBytes(record.LastName);
-                byte[] lastNameResult = new byte[FileConsts.NameSize];
-                for (int i = 0; i < lastName.Length; i++)
+                writer.Write(record.FirstName);
+
+                while (record.LastName.Length < 120)
                 {
-                    lastNameResult[i] = lastName[i];
+                    record.LastName = string.Concat(record.LastName, "\0");
                 }
 
-                byte[] year = BitConverter.GetBytes(record.DateOfBirth.Year);
-                byte[] month = BitConverter.GetBytes(record.DateOfBirth.Month);
-                byte[] day = BitConverter.GetBytes(record.DateOfBirth.Day);
-
-                byte[] height = BitConverter.GetBytes(record.Height);
-                byte[] weight = BitConverter.GetBytes(decimal.ToDouble(record.Weight));
-                byte[] drivingLicenseCategory = BitConverter.GetBytes(record.DrivingLicenseCategory);
-                this.id++;
-
-                this.fileStream.Write(status, 0, status.Length);
-                this.fileStream.Write(recordId, 0, recordId.Length);
-                this.fileStream.Write(firstNameResult, 0, firstNameResult.Length);
-                this.fileStream.Write(lastNameResult, 0, lastNameResult.Length);
-                this.fileStream.Write(year, 0, year.Length);
-                this.fileStream.Write(month, 0, month.Length);
-                this.fileStream.Write(day, 0, day.Length);
-                this.fileStream.Write(height, 0, height.Length);
-                this.fileStream.Write(weight, 0, weight.Length);
-                this.fileStream.Write(drivingLicenseCategory, 0, drivingLicenseCategory.Length);
+                writer.Write(record.LastName);
+                writer.Write(record.DateOfBirth.Year);
+                writer.Write(record.DateOfBirth.Month);
+                writer.Write(record.DateOfBirth.Day);
+                writer.Write(record.Height);
+                writer.Write(record.Weight);
+                writer.Write(record.DrivingLicenseCategory);
+                writer.Flush();
                 this.fileStream.Flush();
                 result--;
             }
@@ -348,23 +315,24 @@ namespace FileCabinetApp
             this.memoization.Clear();
             this.validator.ValidateParameters(arguments);
             short st = 0;
-            byte[] status = BitConverter.GetBytes(st);
-            byte[] recordId = BitConverter.GetBytes(id);
-            byte[] firstName = Encoding.UTF8.GetBytes(arguments.FirstName);
+            BinaryWriter writer = new BinaryWriter(this.fileStream);
+            writer.Seek((int)this.fileStream.Length, SeekOrigin.Begin);
+            writer.Write(st);
+            writer.Write(id);
 
-            byte[] firstNameResult = new byte[FileConsts.NameSize];
-            for (int i = 0; i < firstName.Length; i++)
+            while (arguments.FirstName.Length != 120)
             {
-                firstNameResult[i] = firstName[i];
+                arguments.FirstName = string.Concat(arguments.FirstName, "\0");
             }
 
-            byte[] lastName = Encoding.UTF8.GetBytes(arguments.LastName);
-            byte[] lastNameResult = new byte[FileConsts.NameSize];
-            for (int i = 0; i < lastName.Length; i++)
+            writer.Write(arguments.FirstName);
+
+            while (arguments.LastName.Length < 120)
             {
-                lastNameResult[i] = lastName[i];
+                arguments.LastName = string.Concat(arguments.LastName, "\0");
             }
 
+<<<<<<< HEAD
             byte[] year = BitConverter.GetBytes(arguments.DateOfBirth.Year);
             byte[] month = BitConverter.GetBytes(arguments.DateOfBirth.Month);
             byte[] day = BitConverter.GetBytes(arguments.DateOfBirth.Day);
@@ -383,6 +351,16 @@ namespace FileCabinetApp
             this.fileStream.Write(height, 0, height.Length);
             this.fileStream.Write(weight, 0, weight.Length);
             this.fileStream.Write(drivingLicenseCategory, 0, drivingLicenseCategory.Length);
+=======
+            writer.Write(arguments.LastName);
+            writer.Write(arguments.DateOfBirth.Year);
+            writer.Write(arguments.DateOfBirth.Month);
+            writer.Write(arguments.DateOfBirth.Day);
+            writer.Write(arguments.Height);
+            writer.Write(arguments.Weight);
+            writer.Write(arguments.DrivingLicenseCategory);
+            writer.Flush();
+>>>>>>> step16-refactoring-improvement
             this.fileStream.Flush();
             return id;
         }
@@ -422,30 +400,18 @@ namespace FileCabinetApp
                     DrivingLicenseCategory = 'Z',
                 };
 
-                byte[] buffer = new byte[FileConsts.RecordSize];
-                this.fileStream.Read(buffer, 0, buffer.Length);
-                byte[] statusBuf = buffer[FileConsts.StatusBegin..FileConsts.IdBegin];
-                short status = BitConverter.ToInt16(statusBuf);
+                var reader = new BinaryReader(fileStream);
+                short status = reader.ReadInt16();
                 status &= 4;
                 if (status == 0)
                 {
-                    byte[] recordIdBuf = buffer[FileConsts.IdBegin..FileConsts.FirstNameBegin];
-                    byte[] firstNameBuf = buffer[FileConsts.FirstNameBegin..FileConsts.LastNameBegin];
-                    byte[] lastNameBuf = buffer[FileConsts.LastNameBegin..FileConsts.YearBegin];
-                    byte[] yearBuf = buffer[FileConsts.YearBegin..FileConsts.MonthBegin];
-                    byte[] monthBuf = buffer[FileConsts.MonthBegin..FileConsts.DayBegin];
-                    byte[] dayBuf = buffer[FileConsts.DayBegin..FileConsts.HeightBegin];
-                    byte[] heightBuf = buffer[FileConsts.HeightBegin..FileConsts.WeightBegin];
-                    byte[] weightBuf = buffer[FileConsts.WeightBegin..FileConsts.DrivingLicenseCategoryBegin];
-                    byte[] drivingLicenseCategoryBuf = buffer[FileConsts.DrivingLicenseCategoryBegin..FileConsts.RecordSize];
-
-                    int recordId = BitConverter.ToInt32(recordIdBuf);
-                    string firstName = Encoding.UTF8.GetString(firstNameBuf);
-                    string lastName = Encoding.UTF8.GetString(lastNameBuf);
-                    DateTime dateOfBirth = new DateTime(BitConverter.ToInt32(yearBuf), BitConverter.ToInt32(monthBuf), BitConverter.ToInt32(dayBuf));
-                    short height = BitConverter.ToInt16(heightBuf);
-                    decimal weight = new decimal(BitConverter.ToDouble(weightBuf));
-                    char drivingLicenseCategory = Encoding.UTF8.GetString(drivingLicenseCategoryBuf)[0];
+                    int recordId = reader.ReadInt32();
+                    string firstName = reader.ReadString();
+                    string lastName = reader.ReadString();
+                    DateTime dateOfBirth = new DateTime(reader.ReadInt32(), reader.ReadInt32(), reader.ReadInt32());
+                    short height = reader.ReadInt16();
+                    decimal weight =reader.ReadDecimal();
+                    char drivingLicenseCategory = reader.ReadChar();
 
                     record = new FileCabinetRecord
                     {
@@ -536,7 +502,9 @@ namespace FileCabinetApp
 
                 if (isValid)
                 {
+                    BinaryWriter writer = new BinaryWriter(this.fileStream);
                     this.fileStream.Seek(index, SeekOrigin.Begin);
+                    writer.Seek(index, SeekOrigin.Begin);
                     foreach (var attribute in attriubutesToUpdate)
                     {
                         switch (attribute.Attribute)
@@ -566,6 +534,7 @@ namespace FileCabinetApp
                         }
                     }
 
+<<<<<<< HEAD
                     byte[] firstNameBuf = buffer[FileConsts.FirstNameBegin..FileConsts.LastNameBegin];
                     byte[] lastNameBuf = buffer[FileConsts.LastNameBegin..FileConsts.YearBegin];
                     byte[] yearBuf = buffer[FileConsts.YearBegin..FileConsts.MonthBegin];
@@ -578,20 +547,25 @@ namespace FileCabinetApp
                     byte[] statusBf = BitConverter.GetBytes(st);
                     byte[] recordIdBuf = BitConverter.GetBytes(record.Id);
                     byte[] firstName = Encoding.UTF8.GetBytes(record.FirstName);
+=======
+                    int st = 0;
+                    writer.Write(st);
+                    writer.Write(record.Id);
+>>>>>>> step16-refactoring-improvement
 
-                    byte[] firstNameResult = new byte[FileConsts.NameSize];
-                    for (int i = 0; i < firstName.Length; i++)
+                    while (record.FirstName.Length != 120)
                     {
-                        firstNameResult[i] = firstName[i];
+                        record.FirstName = string.Concat(record.FirstName, "\0");
                     }
 
-                    byte[] lastName = Encoding.UTF8.GetBytes(record.LastName);
-                    byte[] lastNameResult = new byte[FileConsts.NameSize];
-                    for (int i = 0; i < lastName.Length; i++)
+                    writer.Write(record.FirstName);
+
+                    while (record.LastName.Length < 120)
                     {
-                        lastNameResult[i] = lastName[i];
+                        record.LastName = string.Concat(record.LastName, "\0");
                     }
 
+<<<<<<< HEAD
                     byte[] year = BitConverter.GetBytes(record.DateOfBirth.Year);
                     byte[] month = BitConverter.GetBytes(record.DateOfBirth.Month);
                     byte[] day = BitConverter.GetBytes(record.DateOfBirth.Day);
@@ -609,6 +583,16 @@ namespace FileCabinetApp
                     this.fileStream.Write(height, 0, height.Length);
                     this.fileStream.Write(weight, 0, weight.Length);
                     this.fileStream.Write(drivingLicenseCategory, 0, drivingLicenseCategory.Length);
+=======
+                    writer.Write(record.LastName);
+                    writer.Write(record.DateOfBirth.Year);
+                    writer.Write(record.DateOfBirth.Month);
+                    writer.Write(record.DateOfBirth.Day);
+                    writer.Write(record.Height);
+                    writer.Write(record.Weight);
+                    writer.Write(record.DrivingLicenseCategory);
+                    writer.Flush();
+>>>>>>> step16-refactoring-improvement
                     this.fileStream.Flush();
 
                     result.Add(record);
@@ -701,9 +685,11 @@ namespace FileCabinetApp
 
                     if (isIdentical)
                     {
+                        var reader = new BinaryReader(fileStream);
                         foreach (long i in this.memoization[key])
                         {
                             this.fileStream.Seek(i, SeekOrigin.Begin);
+                            reader = new BinaryReader(fileStream);
                             FileCabinetRecord record = new FileCabinetRecord
                             {
                                 Id = -1,
@@ -714,31 +700,17 @@ namespace FileCabinetApp
                                 Weight = -1,
                                 DrivingLicenseCategory = 'Z',
                             };
-
-                            byte[] buffer = new byte[FileConsts.RecordSize];
-                            this.fileStream.Read(buffer, 0, buffer.Length);
-                            byte[] statusBuf = buffer[FileConsts.StatusBegin..FileConsts.IdBegin];
-                            short status = BitConverter.ToInt16(statusBuf);
+                            short status = reader.ReadInt16();
                             status &= 4;
                             if (status == 0)
                             {
-                                byte[] recordIdBuf = buffer[FileConsts.IdBegin..FileConsts.FirstNameBegin];
-                                byte[] firstNameBuf = buffer[FileConsts.FirstNameBegin..FileConsts.LastNameBegin];
-                                byte[] lastNameBuf = buffer[FileConsts.LastNameBegin..FileConsts.YearBegin];
-                                byte[] yearBuf = buffer[FileConsts.YearBegin..FileConsts.MonthBegin];
-                                byte[] monthBuf = buffer[FileConsts.MonthBegin..FileConsts.DayBegin];
-                                byte[] dayBuf = buffer[FileConsts.DayBegin..FileConsts.HeightBegin];
-                                byte[] heightBuf = buffer[FileConsts.HeightBegin..FileConsts.WeightBegin];
-                                byte[] weightBuf = buffer[FileConsts.WeightBegin..FileConsts.DrivingLicenseCategoryBegin];
-                                byte[] drivingLicenseCategoryBuf = buffer[FileConsts.DrivingLicenseCategoryBegin..FileConsts.RecordSize];
-
-                                int recordId = BitConverter.ToInt32(recordIdBuf);
-                                string firstName = Encoding.UTF8.GetString(firstNameBuf);
-                                string lastName = Encoding.UTF8.GetString(lastNameBuf);
-                                DateTime dateOfBirth = new DateTime(BitConverter.ToInt32(yearBuf), BitConverter.ToInt32(monthBuf), BitConverter.ToInt32(dayBuf));
-                                short height = BitConverter.ToInt16(heightBuf);
-                                decimal weight = new decimal(BitConverter.ToDouble(weightBuf));
-                                char drivingLicenseCategory = Encoding.UTF8.GetString(drivingLicenseCategoryBuf)[0];
+                                int recordId = reader.ReadInt32();
+                                string firstName = reader.ReadString();
+                                string lastName = reader.ReadString();
+                                DateTime dateOfBirth = new DateTime(reader.ReadInt32(), reader.ReadInt32(), reader.ReadInt32());
+                                short height = reader.ReadInt16();
+                                decimal weight = reader.ReadDecimal();
+                                char drivingLicenseCategory = reader.ReadChar();
 
                                 record = new FileCabinetRecord
                                 {
@@ -764,6 +736,9 @@ namespace FileCabinetApp
             this.fileStream.Seek(index, SeekOrigin.Begin);
             while (index < this.fileStream.Length)
             {
+                this.fileStream.Seek(index, SeekOrigin.Begin);
+                var reader = new BinaryReader(fileStream);
+
                 FileCabinetRecord record = new FileCabinetRecord
                 {
                     Id = -1,
@@ -774,31 +749,17 @@ namespace FileCabinetApp
                     Weight = -1,
                     DrivingLicenseCategory = 'Z',
                 };
-
-                byte[] buffer = new byte[FileConsts.RecordSize];
-                this.fileStream.Read(buffer, 0, buffer.Length);
-                byte[] statusBuf = buffer[FileConsts.StatusBegin..FileConsts.IdBegin];
-                short status = BitConverter.ToInt16(statusBuf);
+                short status = reader.ReadInt16();
                 status &= 4;
                 if (status == 0)
                 {
-                    byte[] recordIdBuf = buffer[FileConsts.IdBegin..FileConsts.FirstNameBegin];
-                    byte[] firstNameBuf = buffer[FileConsts.FirstNameBegin..FileConsts.LastNameBegin];
-                    byte[] lastNameBuf = buffer[FileConsts.LastNameBegin..FileConsts.YearBegin];
-                    byte[] yearBuf = buffer[FileConsts.YearBegin..FileConsts.MonthBegin];
-                    byte[] monthBuf = buffer[FileConsts.MonthBegin..FileConsts.DayBegin];
-                    byte[] dayBuf = buffer[FileConsts.DayBegin..FileConsts.HeightBegin];
-                    byte[] heightBuf = buffer[FileConsts.HeightBegin..FileConsts.WeightBegin];
-                    byte[] weightBuf = buffer[FileConsts.WeightBegin..FileConsts.DrivingLicenseCategoryBegin];
-                    byte[] drivingLicenseCategoryBuf = buffer[FileConsts.DrivingLicenseCategoryBegin..FileConsts.RecordSize];
-
-                    int recordId = BitConverter.ToInt32(recordIdBuf);
-                    string firstName = Encoding.UTF8.GetString(firstNameBuf);
-                    string lastName = Encoding.UTF8.GetString(lastNameBuf);
-                    DateTime dateOfBirth = new DateTime(BitConverter.ToInt32(yearBuf), BitConverter.ToInt32(monthBuf), BitConverter.ToInt32(dayBuf));
-                    short height = BitConverter.ToInt16(heightBuf);
-                    decimal weight = new decimal(BitConverter.ToDouble(weightBuf));
-                    char drivingLicenseCategory = Encoding.UTF8.GetString(drivingLicenseCategoryBuf)[0];
+                    int recordId = reader.ReadInt32();
+                    string firstName = reader.ReadString();
+                    string lastName = reader.ReadString();
+                    DateTime dateOfBirth = new DateTime(reader.ReadInt32(), reader.ReadInt32(), reader.ReadInt32());
+                    short height = reader.ReadInt16();
+                    decimal weight = reader.ReadDecimal();
+                    char drivingLicenseCategory = reader.ReadChar();
 
                     record = new FileCabinetRecord
                     {
@@ -991,6 +952,7 @@ namespace FileCabinetApp
             this.fileStream.Dispose();
         }
 
+<<<<<<< HEAD
         private void RemakeDictionaries()
         {
             int index = 0;
@@ -1018,6 +980,8 @@ namespace FileCabinetApp
             }
         }
 
+=======
+>>>>>>> step16-refactoring-improvement
         private IEnumerable<FileCabinetRecord> DeleteId(SearchingAttributes arguments)
         {
             int deleteId;
@@ -1029,32 +993,22 @@ namespace FileCabinetApp
             }
 
             int index = 0;
+            this.fileStream.Seek(0, SeekOrigin.Begin);
+            var reader = new BinaryReader(this.fileStream);
             while (index < this.fileStream.Length)
             {
-                this.fileStream.Seek(index, SeekOrigin.Begin);
-                byte[] buffer = new byte[FileConsts.RecordSize];
-                this.fileStream.Read(buffer, 0, buffer.Length);
-                byte[] recordIdBuf = buffer[FileConsts.IdBegin..FileConsts.FirstNameBegin];
+                //this.fileStream.Seek(index, SeekOrigin.Begin);
+                short status = reader.ReadInt16();
+                int recordId = reader.ReadInt32();
+                string firstName = reader.ReadString();
+                string lastName = reader.ReadString();
+                DateTime dateOfBirth = new DateTime(reader.ReadInt32(), reader.ReadInt32(), reader.ReadInt32());
+                short height = reader.ReadInt16();
+                decimal weight = reader.ReadDecimal();
+                char drivingLicenseCategory = reader.ReadChar();
 
-                int recordId = BitConverter.ToInt32(recordIdBuf);
                 if (recordId == deleteId)
                 {
-                    byte[] firstNameBuf = buffer[FileConsts.FirstNameBegin..FileConsts.LastNameBegin];
-                    byte[] lastNameBuf = buffer[FileConsts.LastNameBegin..FileConsts.YearBegin];
-                    byte[] yearBuf = buffer[FileConsts.YearBegin..FileConsts.MonthBegin];
-                    byte[] monthBuf = buffer[FileConsts.MonthBegin..FileConsts.DayBegin];
-                    byte[] dayBuf = buffer[FileConsts.DayBegin..FileConsts.HeightBegin];
-                    byte[] heightBuf = buffer[FileConsts.HeightBegin..FileConsts.WeightBegin];
-                    byte[] weightBuf = buffer[FileConsts.WeightBegin..FileConsts.DrivingLicenseCategoryBegin];
-                    byte[] drivingLicenseCategoryBuf = buffer[FileConsts.DrivingLicenseCategoryBegin..FileConsts.RecordSize];
-
-                    string firstName = Encoding.UTF8.GetString(firstNameBuf);
-                    string lastName = Encoding.UTF8.GetString(lastNameBuf);
-                    DateTime dateOfBirth = new DateTime(BitConverter.ToInt32(yearBuf), BitConverter.ToInt32(monthBuf), BitConverter.ToInt32(dayBuf));
-                    short height = BitConverter.ToInt16(heightBuf);
-                    decimal weight = new decimal(BitConverter.ToDouble(weightBuf));
-                    char drivingLicenseCategory = Encoding.UTF8.GetString(drivingLicenseCategoryBuf)[0];
-
                     var record = new FileCabinetRecord
                     {
                         Id = recordId,
@@ -1067,12 +1021,12 @@ namespace FileCabinetApp
                     };
                     result.Add(record);
                     this.deleted++;
-                    this.fileStream.Seek(index, SeekOrigin.Begin);
-                    byte[] statusBuf = buffer[FileConsts.StatusBegin..FileConsts.IdBegin];
-                    short status = BitConverter.ToInt16(statusBuf);
                     status |= 4;
-                    statusBuf = BitConverter.GetBytes(status);
-                    this.fileStream.Write(statusBuf, 0, statusBuf.Length);
+                   // this.fileStream.Seek(index, SeekOrigin.Begin);
+                    var writer = new BinaryWriter(this.fileStream);
+                    writer.Seek(index, SeekOrigin.Begin);
+                    writer.Write(status);
+                    writer.Flush();
                     this.fileStream.Flush();
                 }
 
@@ -1089,29 +1043,17 @@ namespace FileCabinetApp
             while (index < this.fileStream.Length)
             {
                 this.fileStream.Seek(index, SeekOrigin.Begin);
-                byte[] buffer = new byte[FileConsts.RecordSize];
-                this.fileStream.Read(buffer, 0, buffer.Length);
-                byte[] firstNameBuf = buffer[FileConsts.FirstNameBegin..FileConsts.LastNameBegin];
-                string firstName = Encoding.UTF8.GetString(firstNameBuf);
+                var reader = new BinaryReader(this.fileStream);
+                short status = reader.ReadInt16();
+                int recordId = reader.ReadInt32();
+                string firstName = reader.ReadString();
+                string lastName = reader.ReadString();
+                DateTime dateOfBirth = new DateTime(reader.ReadInt32(), reader.ReadInt32(), reader.ReadInt32());
+                short height = reader.ReadInt16();
+                decimal weight = reader.ReadDecimal();
+                char drivingLicenseCategory = reader.ReadChar();
                 if (firstName == arguments.Value)
                 {
-                    byte[] recordIdBuf = buffer[FileConsts.IdBegin..FileConsts.FirstNameBegin];
-                    int recordId = BitConverter.ToInt32(recordIdBuf);
-
-                    byte[] lastNameBuf = buffer[FileConsts.LastNameBegin..FileConsts.YearBegin];
-                    byte[] yearBuf = buffer[FileConsts.YearBegin..FileConsts.MonthBegin];
-                    byte[] monthBuf = buffer[FileConsts.MonthBegin..FileConsts.DayBegin];
-                    byte[] dayBuf = buffer[FileConsts.DayBegin..FileConsts.HeightBegin];
-                    byte[] heightBuf = buffer[FileConsts.HeightBegin..FileConsts.WeightBegin];
-                    byte[] weightBuf = buffer[FileConsts.WeightBegin..FileConsts.DrivingLicenseCategoryBegin];
-                    byte[] drivingLicenseCategoryBuf = buffer[FileConsts.DrivingLicenseCategoryBegin..FileConsts.RecordSize];
-
-                    string lastName = Encoding.UTF8.GetString(lastNameBuf);
-                    DateTime dateOfBirth = new DateTime(BitConverter.ToInt32(yearBuf), BitConverter.ToInt32(monthBuf), BitConverter.ToInt32(dayBuf));
-                    short height = BitConverter.ToInt16(heightBuf);
-                    decimal weight = new decimal(BitConverter.ToDouble(weightBuf));
-                    char drivingLicenseCategory = Encoding.UTF8.GetString(drivingLicenseCategoryBuf)[0];
-
                     var record = new FileCabinetRecord
                     {
                         Id = recordId,
@@ -1125,11 +1067,9 @@ namespace FileCabinetApp
                     result.Add(record);
                     this.deleted++;
                     this.fileStream.Seek(index, SeekOrigin.Begin);
-                    byte[] statusBuf = buffer[FileConsts.StatusBegin..FileConsts.IdBegin];
-                    short status = BitConverter.ToInt16(statusBuf);
                     status |= 4;
-                    statusBuf = BitConverter.GetBytes(status);
-                    this.fileStream.Write(statusBuf, 0, statusBuf.Length);
+                    var writer = new BinaryWriter(this.fileStream);
+                    writer.Write(status);
                     this.fileStream.Flush();
                 }
 
@@ -1146,27 +1086,17 @@ namespace FileCabinetApp
             while (index < this.fileStream.Length)
             {
                 this.fileStream.Seek(index, SeekOrigin.Begin);
-                byte[] buffer = new byte[FileConsts.RecordSize];
-                this.fileStream.Read(buffer, 0, buffer.Length);
-                byte[] lastNameBuf = buffer[FileConsts.LastNameBegin..FileConsts.YearBegin];
-                string lastName = Encoding.UTF8.GetString(lastNameBuf);
+                var reader = new BinaryReader(this.fileStream);
+                short status = reader.ReadInt16();
+                int recordId = reader.ReadInt32();
+                string firstName = reader.ReadString();
+                string lastName = reader.ReadString();
+                DateTime dateOfBirth = new DateTime(reader.ReadInt32(), reader.ReadInt32(), reader.ReadInt32());
+                short height = reader.ReadInt16();
+                decimal weight = reader.ReadDecimal();
+                char drivingLicenseCategory = reader.ReadChar();
                 if (lastName == arguments.Value)
                 {
-                    byte[] recordIdBuf = buffer[FileConsts.IdBegin..FileConsts.FirstNameBegin];
-                    int recordId = BitConverter.ToInt32(recordIdBuf);
-                    byte[] firstNameBuf = buffer[FileConsts.FirstNameBegin..FileConsts.LastNameBegin];
-                    string firstName = Encoding.UTF8.GetString(firstNameBuf);
-                    byte[] yearBuf = buffer[FileConsts.YearBegin..FileConsts.MonthBegin];
-                    byte[] monthBuf = buffer[FileConsts.MonthBegin..FileConsts.DayBegin];
-                    byte[] dayBuf = buffer[FileConsts.DayBegin..FileConsts.HeightBegin];
-                    byte[] heightBuf = buffer[FileConsts.HeightBegin..FileConsts.WeightBegin];
-                    byte[] weightBuf = buffer[FileConsts.WeightBegin..FileConsts.DrivingLicenseCategoryBegin];
-                    byte[] drivingLicenseCategoryBuf = buffer[FileConsts.DrivingLicenseCategoryBegin..FileConsts.RecordSize];
-                    DateTime dateOfBirth = new DateTime(BitConverter.ToInt32(yearBuf), BitConverter.ToInt32(monthBuf), BitConverter.ToInt32(dayBuf));
-                    short height = BitConverter.ToInt16(heightBuf);
-                    decimal weight = new decimal(BitConverter.ToDouble(weightBuf));
-                    char drivingLicenseCategory = Encoding.UTF8.GetString(drivingLicenseCategoryBuf)[0];
-
                     var record = new FileCabinetRecord
                     {
                         Id = recordId,
@@ -1180,17 +1110,14 @@ namespace FileCabinetApp
                     result.Add(record);
                     this.deleted++;
                     this.fileStream.Seek(index, SeekOrigin.Begin);
-                    byte[] statusBuf = buffer[FileConsts.StatusBegin..FileConsts.IdBegin];
-                    short status = BitConverter.ToInt16(statusBuf);
                     status |= 4;
-                    statusBuf = BitConverter.GetBytes(status);
-                    this.fileStream.Write(statusBuf, 0, statusBuf.Length);
+                    var writer = new BinaryWriter(this.fileStream);
+                    writer.Write(status);
                     this.fileStream.Flush();
                 }
 
                 index += FileConsts.RecordSize;
             }
-
             return result;
         }
 
@@ -1208,30 +1135,17 @@ namespace FileCabinetApp
             while (index < this.fileStream.Length)
             {
                 this.fileStream.Seek(index, SeekOrigin.Begin);
-                byte[] buffer = new byte[FileConsts.RecordSize];
-                this.fileStream.Read(buffer, 0, buffer.Length);
-                byte[] yearBuf = buffer[FileConsts.YearBegin..FileConsts.MonthBegin];
-                byte[] monthBuf = buffer[FileConsts.MonthBegin..FileConsts.DayBegin];
-                byte[] dayBuf = buffer[FileConsts.DayBegin..FileConsts.HeightBegin];
-                DateTime dateOfBirth = new DateTime(BitConverter.ToInt32(yearBuf), BitConverter.ToInt32(monthBuf), BitConverter.ToInt32(dayBuf));
-
+                var reader = new BinaryReader(this.fileStream);
+                short status = reader.ReadInt16();
+                int recordId = reader.ReadInt32();
+                string firstName = reader.ReadString();
+                string lastName = reader.ReadString();
+                DateTime dateOfBirth = new DateTime(reader.ReadInt32(), reader.ReadInt32(), reader.ReadInt32());
+                short height = reader.ReadInt16();
+                decimal weight = reader.ReadDecimal();
+                char drivingLicenseCategory = reader.ReadChar();
                 if (DateTime.Compare(dateOfBirth, dateToDelete) == 0)
                 {
-                    byte[] recordIdBuf = buffer[FileConsts.IdBegin..FileConsts.FirstNameBegin];
-                    int recordId = BitConverter.ToInt32(recordIdBuf);
-                    byte[] firstNameBuf = buffer[FileConsts.FirstNameBegin..FileConsts.LastNameBegin];
-                    string firstName = Encoding.UTF8.GetString(firstNameBuf);
-                    byte[] lastNameBuf = buffer[FileConsts.LastNameBegin..FileConsts.YearBegin];
-                    string lastName = Encoding.UTF8.GetString(lastNameBuf);
-
-                    byte[] heightBuf = buffer[FileConsts.HeightBegin..FileConsts.WeightBegin];
-                    byte[] weightBuf = buffer[FileConsts.WeightBegin..FileConsts.DrivingLicenseCategoryBegin];
-                    byte[] drivingLicenseCategoryBuf = buffer[FileConsts.DrivingLicenseCategoryBegin..FileConsts.RecordSize];
-
-                    short height = BitConverter.ToInt16(heightBuf);
-                    decimal weight = new decimal(BitConverter.ToDouble(weightBuf));
-                    char drivingLicenseCategory = Encoding.UTF8.GetString(drivingLicenseCategoryBuf)[0];
-
                     var record = new FileCabinetRecord
                     {
                         Id = recordId,
@@ -1245,11 +1159,9 @@ namespace FileCabinetApp
                     result.Add(record);
                     this.deleted++;
                     this.fileStream.Seek(index, SeekOrigin.Begin);
-                    byte[] statusBuf = buffer[FileConsts.StatusBegin..FileConsts.IdBegin];
-                    short status = BitConverter.ToInt16(statusBuf);
                     status |= 4;
-                    statusBuf = BitConverter.GetBytes(status);
-                    this.fileStream.Write(statusBuf, 0, statusBuf.Length);
+                    var writer = new BinaryWriter(this.fileStream);
+                    writer.Write(status);
                     this.fileStream.Flush();
                 }
 
@@ -1273,29 +1185,17 @@ namespace FileCabinetApp
             while (index < this.fileStream.Length)
             {
                 this.fileStream.Seek(index, SeekOrigin.Begin);
-                byte[] buffer = new byte[FileConsts.RecordSize];
-                this.fileStream.Read(buffer, 0, buffer.Length);
-                byte[] heightBuf = buffer[FileConsts.HeightBegin..FileConsts.WeightBegin];
-                short height = BitConverter.ToInt16(heightBuf);
+                var reader = new BinaryReader(this.fileStream);
+                short status = reader.ReadInt16();
+                int recordId = reader.ReadInt32();
+                string firstName = reader.ReadString();
+                string lastName = reader.ReadString();
+                DateTime dateOfBirth = new DateTime(reader.ReadInt32(), reader.ReadInt32(), reader.ReadInt32());
+                short height = reader.ReadInt16();
+                decimal weight = reader.ReadDecimal();
+                char drivingLicenseCategory = reader.ReadChar();
                 if (height == heightToDelete)
                 {
-                    byte[] recordIdBuf = buffer[FileConsts.IdBegin..FileConsts.FirstNameBegin];
-                    int recordId = BitConverter.ToInt32(recordIdBuf);
-                    byte[] firstNameBuf = buffer[FileConsts.FirstNameBegin..FileConsts.LastNameBegin];
-                    string firstName = Encoding.UTF8.GetString(firstNameBuf);
-                    byte[] lastNameBuf = buffer[FileConsts.LastNameBegin..FileConsts.YearBegin];
-                    string lastName = Encoding.UTF8.GetString(lastNameBuf);
-                    byte[] yearBuf = buffer[FileConsts.YearBegin..FileConsts.MonthBegin];
-                    byte[] monthBuf = buffer[FileConsts.MonthBegin..FileConsts.DayBegin];
-                    byte[] dayBuf = buffer[FileConsts.DayBegin..FileConsts.HeightBegin];
-
-                    byte[] weightBuf = buffer[FileConsts.WeightBegin..FileConsts.DrivingLicenseCategoryBegin];
-                    byte[] drivingLicenseCategoryBuf = buffer[FileConsts.DrivingLicenseCategoryBegin..FileConsts.RecordSize];
-                    DateTime dateOfBirth = new DateTime(BitConverter.ToInt32(yearBuf), BitConverter.ToInt32(monthBuf), BitConverter.ToInt32(dayBuf));
-
-                    decimal weight = new decimal(BitConverter.ToDouble(weightBuf));
-                    char drivingLicenseCategory = Encoding.UTF8.GetString(drivingLicenseCategoryBuf)[0];
-
                     var record = new FileCabinetRecord
                     {
                         Id = recordId,
@@ -1309,17 +1209,14 @@ namespace FileCabinetApp
                     result.Add(record);
                     this.deleted++;
                     this.fileStream.Seek(index, SeekOrigin.Begin);
-                    byte[] statusBuf = buffer[FileConsts.StatusBegin..FileConsts.IdBegin];
-                    short status = BitConverter.ToInt16(statusBuf);
                     status |= 4;
-                    statusBuf = BitConverter.GetBytes(status);
-                    this.fileStream.Write(statusBuf, 0, statusBuf.Length);
+                    var writer = new BinaryWriter(this.fileStream);
+                    writer.Write(status);
                     this.fileStream.Flush();
                 }
 
                 index += FileConsts.RecordSize;
             }
-
             return result;
         }
 
@@ -1337,27 +1234,17 @@ namespace FileCabinetApp
             while (index < this.fileStream.Length)
             {
                 this.fileStream.Seek(index, SeekOrigin.Begin);
-                byte[] buffer = new byte[FileConsts.RecordSize];
-                this.fileStream.Read(buffer, 0, buffer.Length);
-                byte[] drivingLicenseCategoryBuf = buffer[FileConsts.DrivingLicenseCategoryBegin..FileConsts.RecordSize];
-                char drivingLicenseCategory = Encoding.UTF8.GetString(drivingLicenseCategoryBuf)[0];
+                var reader = new BinaryReader(this.fileStream);
+                short status = reader.ReadInt16();
+                int recordId = reader.ReadInt32();
+                string firstName = reader.ReadString();
+                string lastName = reader.ReadString();
+                DateTime dateOfBirth = new DateTime(reader.ReadInt32(), reader.ReadInt32(), reader.ReadInt32());
+                short height = reader.ReadInt16();
+                decimal weight = reader.ReadDecimal();
+                char drivingLicenseCategory = reader.ReadChar();
                 if (drivingLicenseCategory == categoryToDelete)
                 {
-                    byte[] recordIdBuf = buffer[FileConsts.IdBegin..FileConsts.FirstNameBegin];
-                    int recordId = BitConverter.ToInt32(recordIdBuf);
-                    byte[] firstNameBuf = buffer[FileConsts.FirstNameBegin..FileConsts.LastNameBegin];
-                    string firstName = Encoding.UTF8.GetString(firstNameBuf);
-                    byte[] lastNameBuf = buffer[FileConsts.LastNameBegin..FileConsts.YearBegin];
-                    string lastName = Encoding.UTF8.GetString(lastNameBuf);
-                    byte[] yearBuf = buffer[FileConsts.YearBegin..FileConsts.MonthBegin];
-                    byte[] monthBuf = buffer[FileConsts.MonthBegin..FileConsts.DayBegin];
-                    byte[] dayBuf = buffer[FileConsts.DayBegin..FileConsts.HeightBegin];
-                    byte[] heightBuf = buffer[FileConsts.HeightBegin..FileConsts.WeightBegin];
-                    byte[] weightBuf = buffer[FileConsts.WeightBegin..FileConsts.DrivingLicenseCategoryBegin];
-                    decimal weight = new decimal(BitConverter.ToDouble(weightBuf));
-
-                    DateTime dateOfBirth = new DateTime(BitConverter.ToInt32(yearBuf), BitConverter.ToInt32(monthBuf), BitConverter.ToInt32(dayBuf));
-                    short height = BitConverter.ToInt16(heightBuf);
                     var record = new FileCabinetRecord
                     {
                         Id = recordId,
@@ -1369,12 +1256,11 @@ namespace FileCabinetApp
                         DrivingLicenseCategory = drivingLicenseCategory,
                     };
                     result.Add(record);
+                    this.deleted++;
                     this.fileStream.Seek(index, SeekOrigin.Begin);
-                    byte[] statusBuf = buffer[FileConsts.StatusBegin..FileConsts.IdBegin];
-                    short status = BitConverter.ToInt16(statusBuf);
                     status |= 4;
-                    statusBuf = BitConverter.GetBytes(status);
-                    this.fileStream.Write(statusBuf, 0, statusBuf.Length);
+                    var writer = new BinaryWriter(this.fileStream);
+                    writer.Write(status);
                     this.fileStream.Flush();
                 }
 
@@ -1398,27 +1284,17 @@ namespace FileCabinetApp
             while (index < this.fileStream.Length)
             {
                 this.fileStream.Seek(index, SeekOrigin.Begin);
-                byte[] buffer = new byte[FileConsts.RecordSize];
-                this.fileStream.Read(buffer, 0, buffer.Length);
-                byte[] weightBuf = buffer[FileConsts.WeightBegin..FileConsts.DrivingLicenseCategoryBegin];
-                decimal weight = new decimal(BitConverter.ToDouble(weightBuf));
+                var reader = new BinaryReader(this.fileStream);
+                short status = reader.ReadInt16();
+                int recordId = reader.ReadInt32();
+                string firstName = reader.ReadString();
+                string lastName = reader.ReadString();
+                DateTime dateOfBirth = new DateTime(reader.ReadInt32(), reader.ReadInt32(), reader.ReadInt32());
+                short height = reader.ReadInt16();
+                decimal weight = reader.ReadDecimal();
+                char drivingLicenseCategory = reader.ReadChar();
                 if (weight == weightToDelete)
                 {
-                    byte[] recordIdBuf = buffer[FileConsts.IdBegin..FileConsts.FirstNameBegin];
-                    int recordId = BitConverter.ToInt32(recordIdBuf);
-                    byte[] firstNameBuf = buffer[FileConsts.FirstNameBegin..FileConsts.LastNameBegin];
-                    string firstName = Encoding.UTF8.GetString(firstNameBuf);
-                    byte[] lastNameBuf = buffer[FileConsts.LastNameBegin..FileConsts.YearBegin];
-                    string lastName = Encoding.UTF8.GetString(lastNameBuf);
-                    byte[] yearBuf = buffer[FileConsts.YearBegin..FileConsts.MonthBegin];
-                    byte[] monthBuf = buffer[FileConsts.MonthBegin..FileConsts.DayBegin];
-                    byte[] dayBuf = buffer[FileConsts.DayBegin..FileConsts.HeightBegin];
-                    byte[] heightBuf = buffer[FileConsts.HeightBegin..FileConsts.WeightBegin];
-
-                    byte[] drivingLicenseCategoryBuf = buffer[FileConsts.DrivingLicenseCategoryBegin..FileConsts.RecordSize];
-                    char drivingLicenseCategory = Encoding.UTF8.GetString(drivingLicenseCategoryBuf)[0];
-                    DateTime dateOfBirth = new DateTime(BitConverter.ToInt32(yearBuf), BitConverter.ToInt32(monthBuf), BitConverter.ToInt32(dayBuf));
-                    short height = BitConverter.ToInt16(heightBuf);
                     var record = new FileCabinetRecord
                     {
                         Id = recordId,
@@ -1432,11 +1308,9 @@ namespace FileCabinetApp
                     result.Add(record);
                     this.deleted++;
                     this.fileStream.Seek(index, SeekOrigin.Begin);
-                    byte[] statusBuf = buffer[FileConsts.StatusBegin..FileConsts.IdBegin];
-                    short status = BitConverter.ToInt16(statusBuf);
                     status |= 4;
-                    statusBuf = BitConverter.GetBytes(status);
-                    this.fileStream.Write(statusBuf, 0, statusBuf.Length);
+                    var writer = new BinaryWriter(this.fileStream);
+                    writer.Write(status);
                     this.fileStream.Flush();
                 }
 
@@ -1465,20 +1339,18 @@ namespace FileCabinetApp
             this.fileStream.Seek(index, SeekOrigin.Begin);
             while (index < this.fileStream.Length)
             {
-                byte[] buffer = new byte[FileConsts.RecordSize];
-                this.fileStream.Read(buffer, 0, buffer.Length);
-                byte[] recordIdBuf = buffer[FileConsts.IdBegin..FileConsts.FirstNameBegin];
-
-                int recordId = BitConverter.ToInt32(recordIdBuf);
+                this.fileStream.Seek(index, SeekOrigin.Begin);
+                var reader = new BinaryReader(this.fileStream);
+                short status = reader.ReadInt16();
+                int recordId = reader.ReadInt32();
                 if (recordId == id)
                 {
-                    byte[] statusBuf = buffer[FileConsts.StatusBegin..FileConsts.IdBegin];
-                    short status = BitConverter.ToInt16(statusBuf);
                     status &= 4;
                     if (status == 0)
                     {
                         this.validator.ValidateParameters(arguments);
                         this.fileStream.Seek(index, SeekOrigin.Begin);
+<<<<<<< HEAD
 
                         byte[] firstNameBuf = buffer[FileConsts.FirstNameBegin..FileConsts.LastNameBegin];
                         byte[] lastNameBuf = buffer[FileConsts.LastNameBegin..FileConsts.YearBegin];
@@ -1488,27 +1360,36 @@ namespace FileCabinetApp
                         string firstNameDelete = Encoding.UTF8.GetString(firstNameBuf);
                         string lastNameDelete = Encoding.UTF8.GetString(lastNameBuf);
                         string dateOfBirthDelete = new DateTime(BitConverter.ToInt32(yearBuf), BitConverter.ToInt32(monthBuf), BitConverter.ToInt32(dayBuf)).ToString(CultureInfo.InvariantCulture);
+=======
+                        var writer = new BinaryWriter(this.fileStream);
+                        writer.Seek(index, SeekOrigin.Begin);
+>>>>>>> step16-refactoring-improvement
                         short st = 0;
-                        byte[] statusBf = BitConverter.GetBytes(st);
-                        byte[] firstName = Encoding.UTF8.GetBytes(arguments.FirstName);
+                        writer.Write(st);
+                        writer.Write(id);
 
-                        byte[] firstNameResult = new byte[FileConsts.NameSize];
-                        for (int i = 0; i < firstName.Length; i++)
+                        while (arguments.FirstName.Length != 120)
                         {
-                            firstNameResult[i] = firstName[i];
+                            arguments.FirstName = string.Concat(arguments.FirstName, "\0");
                         }
 
-                        byte[] lastName = Encoding.UTF8.GetBytes(arguments.LastName);
-                        byte[] lastNameResult = new byte[FileConsts.NameSize];
-                        for (int i = 0; i < lastName.Length; i++)
+                        writer.Write(arguments.FirstName);
+
+                        while (arguments.LastName.Length < 120)
                         {
-                            lastNameResult[i] = lastName[i];
+                            arguments.LastName = string.Concat(arguments.LastName, "\0");
                         }
 
-                        byte[] year = BitConverter.GetBytes(arguments.DateOfBirth.Year);
-                        byte[] month = BitConverter.GetBytes(arguments.DateOfBirth.Month);
-                        byte[] day = BitConverter.GetBytes(arguments.DateOfBirth.Day);
+                        writer.Write(arguments.LastName);
+                        writer.Write(arguments.DateOfBirth.Year);
+                        writer.Write(arguments.DateOfBirth.Month);
+                        writer.Write(arguments.DateOfBirth.Day);
+                        writer.Write(arguments.Height);
+                        writer.Write(arguments.Weight);
+                        writer.Write(arguments.DrivingLicenseCategory);
+                        writer.Flush();
 
+<<<<<<< HEAD
                         byte[] height = BitConverter.GetBytes(arguments.Height);
                         byte[] weight = BitConverter.GetBytes(decimal.ToDouble(arguments.Weight));
                         byte[] drivingLicenseCategory = BitConverter.GetBytes(arguments.DrivingLicenseCategory);
@@ -1522,6 +1403,8 @@ namespace FileCabinetApp
                         this.fileStream.Write(height, 0, height.Length);
                         this.fileStream.Write(weight, 0, weight.Length);
                         this.fileStream.Write(drivingLicenseCategory, 0, drivingLicenseCategory.Length);
+=======
+>>>>>>> step16-refactoring-improvement
                         this.fileStream.Flush();
                         break;
                     }

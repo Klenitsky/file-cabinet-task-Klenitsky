@@ -55,6 +55,7 @@ namespace FileCabinetApp.CommandHandlers
                 if (!conversionResult.Item1)
                 {
                     Console.WriteLine($"Conversion failed: {conversionResult.Item2}. Please, correct your input.");
+                    throw new ArgumentException("Invalid argument", nameof(input));
                 }
 
                 value = conversionResult.Item3;
@@ -89,7 +90,7 @@ namespace FileCabinetApp.CommandHandlers
                 return;
             }
 
-            Console.WriteLine($"\nRecord #" + this.fileCabinetService.GetID().ToString(CultureInfo.InvariantCulture) + " created ");
+            Console.WriteLine($"\nRecord #" + id + " created ");
         }
 
         private void EnterParameters(string parameters, out int id, out string firstName, out string lastName, out DateTime dateOfBirth, out short height, out decimal weight, out char drivingLicenseCategory)
