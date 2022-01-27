@@ -43,6 +43,12 @@ namespace FileCabinetApp.CommandHandlers
         {
             var recordsCount = this.fileCabinetService.GetStat();
             int deletedCount = this.fileCabinetService.GetDeletedStat();
+            var records = this.fileCabinetService.GetRecords();
+            foreach (FileCabinetRecord record in records)
+            {
+                Console.WriteLine(record.ToString());
+            }
+
             Console.WriteLine($"{recordsCount} record(s).{deletedCount} records were deleted");
         }
     }

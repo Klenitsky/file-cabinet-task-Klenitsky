@@ -12,7 +12,7 @@ namespace FileCabinetApp.Consts
         /// <summary>
         /// Size of a full record.
         /// </summary>
-        public const int RecordSize = 270;
+        public const int RecordSize = 279;
 
         /// <summary>
         /// Size of a name.

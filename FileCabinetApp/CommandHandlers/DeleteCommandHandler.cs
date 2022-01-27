@@ -46,7 +46,7 @@ namespace FileCabinetApp.CommandHandlers
         {
             parameters = parameters.Replace("=", " ", StringComparison.InvariantCulture);
             parameters = parameters.Replace("'", string.Empty, StringComparison.InvariantCulture);
-            Regex.Replace(parameters, @"\s+", " ");
+            parameters = Regex.Replace(parameters, @"\s+", " ");
             string[] str = parameters.Split(' ');
             if (str[0] != "where")
             {
@@ -62,7 +62,7 @@ namespace FileCabinetApp.CommandHandlers
             IEnumerable<FileCabinetRecord> result;
             try
             {
-               result = this.fileCabinetService.Delete(attributes);
+                result = this.fileCabinetService.Delete(attributes);
             }
             catch (ArgumentException)
             {
@@ -76,8 +76,15 @@ namespace FileCabinetApp.CommandHandlers
                 resultId.Append('#' + record.Id.ToString(CultureInfo.InvariantCulture) + ',');
             }
 
-            resultId.Remove(resultId.Length - 1, 1);
-            Console.WriteLine($"\nRecords " + resultId.ToString() + "are deleted.");
+            if (resultId.Length > 0)
+            {
+                resultId.Remove(resultId.Length - 1, 1);
+                Console.WriteLine($"\nRecords " + resultId.ToString() + "are deleted.");
+            }
+            else
+            {
+                Console.WriteLine($"No such records.");
+            }
         }
     }
 }
