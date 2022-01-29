@@ -46,28 +46,18 @@ namespace FileCabinetApp.Iterators
         /// <returns>Record from collection.</returns>
         public FileCabinetRecord GetNext()
         {
+
             this.fileStream.Seek(this.positions[this.currentPosition], SeekOrigin.Begin);
+            BinaryReader reader = new BinaryReader(this.fileStream);
             FileCabinetRecord record;
-            byte[] buffer = new byte[FileConsts.RecordSize];
-            this.fileStream.Read(buffer, 0, buffer.Length);
-
-            byte[] recordIdBuf = buffer[FileConsts.IdBegin..FileConsts.FirstNameBegin];
-            byte[] firstNameBuf = buffer[FileConsts.FirstNameBegin..FileConsts.LastNameBegin];
-            byte[] lastNameBuf = buffer[FileConsts.LastNameBegin..FileConsts.YearBegin];
-            byte[] yearBuf = buffer[FileConsts.YearBegin..FileConsts.MonthBegin];
-            byte[] monthBuf = buffer[FileConsts.MonthBegin..FileConsts.DayBegin];
-            byte[] dayBuf = buffer[FileConsts.DayBegin..FileConsts.HeightBegin];
-            byte[] heightBuf = buffer[FileConsts.HeightBegin..FileConsts.WeightBegin];
-            byte[] weightBuf = buffer[FileConsts.WeightBegin..FileConsts.DrivingLicenseCategoryBegin];
-            byte[] drivingLicenseCategoryBuf = buffer[FileConsts.DrivingLicenseCategoryBegin..FileConsts.RecordSize];
-
-            int recordId = BitConverter.ToInt32(recordIdBuf);
-            string firstName = Encoding.UTF8.GetString(firstNameBuf);
-            string lastName = Encoding.UTF8.GetString(lastNameBuf);
-            DateTime dateOfBirth = new DateTime(BitConverter.ToInt32(yearBuf), BitConverter.ToInt32(monthBuf), BitConverter.ToInt32(dayBuf));
-            short height = BitConverter.ToInt16(heightBuf);
-            decimal weight = new decimal(BitConverter.ToDouble(weightBuf));
-            char drivingLicenseCategory = Encoding.UTF8.GetString(drivingLicenseCategoryBuf)[0];
+            short status = reader.ReadInt16();
+            int recordId = reader.ReadInt32();
+            string firstName = reader.ReadString();
+            string lastName = reader.ReadString();
+            DateTime dateOfBirth = new DateTime(reader.ReadInt32(), reader.ReadInt32(), reader.ReadInt32());
+            short height = reader.ReadInt16(); ;
+            decimal weight = reader.ReadDecimal();
+            char drivingLicenseCategory = reader.ReadChar();
 
             record = new FileCabinetRecord
                 {
