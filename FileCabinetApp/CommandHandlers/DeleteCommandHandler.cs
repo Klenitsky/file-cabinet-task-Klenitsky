@@ -60,16 +60,7 @@ namespace FileCabinetApp.CommandHandlers
         {
             SearchingAttributes attributes = EnterParameters(parameters);
             IEnumerable<FileCabinetRecord> result;
-            try
-            {
-                result = this.fileCabinetService.Delete(attributes);
-            }
-            catch (ArgumentException)
-            {
-                Console.WriteLine("Data is invalid");
-                return;
-            }
-
+            result = this.fileCabinetService.Delete(attributes);
             StringBuilder resultId = new StringBuilder();
             foreach (var record in result)
             {
